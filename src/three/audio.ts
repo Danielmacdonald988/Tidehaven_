@@ -5,6 +5,7 @@ export class CoastalAudio {
   private wind?: GainNode;
   private surf?: GainNode;
   private filter?: BiquadFilterNode;
+  private surfPan?: StereoPannerNode;
   private sources: AudioBufferSourceNode[] = [];
   private volume = 0.35;
   private muted = true;
@@ -71,27 +72,50 @@ export class CoastalAudio {
       surf.gain.value = 0.3;
       surfSource.connect(band);
       band.connect(surf);
-      surf.connect(output);
+      const pan = (this.surfPan = context.createStereoPanner());
+      surf.connect(pan);
+      pan.connect(output);
       surfSource.start(0, 1.2);
       this.sources.push(surfSource);
     } catch {
       this.context = undefined;
     }
   }
-  update(dt: number, walking: boolean, storm: number) {
+  update(
+    dt: number,
+    walking: boolean,
+    storm: number,
+    position?: { x: number; z: number },
+    indoors = false,
+  ) {
     const bounded = Math.max(0, Math.min(0.1, dt));
     this.elapsed += bounded;
     const c = this.context;
     if (!c || this.muted || c.state !== "running") return;
     const intensity = Math.max(0, Math.min(1, storm));
-    this.wind?.gain.setTargetAtTime(0.2 + intensity * 0.8, c.currentTime, 0.7);
+    const shelter = indoors ? 0.28 : 1;
+    const coast = position
+      ? Math.max(0.12, 1 - Math.abs(33 - position.z) / 65)
+      : 0.65;
+    this.surfPan?.pan.setTargetAtTime(
+      position ? Math.max(-0.65, Math.min(0.65, (5 - position.x) / 45)) : 0,
+      c.currentTime,
+      0.5,
+    );
+    this.wind?.gain.setTargetAtTime(
+      (0.2 + intensity * 0.8) * shelter,
+      c.currentTime,
+      0.7,
+    );
     this.filter?.frequency.setTargetAtTime(
       380 + intensity * 900,
       c.currentTime,
       0.7,
     );
     this.surf?.gain.setTargetAtTime(
-      0.22 + (Math.sin(this.elapsed * 0.37) + 1) * 0.16 + intensity * 0.13,
+      (0.22 + (Math.sin(this.elapsed * 0.37) + 1) * 0.16 + intensity * 0.13) *
+        coast *
+        shelter,
       c.currentTime,
       0.3,
     );

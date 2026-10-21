@@ -61,4 +61,18 @@ Shared additions and file ownership established in V3-CONTRACT.md before paralle
 - [x] Configurable request/token/concurrency/USD limits and safe credential setup.
 - [x] Mocked provider integration, invariant tests, typecheck and production build.
 - [x] 84 passing tests and actual Chrome demo assignment, independent delivery, remembered completion, fulfilled promise and mobile evidence inspection.
-- [ ] Actual upstream request/effect verification: no project credential available. Secure setup and one-request smoke are implemented; no live result claimed.
+- [x] Actual upstream request/effect verification subsequently completed in 4.0 with the user-configured credential.
+
+
+# 4.0 — The Last Good Road
+
+Ownership established in V4-CONTRACT.md before implementation: gameplay engine/campaign; world presentation/audio; character intelligence followed by independent strategy tests; lead UI/integration and actual browser play.
+
+- [x] Inspect and play 3.0 before choosing improvements.
+- [x] Connected opening, alternative supply/transport choices, shelter work and route consequences.
+- [x] Three central character stakes, reliable information sharing and recoverable trust.
+- [x] Pause, exploration mode, no deadline consumption during dialogue or AI wait, explicit work costs.
+- [x] Stateful van/cots/stock/obstruction/aftermath, material and audio pass.
+- [x] Live repair proposal and live market cooperation verified against engine effects.
+- [x] Independent automated alternate-strategy and failure/recovery playtests.
+- [x] Final complete browser campaign, mobile polish, 111 passing tests, production build and release checkpoint.

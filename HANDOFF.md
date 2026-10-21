@@ -1,3 +1,17 @@
+# AFTERLIGHT 4.0 — current handoff
+
+The Last Good Road is implemented around the existing neighborhood and verified server-side AI. The former 3.0 credential blocker below is historical: a user-supplied ignored .env.local now configures OpenAI, and actual repair/cooperation requests have succeeded. Never read or print its contents.
+
+Launch remains `npm run dev` (5173) or build/start (3001), one API server at a time. During this session the existing tsx watcher serves API and production dist at 3001. Secrets remain server-side. New chapter preserves old saves through archived responses.
+
+Current changes and scope: see RELEASE-4.md. Shared interfaces and single-writer ownership: V4-CONTRACT.md. Main UI owns pause/explore, queued navigation after closing overlays, compact project requirements, costs, checkpoints and aftermath. campaign.ts/engine.ts own every resource effect, clock and deadline. Model actions use explicit zero-based indices and strict offered-action validation.
+
+Release verified: 111/111 tests, production build, complete Chrome campaign, real model effects, mobile layout, checkpoint rewind with alternate salvage and preserved outcome. See RELEASE-4.md for exact evidence and measured performance. Old records below are historical.
+
+Next useful work: longer human pacing sessions, stronger character art/animation and vehicle/passenger staging, then 3D bundle splitting. No agent work remains running. No deployment was performed.
+
+---
+
 # AFTERLIGHT 3.0 — character intelligence handoff
 
 ## Current implementation

@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {
   PLACES,
   type EnvironmentHandle,
@@ -8,7 +9,7 @@ import {
 } from "./shared";
 
 /** Original procedural architecture. Dimensions use metres, Y is up. */
-export function buildEnvironment(): EnvironmentHandle {
+export function buildEnvironment(campaignEnabled = true): EnvironmentHandle {
   const group = new THREE.Group();
   group.name = "Bellwether neighborhood";
   const colliders: Collider[] = [];
@@ -26,7 +27,7 @@ export function buildEnvironment(): EnvironmentHandle {
   const M = {
     sand: material("#d5c5a0"),
     ground: material("#9eae91"),
-    road: material("#8c9690"),
+    road: material("#78817b"),
     curb: material("#dcd8c2"),
     cream: material("#e2d8bc"),
     white: material("#f3ebd5"),
@@ -48,37 +49,85 @@ export function buildEnvironment(): EnvironmentHandle {
     medical: material("#ded7c4"),
     fuel: material("#bb7c51"),
   };
-  // Restrained, deterministic surface grain makes the town read as painted timber and stone.
-  function grain(
+  // Original deterministic material studies: broad wear remains legible at the distant camera,
+  // while fine mineral grain breaks up close surfaces. Generated once, never per frame.
+  function weathered(
     mat: THREE.MeshStandardMaterial,
     seed: number,
     repeat: number,
+    style: "stone" | "earth" | "paint" | "wood",
   ) {
-    const c = document.createElement("canvas");
-    c.width = c.height = 128;
-    const ctx = c.getContext("2d")!;
-    ctx.fillStyle = "#f4f3ec";
-    ctx.fillRect(0, 0, 128, 128);
+    const canvas = document.createElement("canvas");
+    canvas.width = canvas.height = 256;
+    const ctx = canvas.getContext("2d")!;
     let rng = seed;
-    for (let i = 0; i < 1800; i++) {
+    const random = () => {
       rng = (Math.imul(rng, 1664525) + 1013904223) >>> 0;
-      const x = rng % 128;
-      rng = (Math.imul(rng, 1664525) + 1013904223) >>> 0;
-      const y = rng % 128;
-      ctx.fillStyle = i % 3 ? "#e8e8de" : "#ffffff";
-      ctx.fillRect(x, y, i % 4 === 0 ? 2 : 1, 1);
+      return rng / 4294967296;
+    };
+    ctx.fillStyle = "#f1f0e8";
+    ctx.fillRect(0, 0, 256, 256);
+    for (let i = 0; i < 70; i++) {
+      ctx.fillStyle =
+        style === "earth" ? "rgba(104,104,76,.045)" : "rgba(63,69,66,.035)";
+      const x = random() * 256,
+        y = random() * 256,
+        radius = 12 + random() * 45;
+      ctx.beginPath();
+      ctx.ellipse(
+        x,
+        y,
+        radius,
+        radius * (0.3 + random() * 0.7),
+        random() * 3,
+        0,
+        Math.PI * 2,
+      );
+      ctx.fill();
     }
-    const texture = new THREE.CanvasTexture(c);
+    for (let i = 0; i < 11000; i++) {
+      const shade = Math.floor(150 + random() * 105);
+      ctx.fillStyle = `rgba(${shade},${shade},${shade},${style === "paint" ? 0.15 : 0.36})`;
+      ctx.fillRect(
+        random() * 256,
+        random() * 256,
+        1 + random() * 2,
+        style === "wood" ? 7 : 1 + random() * 2,
+      );
+    }
+    if (style === "paint") {
+      // Salt-stained bottom edge and fine vertical runoff, no fake damage state.
+      for (let i = 0; i < 30; i++) {
+        ctx.fillStyle = "rgba(110,100,78,.035)";
+        ctx.fillRect(
+          random() * 256,
+          170 + random() * 80,
+          0.5 + random() * 2,
+          70,
+        );
+      }
+      ctx.strokeStyle = "rgba(86,83,69,.18)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(6, 6, 244, 244);
+    }
+    const texture = new THREE.CanvasTexture(canvas);
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(repeat, repeat);
     texture.colorSpace = THREE.SRGBColorSpace;
     textures.push(texture);
     mat.map = texture;
+    if (style === "stone" || style === "earth") {
+      mat.bumpMap = texture;
+      mat.bumpScale = style === "stone" ? 0.035 : 0.05;
+    }
   }
-  grain(M.ground, 26, 12);
-  grain(M.sand, 42, 8);
-  grain(M.road, 85, 12);
-  grain(M.wood, 71, 2);
+  weathered(M.ground, 26, 7, "earth");
+  weathered(M.sand, 42, 6, "earth");
+  weathered(M.road, 85, 8, "stone");
+  weathered(M.wood, 71, 2, "wood");
+  weathered(M.cream, 199, 1, "paint");
+  weathered(M.teal, 291, 1, "paint");
+  weathered(M.white, 744, 1, "paint");
   const buckets = new Map<THREE.Material, THREE.Matrix4[]>();
   function block(
     x: number,
@@ -822,6 +871,280 @@ export function buildEnvironment(): EnvironmentHandle {
     position: { x: 13.5, z: 27.5 },
     location: "harbor",
   });
+  // Campaign props remain physical and silent until authoritative project state changes.
+  // Each approach point is deliberately outside its collider and on existing navigation ground.
+  const campaignObjects = new THREE.Group();
+  campaignObjects.name = "The last good road";
+  group.add(campaignObjects);
+  function prop(
+    parent: THREE.Object3D,
+    x: number,
+    y: number,
+    z: number,
+    w: number,
+    h: number,
+    d: number,
+    mat: THREE.Material,
+  ) {
+    const piece = mesh(boxGeo, mat, parent);
+    piece.position.set(x, y, z);
+    piece.scale.set(w, h, d);
+    return piece;
+  }
+  function station(
+    id: string,
+    label: string,
+    x: number,
+    z: number,
+    location: Interaction["location"],
+    object: THREE.Object3D,
+  ) {
+    object.traverse((o) => (o.userData.interactionId = id));
+    if (!campaignEnabled) return;
+    interactions.push({
+      id,
+      kind: "supply",
+      label,
+      position: { x, z },
+      location,
+      object,
+    });
+  }
+  const van = new THREE.Group();
+  campaignObjects.add(van);
+  van.position.set(-17.7, 0, 20.6);
+  van.rotation.y = -0.13;
+  prop(van, 0, 0.62, 0, 2.3, 0.38, 4.8, M.darkTeal);
+  prop(van, 0, 1.55, -0.65, 2.28, 1.65, 3, M.cream);
+  prop(van, 0, 1.58, 1.13, 2.22, 1.5, 1.08, M.teal);
+  prop(van, 0, 2.36, -0.12, 2.34, 0.13, 4.05, M.white);
+  // Door recesses, rain gutters and wheel-height scuff rails make the body read as sheet metal.
+  for (const side of [-1, 1]) {
+    prop(van, side * 1.15, 1.55, -0.72, 0.028, 1.35, 0.025, M.metal);
+    prop(van, side * 1.16, 1.55, -1.9, 0.03, 1.35, 0.025, M.metal);
+    prop(van, side * 1.17, 2.22, -0.7, 0.045, 0.035, 2.45, M.metal);
+    prop(van, side * 1.17, 0.88, -0.5, 0.045, 0.09, 2.8, M.darkTeal);
+    prop(van, side * 1.18, 1.6, -0.83, 0.045, 0.055, 0.22, M.darkWood);
+    prop(van, side * 1.3, 1.8, 1.62, 0.18, 0.28, 0.13, M.metal);
+    prop(van, side * 0.94, 1.16, -2.17, 0.18, 0.35, 0.05, M.coral);
+  }
+  for (let i = 0; i < 5; i++)
+    prop(van, 0, 0.97 + i * 0.045, 2.29, 1.1, 0.018, 0.03, M.metal);
+  const windshield = prop(van, 0, 1.94, 1.69, 1.95, 0.63, 0.07, M.glass);
+  windshield.rotation.x = -0.1;
+  prop(van, 0, 1.94, 1.75, 0.07, 0.66, 0.04, M.white);
+  prop(van, 0, 0.8, 2.32, 2.35, 0.2, 0.17, M.metal);
+  prop(van, 0, 1.06, 2.25, 1.12, 0.26, 0.05, M.darkTeal);
+  for (const side of [-1, 1]) {
+    prop(van, side * 0.89, 1.06, 2.28, 0.34, 0.25, 0.07, M.white);
+    prop(van, side * 1.16, 1.86, 1.13, 0.03, 0.62, 0.8, M.glass);
+    prop(van, side * 1.18, 1.2, -0.4, 0.035, 0.16, 3.35, M.coral);
+    prop(van, side * 1.18, 1.45, 0.66, 0.04, 0.055, 0.2, M.metal);
+    for (const z of [-1.45, 1.5]) {
+      const geo = new THREE.CylinderGeometry(0.43, 0.43, 0.22, 16);
+      geometries.push(geo);
+      const wheel = mesh(geo, M.darkWood, van);
+      wheel.rotation.z = Math.PI / 2;
+      wheel.position.set(side * 1.12, 0.45, z);
+      const hub = mesh(geo, M.metal, van);
+      hub.rotation.z = Math.PI / 2;
+      hub.position.set(side * 1.25, 0.45, z);
+      hub.scale.set(0.48, 0.35, 0.48);
+    }
+  }
+  const hood = new THREE.Group();
+  van.add(hood);
+  hood.position.set(0, 1.25, 1.65);
+  prop(hood, 0, 0, 0.32, 2.18, 0.09, 0.73, M.teal);
+  prop(van, 0, 1.1, 1.96, 1.45, 0.22, 0.52, M.metal);
+  const vanTools = new THREE.Group();
+  campaignObjects.add(vanTools);
+  // A visible socket case and jack sit on the safe roadside, away from the interaction endpoint.
+  prop(vanTools, -15.8, 0.18, 20.8, 0.65, 0.28, 0.43, M.coral);
+  prop(vanTools, -15.8, 0.34, 20.8, 0.54, 0.035, 0.35, M.darkWood);
+  for (let i = 0; i < 4; i++)
+    prop(vanTools, -16 + i * 0.12, 0.39, 20.8, 0.055, 0.08, 0.13, M.metal);
+  prop(vanTools, -16.2, 0.1, 21.4, 0.45, 0.15, 0.6, M.darkTeal);
+  prop(vanTools, -16.2, 0.3, 21.4, 0.08, 0.4, 0.08, M.metal);
+  const vanCargo = new THREE.Group();
+  campaignObjects.add(vanCargo);
+  for (let i = 0; i < 3; i++) {
+    prop(
+      vanCargo,
+      -20 + (i % 2) * 0.7,
+      0.42 + Math.floor(i / 2) * 0.65,
+      19.5,
+      0.65,
+      0.6,
+      0.65,
+      M.medical,
+    );
+    prop(
+      vanCargo,
+      -20 + (i % 2) * 0.7,
+      0.42 + Math.floor(i / 2) * 0.65,
+      19.84,
+      0.1,
+      0.62,
+      0.025,
+      M.coral,
+    );
+  }
+  const vanSign = sign(
+    "BELLWETHER RELIEF",
+    "MEDICAL SUPPLIES · KEEP DRY",
+    -17.7,
+    1.7,
+    18.13,
+    1.8,
+    "#315d57",
+    0.52,
+  );
+  vanSign.rotation.y = Math.PI;
+  campaignObjects.add(vanSign);
+  if (campaignEnabled) collider(-17.7, 20.6, 2.9, 5.2, "campaign-van");
+  station(
+    "relief-van",
+    "Inspect the stranded relief van",
+    -15,
+    18,
+    "warehouse",
+    van,
+  );
+  vanCargo.traverse((o) => (o.userData.interactionId = "relief-van"));
+  // Folded frames are visibly unprepared; deployed cots and stored food only follow committed work.
+  const shelterBare = new THREE.Group(),
+    shelterCots = new THREE.Group(),
+    shelterStock = new THREE.Group();
+  campaignObjects.add(shelterBare, shelterCots, shelterStock);
+  for (const x of [-26.2, -19.8])
+    for (const z of [-16, -19.4]) {
+      prop(shelterBare, x, 0.4, z, 0.45, 0.8, 1.9, M.metal);
+      prop(shelterBare, x, 0.9, z, 0.38, 0.14, 1.9, M.teal);
+      prop(shelterCots, x, 0.55, z, 1.55, 0.13, 2.6, M.metal);
+      prop(shelterCots, x, 0.67, z, 1.5, 0.14, 2.5, M.cream);
+      prop(shelterCots, x, 0.8, z + 0.3, 1.5, 0.09, 1.8, M.teal);
+      prop(shelterCots, x, 0.85, z - 0.8, 0.8, 0.19, 0.45, M.white);
+      for (const dx of [-0.65, 0.65])
+        for (const dz of [-1.1, 1.1])
+          prop(shelterCots, x + dx, 0.26, z + dz, 0.065, 0.52, 0.065, M.metal);
+    }
+  for (let i = 0; i < 4; i++)
+    prop(
+      shelterStock,
+      -27 + i * 0.8,
+      0.4,
+      -21.6,
+      0.7,
+      0.7,
+      0.6,
+      i % 2 ? M.water : M.food,
+    );
+  const shelterBoard = sign(
+    "CYPRESS HOUSE",
+    "NEIGHBORHOOD STORM SHELTER",
+    -23,
+    2.1,
+    -22.72,
+    4,
+    "#886f51",
+    0.9,
+  );
+  campaignObjects.add(shelterBoard);
+  station(
+    "shelter-work",
+    "Prepare Cypress House shelter",
+    -23,
+    -13,
+    "heights",
+    shelterBare,
+  );
+  shelterCots.traverse((o) => (o.userData.interactionId = "shelter-work"));
+  shelterStock.traverse((o) => (o.userData.interactionId = "shelter-work"));
+  // Freight obstruction is to the side of the pedestrian route, which remains usable.
+  const debris = new THREE.Group();
+  campaignObjects.add(debris);
+  for (let i = 0; i < 7; i++) {
+    const plank = prop(
+      debris,
+      -8 + (i % 3) * 0.5,
+      0.2 + (i % 2) * 0.18,
+      3.3 + (i % 2) * 0.6,
+      2.5,
+      0.13,
+      0.22,
+      M.wood,
+    );
+    plank.rotation.y = i * 0.7;
+  }
+  const barricade = new THREE.Group();
+  campaignObjects.add(barricade);
+  for (const x of [-8.8, -6.2])
+    prop(barricade, x, 0.6, 2.5, 0.13, 1.2, 0.15, M.metal);
+  prop(barricade, -7.5, 0.95, 2.5, 3, 0.35, 0.15, M.white);
+  for (let i = 0; i < 5; i++)
+    prop(barricade, -8.7 + i * 0.6, 0.95, 2.59, 0.27, 0.36, 0.04, M.coral);
+  station(
+    "road-debris",
+    "Inspect the blocked freight lane",
+    -10,
+    3,
+    "warehouse",
+    barricade,
+  );
+  debris.traverse((o) => (o.userData.interactionId = "road-debris"));
+  const ledger = new THREE.Group();
+  campaignObjects.add(ledger);
+  prop(ledger, 2.1, 0.85, -10, 1.25, 0.12, 0.7, M.wood);
+  for (const x of [1.6, 2.6])
+    prop(ledger, x, 0.4, -10, 0.08, 0.8, 0.5, M.darkWood);
+  prop(ledger, 2.1, 0.94, -10, 0.55, 0.04, 0.4, M.cream);
+  for (let i = 0; i < 4; i++)
+    prop(ledger, 2.1, 0.966, -10.13 + i * 0.07, 0.39, 0.008, 0.015, M.darkTeal);
+  station(
+    "market-ledger",
+    "Negotiate the neighborhood reserve",
+    0,
+    -10,
+    "market",
+    ledger,
+  );
+  const sharedReserve = new THREE.Group();
+  campaignObjects.add(sharedReserve);
+  prop(sharedReserve, 3.5, 0.5, -9.7, 0.8, 0.85, 0.8, M.food);
+  prop(sharedReserve, 3.5, 0.94, -9.7, 0.82, 0.06, 0.83, M.white);
+  // Architectural identity: industrial brick plinth, clinic canopy and civic shelter flag.
+  for (let i = 0; i < 16; i++) {
+    if (Math.abs(-28.4 + i * 0.81 + 22) > 2.8)
+      block(-28.4 + i * 0.81, 0.3, 15.18, 0.77, 0.4, 0.08, M.darkTeal);
+    if (Math.abs(16.4 + i * 0.7 - 22) > 1.9)
+      block(16.4 + i * 0.7, 0.33, -7.8, 0.65, 0.42, 0.08, M.cream);
+  }
+  for (const x of [18, 26]) block(x, 3.2, -7.3, 2.5, 0.12, 1.5, M.teal);
+  // Street-level repair patches and worn parking bay markings replace featureless asphalt.
+  for (const [x, z, w, d] of [
+    [-3, 2.7, 5, 2],
+    [19, 20.5, 6, 2],
+    [-11, 11, 2, 3],
+  ])
+    block(x, 0.058, z, w, 0.008, d, M.metal);
+  for (const x of [-25, -20, -15])
+    block(x, 0.07, 22.3, 0.07, 0.01, 2.8, M.cream);
+  const aftermathDebris = new THREE.Group();
+  group.add(aftermathDebris);
+  for (let i = 0; i < 12; i++) {
+    const piece = prop(
+      aftermathDebris,
+      -31 + i * 5.4,
+      0.15,
+      25 + Math.sin(i) * 0.7,
+      1.2,
+      0.09,
+      0.22,
+      M.darkWood,
+    );
+    piece.rotation.y = i * 1.7;
+  }
   // Repeated planted details are instanced into material batches.
   const fronds: {
     mesh: THREE.Mesh;
@@ -951,6 +1274,35 @@ export function buildEnvironment(): EnvironmentHandle {
   group.add(rain);
   const rainDummy = new THREE.Object3D();
   rainDummy.rotation.set(0.1, 0, 0.22);
+  // Merge fittings within each independently visible assembly, retaining hood and state pivots.
+  function batchDetails(parent: THREE.Object3D) {
+    for (const child of [...parent.children])
+      if (child.children.length) batchDetails(child);
+    const sets = new Map<THREE.Material, THREE.Mesh[]>();
+    for (const child of parent.children)
+      if (child instanceof THREE.Mesh && !Array.isArray(child.material)) {
+        const set = sets.get(child.material) || [];
+        set.push(child);
+        sets.set(child.material, set);
+      }
+    for (const [mat, pieces] of sets) {
+      if (pieces.length < 2) continue;
+      const copies = pieces.map((piece) => {
+        piece.updateMatrix();
+        return piece.geometry.clone().applyMatrix4(piece.matrix);
+      });
+      const merged = mergeGeometries(copies, false);
+      copies.forEach((g) => g.dispose());
+      if (!merged) continue;
+      geometries.push(merged);
+      pieces.forEach((piece) => parent.remove(piece));
+      const batch = mesh(merged, mat, parent);
+      batch.userData.interactionId = parent.userData.interactionId;
+    }
+  }
+  batchDetails(campaignObjects);
+  batchDetails(aftermathDebris);
+  for (const roof of roofs) batchDetails(roof.object);
   // Batch architectural components into a handful of GPU submissions.
   for (const [mat, matrices] of buckets) {
     const batch = new THREE.InstancedMesh(boxGeo, mat, matrices.length);
@@ -981,10 +1333,30 @@ export function buildEnvironment(): EnvironmentHandle {
         );
         stagedCrates[resource].forEach((c, i) => (c.visible = i < staged));
       }
+      const campaign = world.campaign;
+      campaignObjects.visible = Boolean(campaign);
+      hood.rotation.x = campaign?.van === "repaired" ? 0 : -1.12;
+      vanCargo.visible = campaign?.van === "stranded";
+      vanTools.visible = campaign?.van === "stranded";
+      shelterBare.visible = campaign?.shelter === "bare";
+      shelterCots.visible = Boolean(campaign && campaign.shelter !== "bare");
+      shelterStock.visible = campaign?.shelter === "stocked";
+      debris.visible = campaign?.route === "blocked";
+      barricade.visible = campaign?.route === "blocked";
+      sharedReserve.visible = Boolean(
+        campaign && campaign.cooperation !== "none",
+      );
+      aftermathDebris.visible = Boolean(world.ended);
       truck.visible = true;
       truck.userData.hired = world.transport > 0;
       stormGate.visible = world.hour >= 54;
-      const rough = world.hour >= 48 ? 1 : world.hour >= 24 ? 0.55 : 0.25;
+      const rough = world.ended
+        ? 0.2
+        : world.hour >= 48
+          ? 1
+          : world.hour >= 24
+            ? 0.55
+            : 0.25;
       waterMat.color.set(world.hour >= 48 ? "#527c7b" : "#548f8b");
       if (quality === "high") {
         const a = waterGeo.attributes.position;
@@ -1017,7 +1389,8 @@ export function buildEnvironment(): EnvironmentHandle {
           Math.abs(player.x - r.center.x) < r.w / 2 &&
           Math.abs(player.z - r.center.z) < r.d / 2,
       );
-      rain.visible = world.hour >= 48 && quality === "high" && !indoors;
+      rain.visible =
+        !world.ended && world.hour >= 48 && quality === "high" && !indoors;
       if (rain.visible) {
         rainMaterial.opacity = 0.17 + ((world.hour - 48) / 24) * 0.18;
         for (let i = 0; i < 160; i++) {

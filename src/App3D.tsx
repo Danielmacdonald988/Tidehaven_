@@ -10,7 +10,6 @@ import {
   type Quality,
 } from "./three/shared";
 import {
-  createPhysicalWorld,
   activateSpatial,
   physicalResidentPosition,
   distance,
@@ -36,6 +35,11 @@ import type {
 } from "./contracts";
 import "./three.css";
 import { resolveEvidence } from "./evidence";
+import {
+  createCampaignWorld,
+  getCampaignOptions,
+  getCampaignView,
+} from "./campaign";
 interface Save {
   version: 2;
   world: World;
@@ -46,7 +50,7 @@ interface Save {
 const clone = <T,>(x: T): T => structuredClone(x),
   id = () => crypto.randomUUID();
 const fresh = (): Save => {
-  const world = activateLives(createPhysicalWorld());
+  const world = createCampaignWorld();
   return {
     version: 2,
     world,
@@ -96,9 +100,9 @@ export default function App3D() {
     [reset, setReset] = useState(0),
     [selected, setSelected] = useState<string>(),
     [placeOpen, setPlaceOpen] = useState(false),
-    [drawer, setDrawer] = useState<"journal" | "saves" | "settings" | null>(
-      null,
-    ),
+    [drawer, setDrawer] = useState<
+      "journal" | "saves" | "settings" | "plan" | null
+    >(null),
     [evidence, setEvidence] = useState<SimEvent>(),
     [hint, setHint] = useState(
       "Click the street to walk. Drag to turn the camera.",
@@ -122,7 +126,20 @@ export default function App3D() {
     [volume, setVolume] = useState(0.35),
     [perf, setPerf] = useState<PerformanceSample>(),
     [replay, setReplay] = useState<World>(),
-    [showRoute, setShowRoute] = useState(false);
+    [showRoute, setShowRoute] = useState(false),
+    [station, setStation] = useState<string>(),
+    [paused, setPaused] = useState(false),
+    [explore, setExplore] = useState(
+      () => localStorage.getItem("afterlight.explore") === "true",
+    ),
+    [sensitivity, setSensitivity] = useState(
+      () => Number(localStorage.getItem("afterlight.camera")) || 1,
+    ),
+    [endingDismissed, setEndingDismissed] = useState(false),
+    [navigation, setNavigation] = useState<{
+      project?: string;
+      place?: World["location"];
+    }>();
   const world = replay || currentWorld;
   const replayRef = useRef(!!replay),
     dialogueEpoch = useRef(0),
@@ -140,6 +157,8 @@ export default function App3D() {
     replay: !!replay,
     drawer,
     evidence: !!evidence,
+    encounter: !!selected || placeOpen,
+    paused,
   });
   runtime.current = {
     intro,
@@ -148,6 +167,8 @@ export default function App3D() {
     replay: !!replay,
     drawer,
     evidence: !!evidence,
+    encounter: !!selected || placeOpen,
+    paused,
   };
   function invalidateWorldWork() {
     worldEpoch.current++;
@@ -219,6 +240,14 @@ export default function App3D() {
         setSelected(undefined);
         setPlaceOpen(false);
         setShowRoute(false);
+        setStation(undefined);
+      }
+      if (
+        e.code === "Space" &&
+        !(e.target as HTMLElement)?.matches("input,textarea,select,button")
+      ) {
+        e.preventDefault();
+        setPaused((p) => !p);
       }
     };
     window.addEventListener("keydown", close);
@@ -251,22 +280,36 @@ export default function App3D() {
     return true;
   }
   function step(p: Point, seconds: number, moving: boolean) {
-    if (
-      intro ||
-      drawer ||
-      evidence ||
-      replayRef.current ||
-      saveRef.current.world.ended
-    )
+    if (intro || drawer || evidence || replayRef.current || paused)
       return false;
+    const clockPaused =
+      explore ||
+      !!selected ||
+      placeOpen ||
+      requestInFlight.current ||
+      saveRef.current.world.ended;
+    if (!moving && clockPaused) return true;
     return commit(
-      { id: id(), kind: moving ? "walk" : "advance", position: p, seconds },
+      {
+        id: id(),
+        kind: moving ? "walk" : "advance",
+        position: p,
+        seconds,
+        clockPaused,
+      },
       true,
     );
   }
   function interact(i: Interaction) {
     if (replayRef.current) return;
     invalidateDialogue();
+    setStation(
+      ["relief-van", "shelter-work", "road-debris", "market-ledger"].includes(
+        i.id,
+      )
+        ? i.id
+        : undefined,
+    );
     if (i.kind === "person") {
       const pid = i.id.replace(/^person[:-]/, "");
       setSelected(pid);
@@ -337,6 +380,8 @@ export default function App3D() {
         r.replay ||
         r.drawer ||
         r.evidence ||
+        r.encounter ||
+        r.paused ||
         r.busy ||
         requestInFlight.current ||
         current.ended ||
@@ -533,6 +578,8 @@ export default function App3D() {
     saveRef.current = next;
     setSave(next);
     setReset((v) => v + 1);
+    setStation(undefined);
+    setEndingDismissed(false);
     setSelected(undefined);
     setPlaceOpen(false);
     setDrawer(null);
@@ -567,6 +614,74 @@ export default function App3D() {
         ),
       ]
     : actions;
+  const checkedActions = (station ? [] : stationActions).map((action) => ({
+    action,
+    check: applyAction(world, { ...action, id: `preview-${action.id}` }),
+  }));
+  const chapter = world.campaign ? getCampaignView(world) : undefined;
+  const projectOptions =
+    world.campaign && station
+      ? getCampaignOptions(world, station).filter(
+          ({ action }) =>
+            action.target !== "finish_scenario" || world.hour >= 54,
+        )
+      : [];
+  const clockReason = paused
+    ? "PAUSED"
+    : drawer || evidence
+      ? "READING · CLOCK PAUSED"
+      : selected || placeOpen
+        ? "ENCOUNTER · CLOCK PAUSED"
+        : requestOwner
+          ? "AI RESPONSE · CLOCK PAUSED"
+          : explore
+            ? "EXPLORATION · CLOCK PAUSED"
+            : world.ended
+              ? "AFTERMATH"
+              : "CLOCK RUNNING";
+  function newCampaign() {
+    scene.current?.stop();
+    invalidateWorldWork();
+    const next = fresh();
+    const old = saveRef.current;
+    next.archives = [
+      ...old.archives,
+      {
+        name: `Previous response · hour ${old.world.hour.toFixed(1)}`,
+        state: clone(old.world),
+      },
+    ];
+    next.checkpoints = [...old.checkpoints, ...next.checkpoints];
+    saveRef.current = next;
+    setSave(next);
+    setReset((r) => r + 1);
+    setSelected(undefined);
+    setStation(undefined);
+    setPlaceOpen(false);
+    setDrawer(null);
+    setReplay(undefined);
+    setIntro(false);
+    setPaused(false);
+    setEndingDismissed(false);
+    localStorage.setItem("afterlight.neighborhood.started", "1");
+    setNotice(
+      "A relief van has stalled outside your warehouse. Click its open hood or inspect it from your plan.",
+    );
+  }
+  useEffect(() => {
+    if (!navigation || drawer || intro || paused || replay) return;
+    if (navigation.project) scene.current?.inspect(navigation.project);
+    else if (navigation.place) scene.current?.walkTo(navigation.place);
+    setNavigation(undefined);
+  }, [navigation, drawer, intro, paused, replay]);
+  function goProject(project: string) {
+    setSelected(undefined);
+    setPlaceOpen(false);
+    setStation(undefined);
+    setDrawer(null);
+    setShowRoute(false);
+    setNavigation({ project });
+  }
   const kept = world.commitments.some((p) => p.status === "kept");
   const broken = world.commitments.some((p) => p.status === "broken");
   const phase = kept
@@ -585,11 +700,13 @@ export default function App3D() {
                 ? "A crew starts with one person"
                 : "Start with a neighbor";
   return (
-    <div className="neighborhood">
+    <div className={`neighborhood ${world.campaign ? "campaign" : "legacy"}`}>
       <Scene
+        key={world.campaign ? "campaign" : "legacy"}
         ref={scene}
         world={world}
-        readOnly={!!replay || intro || !!drawer || !!evidence}
+        readOnly={!!replay || intro || !!drawer || !!evidence || paused}
+        cameraSensitivity={sensitivity}
         quality={quality}
         muted={muted}
         volume={volume}
@@ -609,38 +726,75 @@ export default function App3D() {
         <div className="nh-weather">
           <i />
           <span>
-            {Math.max(0, 72 - world.hour).toFixed(1)}h to landfall
+            {world.ended
+              ? "The morning after"
+              : `${Math.max(0, 72 - world.hour).toFixed(1)}h to landfall`}
             <small>
-              {world.hour < 24
-                ? "Warm air. A distant warning."
-                : world.hour < 54
-                  ? "Wind rising. Clouds closing in."
-                  : "Causeway closed. Stay inland."}
+              {world.ended
+                ? "The water is falling. What held matters."
+                : world.hour < 24
+                  ? "Warm air. A distant warning."
+                  : world.hour < 54
+                    ? "Wind rising. Clouds closing in."
+                    : "Causeway closed. Stay inland."}
             </small>
           </span>
         </div>
-        <button className="nh-desk" onClick={() => setDrawer("saves")}>
+        <button
+          className="nh-pause"
+          aria-pressed={paused}
+          onClick={() => setPaused(!paused)}
+        >
+          {paused ? "Resume" : "Pause"}
+        </button>
+        <button
+          className="nh-desk"
+          onClick={() => setDrawer(world.campaign ? "plan" : "saves")}
+        >
           Field desk <span>↗</span>
         </button>
       </header>
       <section className="nh-mission">
-        <span className="nh-eyebrow">01 / THE FIRST RELIEF RUN</span>
-        <h1>{phase}</h1>
+        <span className="nh-eyebrow">
+          {chapter?.chapter || "01 / THE FIRST RELIEF RUN"}
+        </span>
+        <h1>{chapter?.title || phase}</h1>
         <p>
-          {kept
-            ? "Mara remembers. Keep building the response, or rewind and choose another way."
-            : broken
-              ? "The deadline passed. Speak with Mara to learn what she needs now, or rewind your checkpoint."
-              : world.spatial!.carried.medical >= 10
-                ? "Ten kits are in your pack. Walk to Mercy Clinic and deliver them to Mara."
-                : world.inventory.medical >= 10
-                  ? "Enter the warehouse and load ten kits into your pack. Carry them to Mara at the clinic."
-                  : Object.values(world.spatial!.staged).some((n) => n > 0)
-                    ? "Find Inez and ask her to collect your purchased supplies. She will consider the request, then make the trip herself."
-                    : world.staff
-                      ? "Promise Mara ten medical kits. Buy them from Eli, then ask a neighbor to collect them."
-                      : "Find Inez at the warehouse. Ask her to join your crew, then meet Mara at the clinic."}
+          {chapter
+            ? chapter.description
+            : kept
+              ? "Mara remembers. Keep building the response, or rewind and choose another way."
+              : broken
+                ? "The deadline passed. Speak with Mara to learn what she needs now, or rewind your checkpoint."
+                : world.spatial!.carried.medical >= 10
+                  ? "Ten kits are in your pack. Walk to Mercy Clinic and deliver them to Mara."
+                  : world.inventory.medical >= 10
+                    ? "Enter the warehouse and load ten kits into your pack. Carry them to Mara at the clinic."
+                    : Object.values(world.spatial!.staged).some((n) => n > 0)
+                      ? "Find Inez and ask her to collect your purchased supplies. She will consider the request, then make the trip herself."
+                      : world.staff
+                        ? "Promise Mara ten medical kits. Buy them from Eli, then ask a neighbor to collect them."
+                        : "Find Inez at the warehouse. Ask her to join your crew, then meet Mara at the clinic."}
         </p>
+        {world.campaign && (
+          <button
+            className="nh-next"
+            onClick={() =>
+              world.campaign?.van === "stranded"
+                ? goProject("relief-van")
+                : setDrawer("plan")
+            }
+          >
+            {world.campaign.van === "stranded"
+              ? "Inspect the stranded van ↗"
+              : "Open the response plan ↗"}
+          </button>
+        )}
+        {!world.campaign && (
+          <button className="nh-next" onClick={newCampaign}>
+            Play the new chapter ↗
+          </button>
+        )}
         <button
           disabled={!!replay}
           onClick={() => {
@@ -667,6 +821,7 @@ export default function App3D() {
             {world.inventory.medical} <em>kits</em> · {world.inventory.food}{" "}
             <em>food</em> · {world.inventory.water} <em>water</em>
           </strong>
+          <small>{world.inventory.fuel} fuel · {world.evacuated}/48 uphill</small>
         </span>
         <span>
           <small>CARRYING</small>
@@ -713,12 +868,31 @@ export default function App3D() {
           <span className="nh-eyebrow">
             {character ? "WITHIN SPEAKING DISTANCE" : "YOU ARE HERE"}
           </span>
-          <h2>{character?.name || place.name}</h2>
+          <h2>
+            {character?.name ||
+              (station === "relief-van"
+                ? "The stranded relief van"
+                : station === "road-debris"
+                  ? "The inland road"
+                  : station === "shelter-work"
+                    ? "Make room at Cypress"
+                    : station === "market-ledger"
+                      ? "The market ledger"
+                      : place.name)}
+          </h2>
           <p className="nh-role">
             {character?.role ||
-              (place.id === "harbor"
-                ? "The quay serves the relief fleet. Exposed access closes at hour 54."
-                : "Step inside. The doors are open.")}
+              (station === "relief-van"
+                ? (world.campaign?.van === "stranded" ? "A broken axle, ten medical kits, and a choice about what is worth saving." : world.campaign?.van === "repaired" ? "The repaired van provides twelve evacuation seats. Its medical cargo has been recovered." : "The medicine was recovered. This van was left behind; the harbor offers another transport option.")
+                : station === "shelter-work"
+                  ? (world.campaign?.shelter === "stocked" ? "Twenty sleeping places are ready, with food and water secured. Your preparations will carry through the storm." : `A refuge needs dry sleeping places and supplies. Warehouse reserve: ${world.inventory.food} food, ${world.inventory.water} water.`)
+                  : station === "road-debris"
+                    ? (world.campaign?.route === "cleared" ? "The freight lane is clear. Each evacuation takes four hours and four fuel before the harbor closes at hour 54." : "Clear this freight lane or take the detour: each evacuation costs two extra hours and two extra fuel. Pedestrians can pass.")
+                    : station === "market-ledger"
+                      ? "Bring a clinic receipt or trade fuel for the shop generator. Goods stay here until collected."
+                      : place.id === "harbor"
+                        ? "The quay serves the relief fleet. Exposed access closes at hour 54."
+                        : "Step inside. The doors are open.")}
             {character && ` · trust ${character.trust}`}
           </p>
           {character ? (
@@ -840,7 +1014,8 @@ export default function App3D() {
                       disabled={busy}
                       onClick={() => commit(reply.proposal!)}
                     >
-                      Agree · {nameAction(reply.proposal)}
+                      Agree · {nameAction(reply.proposal)} ·{" "}
+                      {Number(actionHours(reply.proposal, world).toFixed(1))}h
                     </button>
                   )}
                 </div>
@@ -855,7 +1030,7 @@ export default function App3D() {
                   {decisionPending
                     ? "is considering their next step"
                     : "is responding"}
-                  … You can keep walking. Your draft stays here.
+                  … The clock is paused. Your draft stays here.
                 </small>
               )}
               <form
@@ -913,22 +1088,42 @@ export default function App3D() {
             </div>
           )}
           <div className="nh-actions">
-            {stationActions.map((a, i) => (
+            {projectOptions.map(({ action: a, reason }) => (
               <button
-                key={a.kind + "-" + i}
-                disabled={busy || world.ended}
+                key={a.target}
+                disabled={busy || world.ended || !!reason}
                 onClick={() => commit(a)}
               >
-                <span>{nameAction(a)}</span>
+                <span>
+                  {nameAction(a)}
+                  {reason && <em className="nh-requirement">{reason}</em>}
+                </span>
+                <small>{Number(actionHours(a, world).toFixed(1))}h</small>
+              </button>
+            ))}
+            {checkedActions.map(({ action: a, check }, i) => (
+              <button
+                key={a.kind + "-" + i}
+                disabled={busy || world.ended || !check.ok}
+                onClick={() => commit(a)}
+              >
+                <span>
+                  {nameAction(a)}
+                  {!check.ok && (
+                    <em className="nh-requirement">{check.message}</em>
+                  )}
+                </span>
                 <small>
                   {a.kind === "dispatch"
                     ? "10-unit carrying limit"
-                    : `${actionHours(a)}h`}
+                    : a.target === "finish_scenario"
+                      ? `${(72 - world.hour).toFixed(1)}h · through landfall`
+                      : `${Number(actionHours(a, world).toFixed(1))}h`}
                 </small>
               </button>
             ))}
           </div>
-          {world.location === "market" && (
+          {world.location === "market" && (!station || station === "market-ledger") && (
             <p className="nh-caption">
               Purchased here, stored here until collected. Market stock awaiting
               pickup:{" "}
@@ -942,6 +1137,7 @@ export default function App3D() {
         !drawer &&
         !replay &&
         !character &&
+        !placeOpen &&
         (() => {
           const neighbor = world.characters.find(
             (c) =>
@@ -1001,7 +1197,10 @@ export default function App3D() {
                   : "DETERMINISTIC DEMO"}
           </span>
           <p>{replay ? "Recorded moment · read only" : hint}</p>
-          <small data-testid="player-position">
+          <small className="nh-clock-state" role="status">
+            {clockReason}
+          </small>
+          <small className="nh-position" data-testid="player-position">
             Position {world.spatial!.player.x.toFixed(1)},{" "}
             {world.spatial!.player.z.toFixed(1)} · Click to walk · Drag to look
             · WASD optional
@@ -1055,8 +1254,9 @@ export default function App3D() {
               <em>we have each other.</em>
             </h2>
             <p>
-              The shop has medicine. Your warehouse has space. Between them is a
-              neighborhood—and people whose trust you will have to earn.
+              A relief van has broken down outside your warehouse. Ten medical
+              kits are trapped inside; Mara’s clinic needs them. Inez can
+              help—but she has neighbors of her own to protect.
             </p>
             <div className="nh-intro-rules">
               <span>Click the street to walk.</span>
@@ -1081,8 +1281,9 @@ export default function App3D() {
                   : "Live configured; awaiting successful response"
                 : "Deterministic demo; no API key required"}
               <br />
-              Sound starts muted. The town clock runs while you explore; field
-              desk and replay pause it.
+              Sound starts muted. Reading and AI replies pause the clock. Choose
+              exploration mode in settings for unhurried movement. Work always
+              takes the time shown.
             </small>
           </section>
         </div>
@@ -1105,19 +1306,110 @@ export default function App3D() {
             </button>
             <span className="nh-eyebrow">AFTERLIGHT / FIELD DESK</span>
             <h2>
-              {drawer === "settings"
-                ? "Make yourself at home."
-                : drawer === "journal"
-                  ? "The town remembers."
-                  : "Other possible mornings."}
+              {drawer === "plan"
+                ? "The people counting on you."
+                : drawer === "settings"
+                  ? "Make yourself at home."
+                  : drawer === "journal"
+                    ? "The town remembers."
+                    : "Other possible mornings."}
             </h2>
             <nav>
+              {world.campaign && (
+                <button onClick={() => setDrawer("plan")}>Response plan</button>
+              )}
               <button onClick={() => setDrawer("saves")}>Checkpoints</button>
               <button onClick={() => setDrawer("journal")}>Evidence</button>
               <button onClick={() => setDrawer("settings")}>Settings</button>
             </nav>
-            {drawer === "settings" ? (
+            {drawer === "plan" && chapter ? (
               <>
+                <p>
+                  These needs connect. You can choose the order, share the
+                  burden, and recover from a missed promise. Work costs time;
+                  reading this plan does not.
+                </p>
+                <div className="nh-plan">
+                  {chapter.objectives.map((o) => (
+                    <button
+                      className={o.done ? "complete" : ""}
+                      key={o.id}
+                      onClick={() => {
+                        const project = (
+                          {
+                            van: "relief-van",
+                            transport: "relief-van",
+                            cooperation: "market-ledger",
+                            market: "market-ledger",
+                            shelter: "shelter-work",
+                            route: "road-debris",
+                          } as Record<string, string>
+                        )[o.id];
+                        if (project) goProject(project);
+                        else {
+                          setDrawer(null);
+                          setSelected(undefined);
+                          setPlaceOpen(false);
+                          setNavigation({ place: o.location });
+                        }
+                      }}
+                    >
+                      <small>{o.done ? "✓ RESOLVED" : "OPEN NEED"}</small>
+                      <b>{o.title}</b>
+                      <span>{o.detail}</span>
+                      <em>{o.done ? "Visit ↗" : "Go there ↗"}</em>
+                    </button>
+                  ))}
+                </div>
+                <p className="nh-caption">
+                  Harbor access closes at hour 54. An uncleared inland road
+                  stays usable but costs extra evacuation time and fuel. Shelter
+                  stock and clinic medicine are separate needs.
+                </p>
+                <button
+                  className="nh-text"
+                  disabled={world.ended}
+                  onClick={() => commit({ id: id(), kind: "wait", hours: 6 })}
+                >
+                  Work with your crew / pass 6 hours
+                </button>
+              </>
+            ) : drawer === "settings" ? (
+              <>
+                <label className="nh-setting">
+                  Exploration-friendly mode
+                  <input
+                    type="checkbox"
+                    checked={explore}
+                    onChange={(e) => {
+                      setExplore(e.target.checked);
+                      localStorage.setItem(
+                        "afterlight.explore",
+                        String(e.target.checked),
+                      );
+                    }}
+                  />
+                </label>
+                <p className="nh-caption">
+                  Walk and look without advancing deadlines. Deliberate actions
+                  still cost their displayed hours. Deliveries resume when you
+                  work, wait, or turn this off.
+                </p>
+                <label className="nh-setting">
+                  Camera sensitivity
+                  <input
+                    aria-label="Camera sensitivity"
+                    type="range"
+                    min="0.4"
+                    max="2"
+                    step="0.1"
+                    value={sensitivity}
+                    onChange={(e) => {
+                      setSensitivity(Number(e.target.value));
+                      localStorage.setItem("afterlight.camera", e.target.value);
+                    }}
+                  />
+                </label>
                 <label className="nh-setting">
                   Graphics
                   <select
@@ -1226,6 +1518,9 @@ export default function App3D() {
                   shipments in transit. Rewind creates a new branch and
                   preserves the current outcome.
                 </p>
+                <button className="nh-text" onClick={newCampaign}>
+                  Start The Last Good Road · preserve this response
+                </button>
                 <button
                   className="nh-primary"
                   onClick={checkpoint}
@@ -1308,6 +1603,7 @@ export default function App3D() {
                             invalidateWorldWork();
                             replayRef.current = false;
                             setReplay(undefined);
+                            setEndingDismissed(false);
                             setSelected(undefined);
                             setPlaceOpen(false);
                             setShowRoute(false);
@@ -1384,11 +1680,14 @@ export default function App3D() {
           Return to current town
         </button>
       )}
-      {world.ended && !drawer && !replay && (
+      {world.ended && !drawer && !replay && !endingDismissed && (
         <div className="nh-ending">
           <span className="nh-eyebrow">AFTER THE STORM</span>
           <h2>{world.outcome?.title}</h2>
           <p>{world.outcome?.summary}</p>
+          <button onClick={() => setEndingDismissed(true)}>
+            Walk through the aftermath ↗
+          </button>
           <button onClick={() => setDrawer("saves")}>
             Compare another response ↗
           </button>

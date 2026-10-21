@@ -111,6 +111,20 @@ export function validateWorld(x: unknown): x is World {
     )
   )
     return false;
+  if (x.campaign !== undefined) {
+    const c = x.campaign;
+    if (
+      !record(c) ||
+      c.version !== 1 ||
+      typeof c.inspected !== "boolean" ||
+      !["stranded", "repaired", "salvaged"].includes(c.van) ||
+      !["none", "trade", "shared"].includes(c.cooperation) ||
+      !["bare", "cots", "stocked"].includes(c.shelter) ||
+      !["blocked", "cleared"].includes(c.route) ||
+      (c.van !== "stranded" && !c.inspected)
+    )
+      return false;
+  }
   if (x.lives !== undefined) {
     if (
       !record(x.lives) ||

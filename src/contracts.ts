@@ -10,7 +10,16 @@ export interface AIUsage {
   reservedUsd?: number;
   budgetUsd?: number;
 }
+export interface CampaignState {
+  version: 1;
+  inspected: boolean;
+  van: "stranded" | "repaired" | "salvaged";
+  cooperation: "none" | "trade" | "shared";
+  shelter: "bare" | "cots" | "stocked";
+  route: "blocked" | "cleared";
+}
 export type ActionKind =
+  | "project"
   | "assign"
   | "resident_act"
   | "load"
@@ -38,6 +47,7 @@ export interface Action {
   hours?: number;
   position?: Point;
   seconds?: number;
+  clockPaused?: boolean;
   text?: string;
   decision?: {
     triggerId: string;
@@ -123,6 +133,7 @@ export interface World {
   outcome?: Outcome;
   spatial?: SpatialState;
   lives?: Record<string, ResidentLife>;
+  campaign?: CampaignState;
 }
 export interface ActionResult {
   ok: boolean;

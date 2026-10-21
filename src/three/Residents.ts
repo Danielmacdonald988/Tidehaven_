@@ -1,9 +1,9 @@
 import * as THREE from "three";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import type { World, LocationId } from "../contracts";
+import { physicalResidentPosition } from "../physical";
 import {
   routeBetweenLocations,
-  residentHome,
   type AvatarHandle,
   type ResidentHandle,
   type Point,
@@ -639,6 +639,25 @@ export function buildAvatar(id: string, color: string): AvatarHandle {
           elbows[i].rotation.x = -0.35 - Math.sin(elapsed * 2 + i) * 0.18;
         }
       });
+      // Character-specific restrained idle gestures express work without inventing simulation tasks.
+      if (!talking && !carrying && gait < 0.1) {
+        const beat = (Math.sin(elapsed * 0.7 + id.length) + 1) * 0.5;
+        if (id === "inez") {
+          // Check tool belt, then look back up toward the road.
+          arms[1].rotation.x = -0.12 - beat * 0.12;
+          elbows[1].rotation.x = -0.38 - beat * 0.22;
+          body.rotation.z = Math.sin(elapsed * 0.3) * 0.018;
+        } else if (id === "eli") {
+          // Hands at the apron: a guarded shopkeeper, not a waving greeter.
+          arms[0].rotation.x = -0.22;
+          arms[1].rotation.x = -0.22;
+          elbows[0].rotation.x = -0.52;
+          elbows[1].rotation.x = -0.52;
+        } else if (id === "mara") {
+          arms[0].rotation.x = -0.14;
+          elbows[0].rotation.x = -0.45 - beat * 0.18;
+        }
+      } else body.rotation.z = 0;
       head.rotation.y = talking
         ? Math.sin(elapsed * 0.9) * 0.055
         : Math.sin(elapsed * 0.35 + id.length) * 0.085;
@@ -664,7 +683,7 @@ export function buildResidents(world: World): ResidentHandle {
   const interactions: Interaction[] = [];
   const entries = world.characters.map((c) => {
     const avatar = buildAvatar(c.id, c.color);
-    const home = residentHome(world, c.id);
+    const home = physicalResidentPosition(world, c.id);
     const shipment = world.spatial?.shipments
       .filter(
         (s) =>
@@ -707,7 +726,7 @@ export function buildResidents(world: World): ResidentHandle {
       for (const e of entries) {
         const c = next.characters.find((c) => c.id === e.id);
         if (!c) continue;
-        const goal = residentHome(next, e.id);
+        const goal = physicalResidentPosition(next, e.id);
         const shipment = next.spatial?.shipments
           .filter(
             (s) =>

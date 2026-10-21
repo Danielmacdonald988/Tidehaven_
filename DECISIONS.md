@@ -31,3 +31,12 @@
 - 3.0 supersedes the earlier idle-time rule: active gameplay advances time even while stationary; intro, field desk, evidence, replay and hidden tabs pause. This lets residents continue without requiring player commands.
 - Retain scripted storm milestones alongside optional model choices. Routine travel updates logical destination before visual arrival; interactions are suppressed in transit. Cargo remains authoritative throughout its route.
 - Credential setup is a hidden local terminal prompt, with no secret in commands or chat. USD limits are conservative per-process estimates, not provider account billing caps. Provider verification requires a real successful request, not merely a configured key.
+
+## 4.0 — direction and fair time
+
+- Keep one neighborhood. Replace the vague opening and post-medicine dead end with linked van, clinic, market, shelter and evacuation choices; existing economy and promises remain authoritative.
+- Campaign state is optional. New chapter archives the current response; old neighborhood saves and classic mode remain valid. Individual file ownership and contracts are recorded in V4-CONTRACT.md.
+- Pause simulation deadlines during encounters, reading and AI waits; campaign conversation costs zero hours. Explore mode permits validated movement without time or shipment advancement. Deliberate work advances actual shipments.
+- Let manual supplies and independent donations contribute to shelter readiness. Stocking only consumes missing supplies; no double billing for aid already delivered.
+- Explicit zero-based indices on model-visible actions avoid ambiguous selection. Model output is never heuristically converted into a different action. Displayed action terms remain authoritative.
+- Favor original stateful geometry and seeded material textures over new asset downloads. Lower graphics remains available; measure actual browser rendering separately from simulation tests.

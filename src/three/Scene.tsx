@@ -21,6 +21,7 @@ import type { World, LocationId } from "../contracts";
 export interface SceneControl {
   walkTo: (id: LocationId) => void;
   approach: (id: string) => void;
+  inspect: (id: string) => void;
   rotate: (amount: number) => void;
   zoom: (amount: number) => void;
   stop: () => void;
@@ -37,6 +38,7 @@ export interface PerformanceSample {
 interface Props {
   world: World;
   readOnly?: boolean;
+  cameraSensitivity?: number;
   quality: Quality;
   muted: boolean;
   volume: number;
@@ -55,6 +57,7 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
   const controls = useRef<SceneControl>({
     walkTo: () => {},
     approach: () => {},
+    inspect: () => {},
     rotate: () => {},
     zoom: () => {},
     stop: () => {},
@@ -65,6 +68,7 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
     () => ({
       walkTo: (id) => controls.current.walkTo(id),
       approach: (id) => controls.current.approach(id),
+      inspect: (id) => controls.current.inspect(id),
       rotate: (a) => controls.current.rotate(a),
       zoom: (a) => controls.current.zoom(a),
       stop: () => controls.current.stop(),
@@ -122,7 +126,9 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
     const fill = new THREE.DirectionalLight("#b2d9e8", 0.6);
     fill.position.set(15, 16, -30);
     scene.add(fill);
-    const environment = buildEnvironment();
+    const environment = buildEnvironment(
+      Boolean(current.current.world.campaign),
+    );
     scene.add(environment.group);
     const residents = buildResidents(current.current.world);
     scene.add(residents.group);
@@ -270,7 +276,7 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
         current.current.onHint("Recorded moment · read only");
         return;
       }
-      if (current.current.world.ended) {
+      if (current.current.world.ended && !current.current.world.campaign) {
         current.current.onHint(
           "The storm has arrived. Rewind a checkpoint at the field desk.",
         );
@@ -298,12 +304,14 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
     controls.current = {
       walkTo(id) {
         const place = PLACES.find((p) => p.id === id)!;
-        navigate(pointAtLocation(id), {
+        const arrival = pointAtLocation(id);
+        arrival.z += 1.2;
+        navigate(arrival, {
           id: `location-${id}`,
           kind: "location",
           label: place.name,
           location: id,
-          position: pointAtLocation(id),
+          position: arrival,
         });
       },
       approach(id) {
@@ -315,6 +323,10 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
           const pos = residents.position(id) || i.position;
           navigate({ x: pos.x, z: pos.z + 1.3 }, i);
         }
+      },
+      inspect(id) {
+        const interaction = environment.interactions.find((i) => i.id === id);
+        if (interaction) navigate(interaction.position, interaction);
       },
       rotate(a) {
         yaw += a;
@@ -394,7 +406,8 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
       if (drag) {
         const dx = e.clientX - drag.lastX;
         drag.moved ||= Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 6;
-        if (drag.moved) yaw -= dx * 0.006;
+        if (drag.moved)
+          yaw -= dx * 0.006 * (current.current.cameraSensitivity ?? 1);
         drag.lastX = e.clientX;
         drag.lastY = e.clientY;
         return;
@@ -549,7 +562,11 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
         side =
           (keys.has("d") || keys.has("arrowright") ? 1 : 0) -
           (keys.has("a") || keys.has("arrowleft") ? 1 : 0);
-      if (!p.readOnly && !p.world.ended && (forward || side)) {
+      if (
+        !p.readOnly &&
+        (!p.world.ended || !!p.world.campaign) &&
+        (forward || side)
+      ) {
         vx = -Math.sin(yaw) * forward + Math.cos(yaw) * side;
         vz = -Math.cos(yaw) * forward - Math.sin(yaw) * side;
         const len = Math.hypot(vx, vz);
@@ -563,7 +580,11 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
           const z = { x: position.x, z: position.z + vz };
           if (isWalkable(z, colliders)) position = z;
         }
-      } else if (!p.readOnly && !p.world.ended && path.length) {
+      } else if (
+        !p.readOnly &&
+        (!p.world.ended || !!p.world.campaign) &&
+        path.length
+      ) {
         let movement = dt * 3.2;
         while (movement > 0 && path.length) {
           const dest = path[0],
@@ -635,8 +656,8 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
       }
       environment.update(p.world, dt, elapsed, position, p.quality);
       residents.update(p.world, dt, elapsed, position, p.selected);
-      audio.update(dt, moving, p.world.hour / 72);
-      const storm = Math.min(1, p.world.hour / 72);
+
+      const storm = p.world.ended ? 0.2 : Math.min(1, p.world.hour / 72);
       const sky = new THREE.Color("#bad4d5").lerp(
         new THREE.Color("#596f7c"),
         storm * 0.83,
@@ -651,6 +672,13 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
           b.id !== "harbor" &&
           Math.abs(position.x - b.center.x) < b.width / 2 &&
           Math.abs(position.z - b.center.z) < b.depth / 2,
+      );
+      audio.update(
+        dt,
+        moving,
+        p.world.ended ? 0.22 : p.world.hour / 72,
+        position,
+        inside,
       );
       const target = new THREE.Vector3(position.x, 1.1, position.z);
       const desired = new THREE.Vector3(

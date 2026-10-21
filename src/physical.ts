@@ -42,7 +42,21 @@ export function physicalLocation(p: Point): LocationId {
   ).id;
 }
 export function physicalResidentPosition(w: World, id: string): Point {
-  const shipments = w.spatial?.shipments.filter((s) => s.workerId === id);
+  if (
+    w.campaign?.van === "stranded" &&
+    id === "inez" &&
+    w.characters.find((c) => c.id === id)?.location === "warehouse" &&
+    !w.spatial?.shipments.some(
+      (s) => s.workerId === id && s.status !== "arrived",
+    )
+  )
+    return { x: -16.3, z: 17 };
+  const shipments = w.spatial?.shipments.filter(
+    (s) =>
+      s.workerId === id &&
+      (s.status !== "arrived" ||
+        w.characters.find((c) => c.id === id)?.location === "warehouse"),
+  );
   return shipments?.length
     ? { ...shipments[shipments.length - 1].position }
     : residentHome(w, id);
@@ -78,6 +92,7 @@ export function spatialError(w: World, a: Action): string | undefined {
       ? "Physical mode is not active."
       : undefined;
   const s = w.spatial;
+  if (a.kind === "project") return;
   if (a.kind === "travel")
     return "Walk to the destination; map teleportation is disabled.";
   if (a.kind === "walk" || a.kind === "advance") {
@@ -111,8 +126,19 @@ export function spatialError(w: World, a: Action): string | undefined {
     return;
   }
   if (a.kind === "wait") return;
+  const social =
+    ["talk", "recruit", "promise", "assign"].includes(a.kind) && !!a.target;
+  if (
+    w.campaign &&
+    social &&
+    w.characters.find((c) => c.id === a.target)?.location !== w.location
+  )
+    return "Approach this resident at their current location.";
   const place = PLACES.find((p) => p.id === w.location)!;
-  if (distance(s.player, pointAtLocation(place.id)) > 4)
+  if (
+    !(w.campaign && social) &&
+    distance(s.player, pointAtLocation(place.id)) > 4
+  )
     return "Move closer to the location before taking this action.";
   if (["talk", "recruit", "promise", "assign"].includes(a.kind) && a.target) {
     if (distance(s.player, physicalResidentPosition(w, a.target)) > 3.5)

@@ -73,16 +73,43 @@ function trigger(w: World, id: string): string | undefined {
   if (!life || !c || busy(w, id) || w.ended) return;
   const assignment = life.assignment;
   if (assignment?.status === "pending") return `assignment:${assignment.id}`;
-  if (w.hour - life.lastDecisionHour < 2) return;
+  if (w.hour - life.lastDecisionHour < (w.campaign ? 8 : 2)) return;
   const eventMemory = [...c.memories]
     .reverse()
     .find(
       (m) =>
         !m.tags.includes("conversation") &&
         !m.tags.includes("decision") &&
+        (!w.campaign || m.hour > life.lastDecisionHour) &&
+        (!w.campaign ||
+          m.tags.some((tag) =>
+            [
+              "project",
+              "promise",
+              "kept",
+              "broken",
+              "complete",
+              "shipment",
+            ].includes(tag),
+          )) &&
         !life.handledTriggers.includes(`event:${m.eventId}`),
     );
   if (eventMemory) return `event:${eventMemory.eventId}`;
+  // Campaign calls serve changed circumstances, never twelve identical opening check-ins.
+  if (w.campaign) {
+    const moveAt: Record<string, number> = { kit: 24, ada: 32, theo: 54 };
+    const threshold = moveAt[id];
+    const milestone = `routine:${id}:storm-${threshold}`;
+    if (
+      threshold !== undefined &&
+      w.hour >= threshold &&
+      !c.recruited &&
+      c.location !== "heights" &&
+      !life.handledTriggers.includes(milestone)
+    )
+      return milestone;
+    return;
+  }
   const routine = `routine:${id}:${Math.floor(w.hour / 8)}`;
   if (
     w.hour - life.lastDecisionHour >= 8 &&
@@ -291,7 +318,11 @@ export function applyResidentChoice(
 export function recordLifeEvent(w: World, e: SimEvent, actor?: string): void {
   if (!w.lives) return;
   const actorLife = actor && w.lives[actor];
-  if (actorLife && e.action?.decision) {
+  if (
+    actorLife &&
+    e.action?.decision &&
+    e.action.decision.choice !== "routine"
+  ) {
     actorLife.initiative = {
       text: e.action.decision.summary.slice(0, 600),
       eventId: e.id,

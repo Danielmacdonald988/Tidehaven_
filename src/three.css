@@ -1046,3 +1046,177 @@ select:focus-visible {
     margin-bottom: 10px;
   }
 }
+
+/* The Last Good Road: a quieter field HUD and a readable response plan. */
+.nh-pause {
+  pointer-events: auto;
+  padding: 10px 16px;
+  color: #fff1d0;
+  border: 1px solid #d9c39b70;
+  background: #183b38c9;
+}
+.nh-pause[aria-pressed="true"] {
+  background: #e3be7d;
+  color: #1a3937;
+}
+.nh-clock-state {
+  display: block;
+  margin: 4px 0;
+  letter-spacing: 1.2px;
+  color: #e5c78f !important;
+}
+.nh-position {
+  opacity: 0.65;
+}
+.nh-mission .nh-next {
+  display: block;
+  border: 1px solid #e0c38966;
+  padding: 10px 13px;
+  background: #244840de;
+  margin: 12px 0 2px;
+  color: #ffe6ae;
+  width: 100%;
+  text-align: left;
+}
+.campaign .nh-mission h1 {
+  font-size: 29px;
+}
+.campaign .nh-mission {
+  width: 265px;
+}
+.campaign .nh-destinations {
+  top: 390px;
+  max-height: calc(100dvh - 480px);
+  overflow: auto;
+}
+.nh-plan {
+  display: grid;
+  gap: 1px;
+  background: #a3afa344;
+  margin: 20px 0;
+  border: 1px solid #a3afa344;
+}
+.nh-plan button {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px 15px;
+  padding: 18px;
+  text-align: left;
+  border: 0;
+  background: #f2efdf;
+  color: #24423b;
+}
+.nh-plan button:hover {
+  background: #e6e6d1;
+}
+.nh-plan small {
+  grid-column: 1/-1;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  color: #9b6e31;
+}
+.nh-plan b {
+  font:
+    20px Georgia,
+    serif;
+}
+.nh-plan span {
+  grid-column: 1/-1;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.nh-plan em {
+  grid-column: 2;
+  grid-row: 2;
+  font-size: 10px;
+  font-style: normal;
+  align-self: center;
+}
+.nh-plan .complete {
+  background: #e1e8d9;
+}
+.nh-plan .complete small {
+  color: #497a57;
+}
+.nh-setting input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #315e4f;
+}
+.nh-encounter .nh-actions button small {
+  max-width: 120px;
+  text-align: right;
+  line-height: 1.5;
+}
+.nh-encounter {
+  scroll-behavior: smooth;
+}
+.nh-ending button + button {
+  margin-left: 10px;
+}
+@media (max-width: 700px) {
+  .nh-header {
+    gap: 10px;
+  }
+  .nh-pause {
+    font-size: 10px;
+    padding: 8px;
+  }
+  .campaign .nh-mission {
+    width: calc(100% - 32px);
+  }
+  .campaign .nh-mission h1 {
+    font-size: 23px;
+  }
+  .campaign .nh-mission .nh-next {
+    display: inline-block;
+    width: auto;
+    margin-right: 12px;
+    font-size: 10px;
+  }
+  .campaign .nh-destinations {
+    top: 280px;
+    max-height: calc(100dvh - 380px);
+  }
+  .nh-plan button {
+    padding: 14px;
+  }
+  .nh-plan b {
+    font-size: 18px;
+  }
+  .nh-position {
+    display: none;
+  }
+  .nh-ending button + button {
+    margin: 10px 0 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nh-encounter {
+    scroll-behavior: auto;
+  }
+}
+
+.nh-requirement {
+  display: block;
+  font-size: 11px;
+  font-style: normal;
+  line-height: 1.6;
+  margin-top: 6px;
+  color: #79562c;
+}
+.nh-actions button:disabled {
+  opacity: 0.65;
+}
+
+@media (max-width: 600px) {
+  .neighborhood:has(.nh-encounter) .nh-mission {
+    display: none;
+  }
+  .nh-footer .nh-position {
+    display: none;
+  }
+  .neighborhood:has(.nh-encounter) .nh-shipment {
+    display: none;
+  }
+}

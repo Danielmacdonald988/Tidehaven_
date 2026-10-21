@@ -1,10 +1,18 @@
 import {
+  campaignError,
+  commitCampaignProject,
+  campaignActionHours,
+  getCampaignActions,
+  idleHelpers,
+} from "./campaign";
+import {
   assignmentError,
   applyResidentChoice,
   recordLifeEvent,
   completeAssignment,
   routineDescription,
   residentChoices,
+  residentConstraint,
 } from "./lives";
 import {
   spatialError,
@@ -96,7 +104,24 @@ function remember(
     c.knowledge = [...new Set([...c.knowledge, text])];
   }
 }
+function recordArrivals(w: World, arrivals: import("./contracts").Shipment[]) {
+  for (const shipment of arrivals) {
+    const arrived = event(
+      w,
+      "Supplies arrive at the warehouse",
+      `${shipment.amount} ${shipment.resource} carried by ${shipment.workerId} is now available.`,
+      "shipment",
+      [`Shipment ${shipment.id}`, `Worker ${shipment.workerId}`],
+      ["Goods credited only after physical route completed"],
+      [`${shipment.resource} +${shipment.amount}`],
+    );
+    completeAssignment(w, shipment.workerId, arrived);
+    recordLifeEvent(w, arrived, shipment.workerId);
+    remember(w, shipment.workerId, arrived, arrived.description, ["shipment"]);
+  }
+}
 function recruitReason(w: World, id: string): string | undefined {
+  if (w.campaign) return residentConstraint(w, id);
   if (
     id === "mara" &&
     w.commitments.some((p) => p.status === "broken") &&
@@ -179,7 +204,9 @@ function tick(w: World, hours: number) {
       40,
       "jo",
       "The last reliable road",
-      "Jo checks the harbor road. After hour 54, evacuation fuel use doubles.",
+      w.campaign
+        ? "Jo checks the harbor road. Harbor evacuation closes at hour 54; move people before then."
+        : "Jo checks the harbor road. After hour 54, evacuation fuel use doubles.",
       () => {
         w.flags.roadWarning = true;
       },
@@ -232,6 +259,31 @@ function tick(w: World, hours: number) {
       e.hour = at;
       remember(w, id, e, desc, ["goal", "action"]);
     }
+  if (
+    w.campaign?.shelter === "cots" &&
+    w.delivered.food >= 20 &&
+    w.delivered.water >= 20
+  ) {
+    w.campaign.shelter = "stocked";
+    const inez = w.characters.find((c) => c.id === "inez")!;
+    inez.trust = Math.min(100, inez.trust + 10);
+    const ready = event(
+      w,
+      "Many hands fill the shelter",
+      "Hand-carried aid and neighbors’ contributions have supplied all twenty prepared shelter places. No additional warehouse stock is needed.",
+      "project",
+      [
+        `Shelter food received: ${w.delivered.food}`,
+        `Shelter water received: ${w.delivered.water}`,
+      ],
+      [
+        "Prepared cots plus at least twenty food and twenty water",
+        "Existing deliveries count; no second payment or stock deduction",
+      ],
+      ["Shelter fully stocked", "Inez trust +10"],
+    );
+    remember(w, "inez", ready, ready.description, ["project", "shelter_stock"]);
+  }
   w.rng = (Math.imul(w.rng, 1664525) + 1013904223) >>> 0;
   if (w.hour === 72) {
     w.ended = true;
@@ -254,16 +306,35 @@ function tick(w: World, hours: number) {
 export function evaluateOutcome(w: World): Outcome {
   const supplied = Math.min(w.delivered.food, w.delivered.water);
   const trust = Math.round(w.characters.reduce((a, c) => a + c.trust, 0) / 12);
-  const score = Math.min(
-    100,
-    Math.round(
-      (Math.min(36, w.evacuated) / 36) * 35 +
-        (Math.min(60, supplied) / 60) * 25 +
-        (Math.min(10, w.delivered.medical) / 10) * 20 +
-        w.prepared * 10 +
-        (Math.min(4, w.staff) / 4) * 10,
-    ),
-  );
+  const score = w.campaign
+    ? Math.min(
+        100,
+        Math.round(
+          (Math.min(36, w.evacuated) / 36) * 35 +
+            (Math.min(10, w.delivered.medical) / 10) * 25 +
+            (w.campaign.shelter === "stocked"
+              ? 25
+              : w.campaign.shelter === "cots"
+                ? 10
+                : 0) +
+            (w.campaign.cooperation === "shared"
+              ? 10
+              : w.campaign.cooperation === "trade"
+                ? 5
+                : 0) +
+            (w.campaign.route === "cleared" ? 5 : 0),
+        ),
+      )
+    : Math.min(
+        100,
+        Math.round(
+          (Math.min(36, w.evacuated) / 36) * 35 +
+            (Math.min(60, supplied) / 60) * 25 +
+            (Math.min(10, w.delivered.medical) / 10) * 20 +
+            w.prepared * 10 +
+            (Math.min(4, w.staff) / 4) * 10,
+        ),
+      );
   return {
     title:
       score >= 80
@@ -271,8 +342,9 @@ export function evaluateOutcome(w: World): Outcome {
         : score >= 45
           ? "Some doors stayed open"
           : "The water came too soon",
-    summary:
-      score >= 80
+    summary: w.campaign
+      ? `${w.evacuated} neighbors reached high ground. ${w.delivered.medical >= 10 ? "Mercy Clinic stayed supplied." : "Medicine ran short at Mercy Clinic."} ${w.campaign.shelter === "stocked" ? "Twenty prepared shelter places have food and water." : w.campaign.shelter === "cots" ? "The shelter is dry, but supplies are thin." : "The school depends on neighbors opening their homes."} ${w.campaign.cooperation === "shared" ? "Eli joined a shared neighborhood response." : w.campaign.cooperation === "trade" ? "Your trade kept Eli’s generator running." : "The market and relief effort weathered the storm separately."} ${w.commitments.some((p) => p.status === "broken") ? "A missed promise remains part of what people remember." : "What you did will be remembered."}`
+      : score >= 80
         ? `Bellwether bends, but holds. ${w.evacuated} people reached high ground; medicine and shelter supplies kept neighbors safe.`
         : score >= 45
           ? `${w.evacuated} people reached high ground. Your effort mattered, but gaps in shelter supplies and preparation left difficult days ahead.`
@@ -293,6 +365,7 @@ export function applyAction(world: World, a: Action): ActionResult {
     !a.id.trim() ||
     a.id.length > 200 ||
     ![
+      "project",
       "assign",
       "resident_act",
       "walk",
@@ -312,7 +385,7 @@ export function applyAction(world: World, a: Action): ActionResult {
     ].includes(a.kind)
   )
     return fail("Malformed action.");
-  if (world.ended)
+  if (world.ended && !(a.kind === "walk" && a.clockPaused === true))
     return fail("The storm has arrived. Rewind to make a different choice.");
   if (!a.id || world.appliedActions.includes(a.id))
     return fail(
@@ -354,6 +427,12 @@ export function applyAction(world: World, a: Action): ActionResult {
     recordLifeEvent(w, decisionEvent, a.actor);
     return { ok: true, state: w, message: result.description! };
   }
+  if (
+    a.clockPaused !== undefined &&
+    (typeof a.clockPaused !== "boolean" ||
+      !["walk", "advance"].includes(a.kind))
+  )
+    return fail("Clock pause only applies to movement.");
   const spatialProblem = spatialError(w, a);
   if (spatialProblem) return fail(spatialProblem);
   if (a.kind === "walk" || a.kind === "advance") {
@@ -361,25 +440,10 @@ export function applyAction(world: World, a: Action): ActionResult {
       w.spatial!.player = { ...a.position! };
       w.location = physicalLocation(a.position!);
     }
-    const arrivals = advanceShipments(w, a.seconds!);
+    const arrivals = a.clockPaused ? [] : advanceShipments(w, a.seconds!);
     w.appliedActions.push(a.id);
-    tick(w, a.seconds! / 60);
-    for (const shipment of arrivals) {
-      const arrived = event(
-        w,
-        "Supplies arrive at the warehouse",
-        `${shipment.amount} ${shipment.resource} carried by ${shipment.workerId} is now available.`,
-        "shipment",
-        [`Shipment ${shipment.id}`, `Worker ${shipment.workerId}`],
-        ["Goods credited only after physical route completed"],
-        [`${shipment.resource} +${shipment.amount}`],
-      );
-      completeAssignment(w, shipment.workerId, arrived);
-      recordLifeEvent(w, arrived, shipment.workerId);
-      remember(w, shipment.workerId, arrived, arrived.description, [
-        "shipment",
-      ]);
-    }
+    if (!a.clockPaused) tick(w, a.seconds! / (w.campaign ? 20 : 60));
+    recordArrivals(w, arrivals);
     return {
       ok: true,
       state: w,
@@ -387,6 +451,30 @@ export function applyAction(world: World, a: Action): ActionResult {
     };
   }
   switch (a.kind) {
+    case "project": {
+      const error = campaignError(w, a);
+      if (error) return fail(error);
+      const result = commitCampaignProject(w, a);
+      title = result.title;
+      desc = result.description;
+      effects = result.effects;
+      hours =
+        a.target === "finish_scenario" ? 72 - w.hour : campaignActionHours(a);
+      constraints.push(
+        "Finite project requirements, proximity, stock, available crew and budget validated",
+        `Project ${a.target}; completion cost ${hours} hours`,
+      );
+      if (result.witness) facts.push(`Participant: ${result.witness}`);
+      if (a.target === "market_coop") {
+        facts.push(
+          `Verified clinic receipt: delivered.medical = ${w.delivered.medical}`,
+        );
+        constraints.push(
+          "Player shares recorded clinic receipt here; Eli does not overhear distant care",
+        );
+      }
+      break;
+    }
     case "assign": {
       const error = assignmentError(w, a);
       if (error) return fail(error);
@@ -578,16 +666,18 @@ export function applyAction(world: World, a: Action): ActionResult {
       w.transport = 12;
       hours = 3;
       title = "A route to high ground";
-      desc =
-        "Jo secures a truck and driver: twelve seats each trip. Each evacuation uses four fuel, or eight after hour 54.";
+      desc = w.campaign
+        ? `Jo secures a truck and driver: twelve seats each trip. Each evacuation uses ${w.campaign.route === "blocked" ? "six fuel and six hours on the detour" : "four fuel and four hours on the cleared route"}. Harbor evacuation closes at hour 54.`
+        : "Jo secures a truck and driver: twelve seats each trip. Each evacuation uses four fuel, or eight after hour 54.";
       effects = ["Money -$1800", "Transport capacity +12"];
       break;
     case "evacuate": {
-      const fuel = w.hour >= 54 ? 8 : 4;
+      const detour = w.campaign?.route === "blocked";
+      const fuel = (w.hour >= 54 ? 8 : 4) + (detour ? 2 : 0);
       if (
         w.location !== "harbor" ||
         w.transport < 1 ||
-        w.staff < 2 ||
+        (w.campaign ? idleHelpers(w) : w.staff) < 2 ||
         w.inventory.fuel < fuel
       )
         return fail(
@@ -598,7 +688,11 @@ export function applyAction(world: World, a: Action): ActionResult {
       const n = Math.min(12, 48 - w.evacuated);
       w.evacuated += n;
       w.inventory.fuel -= fuel;
-      hours = 4;
+      hours = detour ? 6 : 4;
+      if (detour)
+        constraints.push(
+          "Blocked inland road: detour adds two hours and two fuel",
+        );
       title = `${n} neighbors reach high ground`;
       desc =
         "Your crew checks each household, loads the truck, and reunites families at the school.";
@@ -625,7 +719,7 @@ export function applyAction(world: World, a: Action): ActionResult {
     case "talk":
       if (!c || c.location !== w.location)
         return fail("Choose a resident at your location.");
-      hours = 1;
+      hours = w.campaign ? 0 : 1;
       title = `A moment with ${c.name}`;
       desc = a.text
         ? String(a.text).slice(0, 4000)
@@ -642,6 +736,10 @@ export function applyAction(world: World, a: Action): ActionResult {
   w.appliedActions.push(a.id);
   const e = event(w, title, desc, a.kind, facts, constraints, effects, a);
   recordLifeEvent(w, e, c?.id);
+  if (a.kind === "project") {
+    const witness = facts.find((f) => f.startsWith("Participant: "))?.slice(13);
+    if (witness) remember(w, witness, e, desc, ["project", a.target!]);
+  }
   if (c && a.kind === "talk") {
     c.memories.push({
       eventId: e.id,
@@ -685,7 +783,44 @@ export function applyAction(world: World, a: Action): ActionResult {
         }
       }
   }
+  if (
+    w.campaign &&
+    a.kind === "deliver" &&
+    a.resource === "medical" &&
+    w.delivered.medical >= 20 &&
+    w.commitments.some(
+      (p) => p.characterId === "mara" && p.status === "broken",
+    ) &&
+    !w.flags.maraRestitution
+  ) {
+    w.flags.maraRestitution = true;
+    const mara = w.characters.find((c) => c.id === "mara")!;
+    const before = mara.trust;
+    mara.trust = Math.min(100, Math.max(35, mara.trust + 15));
+    const repaired = event(
+      w,
+      "A way back to working together",
+      "Mara has received twenty medical kits. The missed promise still happened, but this practical restitution makes her willing to work with your crew again.",
+      "commitment",
+      [
+        `Medical delivered: ${w.delivered.medical}`,
+        `Restitution delivery: ${e.id}`,
+      ],
+      [
+        "A broken medicine promise remains broken",
+        "Twenty actual medical kits delivered; one-time practical restitution",
+      ],
+      [`Mara trust +${mara.trust - before}`, "Clinic cooperation restored"],
+    );
+    remember(w, "mara", repaired, repaired.description, [
+      "promise",
+      "restitution",
+    ]);
+  }
+  const arrivals =
+    w.campaign && w.spatial && hours > 0 ? advanceShipments(w, hours * 20) : [];
   tick(w, hours);
+  recordArrivals(w, arrivals);
   return { ok: true, state: w, message: desc };
 }
 export function getAvailableActions(w: World, characterId?: string): Action[] {
@@ -733,6 +868,7 @@ export function getAvailableActions(w: World, characterId?: string): Action[] {
           );
     const logistics = getAvailableActions(w).filter((a) =>
       [
+        "project",
         "buy",
         "transport",
         "evacuate",
@@ -775,7 +911,11 @@ export function getAvailableActions(w: World, characterId?: string): Action[] {
       });
   if (w.location === "harbor") {
     if (!w.transport) add("transport", "Hire truck & driver · $1,800");
-    add("evacuate", `Evacuate 12 residents · ${w.hour >= 54 ? 8 : 4} fuel`);
+    const detour = w.campaign?.route === "blocked";
+    add(
+      "evacuate",
+      `Evacuate 12 residents · ${(w.hour >= 54 ? 8 : 4) + (detour ? 2 : 0)} fuel · ${detour ? "6h detour" : "4h"}`,
+    );
   }
   if (w.location === "warehouse" && !w.prepared)
     add("prepare", "Stormproof warehouse · $800");
@@ -787,6 +927,7 @@ export function getAvailableActions(w: World, characterId?: string): Action[] {
           `Load ${Math.min(10, w.inventory[resource])} ${resource} for delivery`,
           { resource, amount: Math.min(10, w.inventory[resource]) },
         );
+  actions.push(...getCampaignActions(w));
   actions.push(...shipmentActions(w));
   add("wait", "Let six hours pass");
   return actions;
@@ -887,13 +1028,23 @@ export function replayTimeline(t: Timeline): World {
   return state;
 }
 
-export function actionHours(action: Action): number {
+export function actionHours(action: Action, world?: World): number {
+  if (world?.campaign) {
+    if (action.kind === "talk") return 0;
+    if (action.kind === "evacuate")
+      return world.campaign.route === "blocked" ? 6 : 4;
+    if (action.kind === "project" && action.target === "finish_scenario")
+      return 72 - world.hour;
+    if (action.kind === "walk" || action.kind === "advance")
+      return action.clockPaused ? 0 : (action.seconds || 0) / 20;
+  }
+  if (action.kind === "project") return campaignActionHours(action);
   if (action.kind === "resident_act") return 0;
   if (action.kind === "assign") return 0.1;
   if (action.kind === "load") return 0.25;
   if (action.kind === "dispatch") return 0;
   if (action.kind === "walk" || action.kind === "advance")
-    return (action.seconds || 0) / 60;
+    return action.clockPaused ? 0 : (action.seconds || 0) / 60;
   return action.kind === "travel" || action.kind === "talk"
     ? 1
     : action.kind === "wait"

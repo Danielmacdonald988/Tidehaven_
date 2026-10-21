@@ -1,8 +1,18 @@
-# AFTERLIGHT 3.0 — lives behind the doors
+# AFTERLIGHT 4.0 — The Last Good Road
 
 The default experience is now a **playable Three.js neighborhood**. The original simulation, promises, negotiations, outcomes and tests remain underneath it. The previous 2D edition is preserved at `?classic`, with its original browser save untouched.
 
-## 3.0: character decisions, with honest provenance
+## Play the new chapter
+
+Launch with `npm run dev` (http://127.0.0.1:5173), or `npm run build && npm start` (http://127.0.0.1:3001). Stop an existing server before starting another on the same port. Existing saves remain intact: select **Play the new chapter** or **Field desk → Checkpoints → Start The Last Good Road** to archive the current response and start the new scenario.
+
+A stranded van puts ten medical kits within reach—but you must choose repair or salvage. Work with Inez, Mara and Eli, secure real supplies, prepare Cypress House, and choose how to get people off the waterfront before hour 54. Shelter through the storm after hour 54, then explore the aftermath. The response plan provides direction without forcing a fixed order.
+
+**Time is fair:** encounters, reading and AI waits pause deadlines. Use **Pause** or Space for a full pause, and **Settings → Exploration-friendly mode** for unhurried movement. Work and waiting still consume their displayed time. Normal active campaign time runs at one hour per 20 seconds. The 20–30-minute duration is a design target; explicit waiting can shorten it.
+
+Live OpenAI was subsequently configured and verified through real requests, including Inez’s repair decision and Eli’s shared-supply agreement. The key remains only in ignored server-side configuration. The earlier release verification sections below are historical records. See [RELEASE-4.md](RELEASE-4.md) for the new rules, improvements and remaining scope.
+
+## Previous 3.0 foundation
 
 The existing OpenAI Responses adapter now powers both conversation and bounded resident decisions when a project credential is configured. Without one, the game explicitly uses **deterministic demo** behavior. Provider failures or exhausted limits display **deterministic fallback**. A configured key is not shown as verified until a structured provider response succeeds.
 
@@ -16,7 +26,7 @@ Limits live in `.env.example`: requests, tokens, concurrency, output tokens, tim
 
 **3.0 verification:** 84 automated tests pass, including mocked provider-to-shipment integration, failure limits, knowledge boundaries, persistence and exact event evidence. Chrome demo play verified the Inez pickup, independent arrival, recalled completion, Mara’s kept promise, and a 390×844 encounter/evidence layout.
 
-See [AI-AUDIT.md](AI-AUDIT.md) for what was scripted before, what models can now decide, official documentation references, and verification boundaries. In this build session no project credential was available, so **real upstream behavior remains unverified**; mocked integration and actual browser demo playthrough are separate evidence.
+See [AI-AUDIT.md](AI-AUDIT.md) for what was scripted before, what models can now decide, official documentation references, and verification boundaries. At the original 3.0 checkpoint no credential was available. The 4.0 verification above supersedes that limitation; real upstream requests now work.
 
 ## Start the 3D build
 
