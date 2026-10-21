@@ -1,0 +1,885 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #f4f0df;
+  background: #163237;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+input,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #e9bd73;
+  outline-offset: 4px;
+}
+.neighborhood {
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+.scene-host {
+  position: absolute;
+  inset: 0;
+}
+.scene-host canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+.cinema-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    #10262791 0,
+    transparent 25%,
+    transparent 64%,
+    #102627b3 100%
+  );
+}
+.nh-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 26px 34px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  pointer-events: none;
+}
+.nh-header button {
+  pointer-events: auto;
+}
+.nh-brand {
+  border: 0;
+  background: none;
+  color: #fff4dc;
+  text-align: left;
+  font-family: Georgia, serif;
+  font-size: 28px;
+  letter-spacing: 5px;
+}
+.nh-brand span {
+  display: block;
+  font:
+    8px Arial,
+    sans-serif;
+  letter-spacing: 2.4px;
+  margin-top: 9px;
+}
+.nh-weather {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  margin-left: auto;
+}
+.nh-weather i {
+  display: block;
+  width: 9px;
+  height: 9px;
+  border: 1px solid #e9bf82;
+  border-radius: 50%;
+  box-shadow: 0 0 0 5px #d4b27220;
+}
+.nh-weather small {
+  display: block;
+  font-size: 10px;
+  color: #e4e7d8a6;
+  margin-top: 5px;
+}
+.nh-desk {
+  border: 1px solid #eee8d650;
+  background: #193a3980;
+  color: #f3edda;
+  padding: 13px 19px;
+  font-size: 12px;
+}
+.nh-desk span {
+  margin-left: 22px;
+}
+.nh-mission {
+  position: absolute;
+  top: 125px;
+  left: 38px;
+  width: 280px;
+  pointer-events: none;
+  text-shadow: 0 1px 12px #1a393b88;
+}
+.nh-eyebrow {
+  font-size: 9px;
+  letter-spacing: 2px;
+  line-height: 1.7;
+  font-weight: 600;
+}
+.nh-mission h1 {
+  font:
+    normal 34px/1.1 Georgia,
+    serif;
+  margin: 12px 0 14px;
+}
+.nh-mission p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #f1ebd8cc;
+  max-width: 255px;
+}
+.nh-mission button {
+  background: none;
+  color: #f0e7cd;
+  border: 0;
+  border-bottom: 1px solid #f0e7cd55;
+  padding: 10px 0;
+  font-size: 11px;
+  pointer-events: auto;
+}
+.nh-mission button span {
+  margin-left: 16px;
+}
+.nh-resources {
+  position: absolute;
+  top: 112px;
+  right: 34px;
+  display: flex;
+  gap: 24px;
+  padding: 16px 20px;
+  background: #1636339c;
+  backdrop-filter: blur(12px);
+  border-top: 1px solid #f1e5c638;
+}
+.nh-resources small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.6px;
+  color: #d7dfd1b3;
+  margin-bottom: 8px;
+}
+.nh-resources strong {
+  font-weight: 400;
+  font-size: 18px;
+}
+.nh-resources em {
+  font: 10px Arial;
+  color: #dbe2d0;
+  font-style: normal;
+}
+.nh-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 22px 34px;
+  pointer-events: none;
+}
+.nh-footer p {
+  margin: 8px 0 5px;
+  font-size: 13px;
+}
+.nh-footer small {
+  font-size: 9px;
+  color: #d2dcce9c;
+}
+.nh-mode {
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #e5c78f;
+}
+.nh-camera {
+  display: flex;
+  gap: 5px;
+  pointer-events: auto;
+}
+.nh-camera button {
+  min-width: 35px;
+  padding: 11px;
+  border: 1px solid #e2e3cb38;
+  color: #f3ecd5;
+  background: #14352e6e;
+  font-size: 11px;
+}
+.nh-camera button:nth-child(-n + 4) {
+  font-size: 17px;
+  padding: 7px 10px;
+}
+.nh-destinations {
+  position: absolute;
+  top: 330px;
+  left: 38px;
+  width: 280px;
+  padding: 10px 18px;
+  background: #163631ee;
+  border: 1px solid #b7c6aa4d;
+}
+.nh-destinations button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 13px 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #f0e9d423;
+  color: #f2e9cf;
+  text-align: left;
+  font-size: 12px;
+}
+.nh-encounter {
+  position: absolute;
+  right: 34px;
+  top: 205px;
+  width: 345px;
+  max-height: calc(100dvh - 310px);
+  overflow: auto;
+  background: #f6f0e0f5;
+  color: #29413c;
+  padding: 26px;
+  border-top: 3px solid #b68b53;
+  box-shadow: 0 20px 70px #122d3540;
+  scrollbar-width: thin;
+}
+.nh-close {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  border: 0;
+  background: none;
+  font-size: 24px;
+  color: #718070;
+}
+.nh-encounter h2 {
+  font: normal 29px Georgia;
+  margin: 8px 0;
+}
+.nh-role {
+  font-size: 10px;
+  color: #708074;
+  margin: 0 0 18px;
+}
+.nh-character-line {
+  font: italic 14px/1.5 Georgia;
+  color: #687866;
+}
+.nh-promise {
+  font-size: 10px;
+  padding: 10px;
+  background: #e5e5ca;
+  border-left: 2px solid #9c8050;
+}
+.nh-promise.kept {
+  background: #dce8d6;
+}
+.nh-promise.broken {
+  background: #ecd5c8;
+}
+.nh-talk {
+  display: flex;
+  border: 1px solid #b6bea6;
+  margin-top: 16px;
+}
+.nh-talk input {
+  width: 100%;
+  min-width: 0;
+  padding: 11px;
+  background: none;
+  border: 0;
+  color: #29413c;
+  font-size: 12px;
+}
+.nh-talk button {
+  border: 0;
+  background: none;
+  color: #65775d;
+  padding: 0 12px;
+}
+.nh-quick {
+  display: flex;
+  gap: 14px;
+  margin-top: 9px;
+}
+.nh-quick button {
+  padding: 0;
+  background: none;
+  border: 0;
+  color: #748068;
+  text-decoration: underline;
+  font-size: 9px;
+}
+.nh-dialogue {
+  border-top: 1px solid #d8ddc9;
+  padding-top: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.nh-dialogue small {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #8a7c5e;
+}
+.nh-actions {
+  margin-top: 20px;
+}
+.nh-actions > button {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  padding: 13px 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid #d9dece;
+  color: #2f4841;
+  font-size: 12px;
+}
+.nh-actions > button small {
+  font-size: 8px;
+  max-width: 85px;
+  flex-shrink: 0;
+  color: #7e8873;
+}
+.nh-caption {
+  font-size: 10px;
+  line-height: 1.6;
+  color: #77836b;
+}
+.nh-neighbors button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 0;
+  border: 0;
+  border-bottom: 1px solid #d9dece;
+  background: none;
+  text-align: left;
+  color: #29413c;
+  font-size: 13px;
+}
+.nh-neighbors small {
+  display: block;
+  font-size: 9px;
+  color: #7e8873;
+  margin-top: 5px;
+}
+.nh-neighbors b {
+  font-size: 10px;
+  font-weight: 400;
+}
+.nh-shipment {
+  position: absolute;
+  bottom: 125px;
+  left: 38px;
+  min-width: 260px;
+  max-width: 330px;
+  background: #163a33de;
+  padding: 16px 20px;
+  border-left: 2px solid #d7b578;
+}
+.nh-shipment p {
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 8px 0;
+}
+.nh-shipment progress {
+  width: 100%;
+  height: 3px;
+  accent-color: #e9c784;
+}
+.nh-notice {
+  position: absolute;
+  bottom: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 420px;
+  background: #f0ead9;
+  color: #355244;
+  padding: 13px 20px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-left: 3px solid #c0a36a;
+  pointer-events: none;
+}
+.nh-scrim {
+  position: absolute;
+  inset: 0;
+  background: #10282b96;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  padding: 20px;
+  backdrop-filter: blur(7px);
+}
+.nh-intro,
+.nh-notebook {
+  position: relative;
+  background: #f3efdf;
+  color: #304d43;
+  padding: 44px;
+  max-width: 570px;
+  width: 100%;
+  max-height: 90dvh;
+  overflow: auto;
+  box-shadow: 0 25px 80px #0c272952;
+}
+.nh-intro {
+  border-top: 3px solid #bd9764;
+}
+.nh-intro h2,
+.nh-notebook h2 {
+  font: normal 42px/1.13 Georgia;
+  margin: 24px 0;
+}
+.nh-intro h2 em {
+  font-style: normal;
+  color: #9a8064;
+}
+.nh-intro p,
+.nh-notebook p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #6c7968;
+}
+.nh-intro-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 26px 0;
+  padding: 22px 0;
+  border-top: 1px solid #c7cdb9;
+  border-bottom: 1px solid #c7cdb9;
+  font-size: 12px;
+}
+.nh-primary {
+  border: 0;
+  background: #2c5145;
+  color: #f5efda;
+  padding: 15px 22px;
+  font-size: 12px;
+}
+.nh-intro > small {
+  display: block;
+  margin-top: 22px;
+  font-size: 10px;
+  line-height: 1.8;
+  color: #8e947f;
+}
+.nh-notebook {
+  max-width: 670px;
+}
+.nh-notebook nav {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 26px;
+  border-bottom: 1px solid #c8d0bb;
+  padding: 0 0 16px;
+}
+.nh-notebook nav button {
+  border: 0;
+  background: none;
+  color: #687c62;
+  font-size: 12px;
+}
+.nh-setting {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+  font-size: 13px;
+}
+.nh-setting select,
+.nh-notebook select {
+  padding: 10px;
+  border: 1px solid #c4cbb6;
+  background: #faf5e5;
+  color: #2e5143;
+  max-width: 100%;
+}
+.nh-setting button,
+.nh-save-tools button {
+  padding: 9px 14px;
+  border: 1px solid #b7c4ad;
+  background: none;
+  color: #345544;
+}
+.nh-performance {
+  padding: 18px;
+  border: 1px solid #cbd2be;
+  font-size: 12px;
+}
+.nh-performance small {
+  font-size: 10px;
+  color: #829078;
+  overflow-wrap: anywhere;
+}
+.nh-text {
+  display: block;
+  font-size: 12px;
+  color: #577253;
+  margin: 20px 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  padding: 0;
+  text-decoration: underline;
+}
+.nh-save-row,
+.nh-log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 0;
+  border: 0;
+  border-bottom: 1px solid #cbd2be;
+  background: none;
+  width: 100%;
+  text-align: left;
+  color: #335344;
+  font-size: 12px;
+}
+.nh-save-row span,
+.nh-log span,
+.nh-log small {
+  font-size: 10px;
+  color: #7c8a70;
+}
+.nh-notebook h3 {
+  font: normal 20px Georgia;
+  margin: 24px 0 14px;
+}
+.nh-save-tools {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-top: 24px;
+  font-size: 12px;
+}
+.nh-save-tools input {
+  display: block;
+  font-size: 10px;
+  margin-top: 10px;
+  max-width: 200px;
+}
+.evidence {
+  z-index: 30;
+}
+.nh-notebook li {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 8px 0;
+}
+.nh-replay-exit {
+  position: absolute;
+  top: 210px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 15;
+}
+.nh-ending {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: #f3efdf;
+  color: #304d43;
+  padding: 35px;
+  width: min(90vw, 470px);
+}
+.nh-ending h2 {
+  font: 32px Georgia;
+}
+.nh-ending p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.nh-ending button {
+  padding: 12px;
+  background: #2f5044;
+  border: 0;
+  color: #f2ead7;
+}
+.webgl-error {
+  position: absolute;
+  inset: 30%;
+  z-index: 50;
+  background: #f3efdf;
+  color: #304d43;
+  padding: 30px;
+}
+.webgl-error a {
+  display: block;
+  margin-top: 20px;
+  color: inherit;
+}
+@media (max-width: 900px) {
+  .nh-header {
+    padding: 18px 20px;
+    gap: 16px;
+  }
+  .nh-brand {
+    font-size: 22px;
+  }
+  .nh-brand span {
+    font-size: 7px;
+  }
+  .nh-weather {
+    font-size: 11px;
+  }
+  .nh-weather small {
+    display: none;
+  }
+  .nh-mission {
+    left: 22px;
+    top: 110px;
+    width: 220px;
+  }
+  .nh-mission h1 {
+    font-size: 27px;
+  }
+  .nh-mission p {
+    font-size: 11px;
+  }
+  .nh-resources {
+    right: 20px;
+    top: 90px;
+    gap: 16px;
+    padding: 12px;
+  }
+  .nh-resources strong {
+    font-size: 14px;
+  }
+  .nh-encounter {
+    right: 20px;
+    top: 170px;
+    width: 310px;
+    max-height: calc(100dvh - 280px);
+    padding: 22px;
+  }
+  .nh-footer {
+    padding: 18px 20px;
+  }
+  .nh-footer small {
+    max-width: 250px;
+    display: block;
+  }
+  .nh-camera {
+    gap: 3px;
+  }
+  .nh-camera button {
+    padding: 8px;
+  }
+  .nh-destinations {
+    left: 22px;
+    top: 300px;
+  }
+  .nh-shipment {
+    left: 22px;
+    bottom: 125px;
+    width: 245px;
+    min-width: 0;
+  }
+}
+@media (max-width: 600px) {
+  .nh-header {
+    padding: 18px 16px;
+  }
+  .nh-brand {
+    font-size: 19px;
+    letter-spacing: 3px;
+  }
+  .nh-brand span {
+    font-size: 6px;
+    letter-spacing: 1.4px;
+  }
+  .nh-weather {
+    font-size: 10px;
+    gap: 8px;
+  }
+  .nh-desk {
+    padding: 10px;
+    font-size: 10px;
+  }
+  .nh-desk span {
+    display: none;
+  }
+  .nh-mission {
+    left: 17px;
+    top: 138px;
+    width: 220px;
+  }
+  .nh-mission h1 {
+    font-size: 25px;
+    margin: 7px 0;
+  }
+  .nh-mission p {
+    display: none;
+  }
+  .nh-mission button {
+    font-size: 10px;
+  }
+  .nh-resources {
+    top: 78px;
+    left: 16px;
+    right: 16px;
+    justify-content: space-between;
+    padding: 11px 14px;
+    gap: 8px;
+  }
+  .nh-resources small {
+    font-size: 6px;
+    margin-bottom: 4px;
+  }
+  .nh-resources strong {
+    font-size: 13px;
+  }
+  .nh-resources em {
+    font-size: 8px;
+  }
+  .nh-footer {
+    padding: 12px 16px;
+    display: block;
+  }
+  .nh-footer p {
+    font-size: 11px;
+    margin: 5px 0;
+  }
+  .nh-footer small {
+    font-size: 8px;
+    max-width: none;
+  }
+  .nh-camera {
+    margin-top: 12px;
+    justify-content: space-between;
+  }
+  .nh-camera button {
+    font-size: 10px;
+  }
+  .nh-encounter {
+    left: 16px;
+    right: 16px;
+    top: auto;
+    bottom: 140px;
+    width: auto;
+    max-height: 49dvh;
+    padding: 20px;
+  }
+  .nh-encounter h2 {
+    font-size: 24px;
+  }
+  .nh-character-line {
+    font-size: 12px;
+  }
+  .nh-shipment {
+    left: 16px;
+    bottom: 145px;
+    max-width: 240px;
+    padding: 12px;
+    font-size: 10px;
+  }
+  .nh-encounter ~ .nh-shipment {
+    display: none;
+  }
+  .nh-destinations {
+    top: 230px;
+    left: 16px;
+    width: 240px;
+  }
+  .nh-notice {
+    bottom: 132px;
+    width: 90%;
+    font-size: 11px;
+    padding: 10px;
+    max-width: none;
+  }
+  .nh-intro,
+  .nh-notebook {
+    padding: 30px 25px;
+  }
+  .nh-intro h2,
+  .nh-notebook h2 {
+    font-size: 32px;
+  }
+  .nh-intro p {
+    font-size: 12px;
+  }
+  .nh-notebook nav {
+    gap: 13px;
+  }
+  .nh-scrim {
+    padding: 14px;
+  }
+  .nh-replay-exit {
+    top: 235px;
+    font-size: 10px;
+  }
+  .nh-save-tools {
+    flex-wrap: wrap;
+  }
+}
+/* Keep objectives readable against sunlit plaster and pale roofs. */
+.nh-mission {
+  background: linear-gradient(110deg, #183b36d9, #183b3699);
+  padding: 18px 20px;
+  border-left: 1px solid #ead4a65c;
+  width: 300px;
+  left: 24px;
+  top: 112px;
+}
+.nh-mission p {
+  color: #f1ebd8;
+}
+.nh-mission h1 {
+  font-size: 30px;
+}
+.nh-destinations {
+  top: 370px;
+  left: 24px;
+  width: 300px;
+}
+@media (max-width: 600px) {
+  .nh-mission {
+    padding: 10px 12px;
+    left: 14px;
+    top: 145px;
+    width: 230px;
+  }
+  .nh-mission h1 {
+    font-size: 22px;
+  }
+  .nh-destinations {
+    top: 270px;
+    left: 14px;
+    width: 260px;
+  }
+}
