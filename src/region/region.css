@@ -1,0 +1,172 @@
+.region-status {
+  position: absolute;
+  left: 26px;
+  top: 142px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  color: #f8edd6;
+  text-shadow: 0 2px 5px #183e40;
+  font: 13px system-ui;
+}
+.region-actions {
+  position: absolute;
+  right: 25px;
+  bottom: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-width: 290px;
+}
+.region-actions button,
+.drive-pad button,
+.region-dialog button,
+.region-job button {
+  border: 1px solid #c6b58570;
+  background: #173b3be8;
+  color: #fff0d6;
+  border-radius: 7px;
+  padding: 11px 16px;
+  cursor: pointer;
+  font: 13px system-ui;
+}
+.region-actions button:hover,
+.drive-pad button:hover {
+  background: #47756a;
+}
+.drive-pad {
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  touch-action: none;
+}
+.region-job {
+  position: absolute;
+  right: 24px;
+  top: 95px;
+  max-width: 300px;
+  background: #173b3be8;
+  border-left: 2px solid #d7b375;
+  padding: 12px;
+  color: #f6ead6;
+  font: 13px/1.5 system-ui;
+}
+.region-job button {
+  padding: 5px;
+  margin-top: 7px;
+  display: block;
+}
+.region-dialog {
+  position: absolute;
+  z-index: 30;
+  right: 28px;
+  bottom: 72px;
+  background: #183d3df5;
+  border: 1px solid #bca775;
+  border-radius: 12px;
+  padding: 22px;
+  color: #f6ead6;
+  width: min(380px, calc(100vw - 30px));
+  box-shadow: 0 20px 70px #0005;
+  font: 14px/1.5 system-ui;
+}
+.region-dialog input {
+  width: 100%;
+  box-sizing: border-box;
+  background: #f2eadb;
+  color: #123333;
+  padding: 12px;
+  border: 0;
+  border-radius: 4px;
+}
+.region-dialog a {
+  display: block;
+  padding: 12px;
+  color: #ecd3a3;
+}
+.region-dialog p {
+  max-height: 190px;
+  overflow: auto;
+}
+.region-dialog small {
+  display: block;
+  opacity: 0.75;
+}
+.region-dialog form {
+  display: flex;
+  gap: 6px;
+  margin: 12px 0;
+}
+.region-dialog h2 {
+  font: 26px Georgia;
+  margin: 5px 0;
+}
+.region-dialog > button:first-child {
+  float: right;
+}
+.region-dialog button:disabled {
+  opacity: 0.5;
+}
+.wildlife-context {
+  max-width: 320px;
+}
+.wildlife-header nav {
+  flex-wrap: wrap;
+}
+.region-dialog textarea {
+  width: 100%;
+}
+@media (max-width: 650px) {
+  .region-actions {
+    right: 10px;
+    bottom: 105px;
+    max-width: 220px;
+  }
+  .region-status {
+    left: 16px;
+    top: 150px;
+    font-size: 11px;
+  }
+  .region-job {
+    top: 185px;
+    right: 10px;
+    max-width: 220px;
+    font-size: 11px;
+  }
+  .drive-pad {
+    bottom: 48px;
+    max-width: 100%;
+    width: 95%;
+    justify-content: center;
+  }
+  .drive-pad button {
+    padding: 10px 7px;
+    font-size: 11px;
+  }
+  .region-dialog {
+    right: 15px;
+    bottom: 65px;
+    box-sizing: border-box;
+  }
+  .wildlife-header nav button {
+    font-size: 10px;
+    padding: 8px;
+  }
+  .wildlife-weather {
+    top: 105px;
+  }
+}
+.region-status {
+  top: 177px;
+}
+.wildlife-root .region-map-travel {
+  background: #e2d5a8;
+  color: #263c32 !important;
+  border-radius: 7px;
+}
+.wildlife-root .region-map-travel:hover {
+  background: #f0e4bd;
+}

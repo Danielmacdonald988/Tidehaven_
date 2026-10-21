@@ -1,3 +1,15 @@
+# Current decisions — Connected coast
+
+- Expand the existing Three.js scene, deterministic wildlife reducer and server AI adapter; no framework migration. The checkpoint tag `checkpoint-living-coast-67c9934` preserves the prior release.
+- Default to relaxed free roam. Existing storm/campaign modes keep separate checkpoints; new region activities share one persistent collection, inventory, people and vehicle timeline.
+- Bound the world to three compact districts, twelve residents and two traffic shuttles. Static batching, instanced plants, frustum culling and Low graphics are sufficient at this scale; no streaming infrastructure is claimed.
+- Route mouse driving through real road geometry, with collision-checked roadside parking and recovery within ten metres. Cargo capacity is eight. Reverse travel is explicit and controlled; no teleporting between destinations.
+- Physical positions gate every handoff, promise, companion passage and rescue. AI speech cannot grant items or complete activities. Offers require engine validation. Imported history remains intact; new conversation history is bounded with commitment evidence retained.
+- First-entry migration copies legacy saves without deleting them. New region saves have strict structural and audit validation. The game remains a local single-player simulation, not a secure multiplayer authority.
+- Art and sounds are original procedural work; no purchased/downloaded assets or new credentials. Performance target: 60 FPS High / at least 30 FPS Low on the available desktop browser, with measured samples reported separately.
+
+---
+
 Latest playtest refinements: approach points are selected from reachable sight-clear candidates, screen-space aim assistance eases selection of moving creatures, foreground roofs/palms fade when obstructing the encounter, and portrait framing includes both explorer and creature. Weather benches are physical local rest points. New expeditions archive one validated previous save; restore swaps rather than deletes.
 
 # Current decisions — The Living Coast

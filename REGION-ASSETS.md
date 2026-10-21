@@ -1,0 +1,4 @@
+# Connected coast asset provenance
+All added region geometry, road decks, pitched freight buildings, tidal bridge, crane, wetland cabin, mangrove/fern instances, observatory arcade, crates, tools, furniture, signs and material palette are original procedural artwork authored for AFTERLIGHT. No external model or texture downloads were used. Existing detailed town and six creature artworks remain unchanged; see WILDLIFE-ASSETS.md and RESCUE-ASSETS.md for earlier provenance.
+
+Three.js (MIT) provides rendering, primitive geometry and static geometry merging. Signs use the local system sans-serif font rasterized to canvas. The environment uses metre scale, material-based static batching and instanced vegetation. Roads and raised surfaces share `surfaceHeight` with movement/vehicle presentation.

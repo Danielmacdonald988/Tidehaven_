@@ -1,3 +1,5 @@
+import { BOUNDS } from "../three/shared";
+import type { NavigationBounds } from "../three/navigation";
 import type { Collider, Point } from "../three/shared";
 import { clearSegment, findPath, isWalkable } from "../three/navigation";
 /** Choose an approach point the explorer can reach and greet from, including around doorways. */
@@ -5,6 +7,7 @@ export function findCreatureApproach(
   player: Point,
   target: Point,
   colliders: Collider[],
+  bounds: NavigationBounds = BOUNDS,
 ): Point | null {
   if (
     !Number.isFinite(player.x) ||
@@ -14,8 +17,8 @@ export function findCreatureApproach(
   )
     return null;
   if (
-    !isWalkable(target, colliders) ||
-    !findPath(player, target, colliders).length
+    !isWalkable(target, colliders, 0.38, bounds) ||
+    !findPath(player, target, colliders, bounds).length
   )
     return null;
   const angle = Math.atan2(player.z - target.z, player.x - target.x);
@@ -38,11 +41,11 @@ export function findCreatureApproach(
       )
         continue;
       if (
-        !isWalkable(candidate, colliders) ||
-        !clearSegment(candidate, target, colliders)
+        !isWalkable(candidate, colliders, 0.38, bounds) ||
+        !clearSegment(candidate, target, colliders, bounds)
       )
         continue;
-      const path = findPath(player, candidate, colliders);
+      const path = findPath(player, candidate, colliders, bounds);
       if (!path.length) continue;
       let length = 0,
         previous = player;

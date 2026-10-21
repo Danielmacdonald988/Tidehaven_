@@ -1,3 +1,30 @@
+# AFTERLIGHT — A connected coast
+
+The default experience expands the existing neighborhood into three compact districts: coastal town, working harbor and wetlands. Leave your warehouse on foot or in your Coast Runner, discover creatures, speak to residents, or choose an optional delivery, expedition or dockside assistance. Free roam has **no disaster countdown**. The original six species and all their abilities remain available.
+
+```sh
+npm install
+npm run dev
+```
+
+Open **http://127.0.0.1:5173**. Production: `npm run build`, then `npm start` at **http://127.0.0.1:3001**. Reuse an existing server on these ports instead of starting a duplicate.
+
+**Controls:** click ground to walk, click a person/creature/vehicle to approach, then use the nearby action. Drag to orbit; scroll to zoom. WASD offers optional walking/driving, **B** brakes, **Space** pauses. Driving also works with the mouse controls or by choosing a destination on the coastal map. Stop before stepping out. The journal selects a bonded companion. Options includes sound, camera sensitivity, assisted resonance and Low graphics.
+
+Three optional activities connect physical exploration to persistent results:
+
+- Harbor freight: ask Inez, park beside the crates, load eight crates and drive them home. A kept promise improves her trust; cancellation is allowed.
+- Wetland expedition: inspect the tracks, bring a helpful companion, open a real passage and recover an object for home.
+- Dockside assistance: approach the stranded neighbor and physically escort them to the safe quay.
+
+The warehouse holds delivered supplies, vehicle parking, collected creature displays and two purchasable physical upgrades. Existing storm rescue and relief campaign remain deliberate choices at home, with their own checkpoints. The original wildlife-only mode is retained at `?wildlife`.
+
+Region progress uses `afterlight-region-v1`. On first entry it copies the existing creature collection and campaign state, retaining all original save keys unchanged. It persists money, inventory, memories, promises, upgrades, activities, companion and parking. Invalid regional data is backed up before recovery. Secrets and provider limits remain in the existing server configuration; no key belongs in browser code. Movement and encounters work during AI outages.
+
+Release evidence and limitations: [REGION-RELEASE.md](REGION-RELEASE.md). Implementation and current verification are tracked in [TASKS.md](TASKS.md) and [HANDOFF.md](HANDOFF.md). Asset provenance: [REGION-ASSETS.md](REGION-ASSETS.md). Earlier release records below are historical; their statements about the default route refer to those releases.
+
+---
+
 # AFTERLIGHT — The Living Coast
 
 The default experience is now creature discovery: follow tracks and calls, approach an original coastal creature, offer a gentle greeting, and release resonance. Befriend six distinct species, choose a visible companion, and use its abilities to open new routes. This is free exploration with changing weather and **no rescue countdown**.

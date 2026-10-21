@@ -1,3 +1,21 @@
+# Current: connected coastal region expansion
+
+Default entry is the persistent region; standalone creature exploration remains `?wildlife`, storm rescue `?rescue`, campaign `?campaign`, classic `?classic`. Existing missions keep their original checkpoints. Shared contracts are in `src/region/contracts.ts` and [REGION-CONTRACT.md](REGION-CONTRACT.md). Recoverable baseline tag: `checkpoint-living-coast-67c9934`.
+
+Commands: `npm run dev` (5173), `npm test`, `npm run build`, then `npm start` (3001). Existing production server serves 3001 in this session; reuse it. Never print/read `.env.local`; live AI adapter and limits are preserved server-side.
+
+**Implemented:** connected town/harbor/wetlands, detailed owned vehicle with persistent parking/cargo, mouse/keyboard drive, collision/safe exit/recovery, 12 bounded physical routines and yielding traffic, optional freight/companion expedition/escort, paid visible base upgrades, journal and map, nearby resident AI and stored memories. Three activity types validate actual positions and prerequisites; rewards are one-time. Free roam freezes the original campaign clock. Region can operate without provider availability.
+
+Persistence: `afterlight-region-v1` copies `afterlight-living-coast-v1` plus the `.world` field stored under `afterlight.neighborhood` (or supported old aliases/session), keeping originals unchanged. Corrupt region JSON is retained at `afterlight-region-v1-corrupt-backup`. Region validation accepts extended bounds and rejects mismatched cargo/activity state. Wildlife-only saves keep the original bounds. Region commitments use prefixed IDs and source events; remote completion receipts are explicitly recorded as radio communication.
+
+**Verified release:** 166/166 tests and production build pass. Actual Chrome play crossed all three districts with mouse driving, parked/re-entered, completed physical freight and dock escort, bonded Brindlefin, used its wetland shortcut, recovered the lens, and retained collection/cargo/money/commitments across reloads. Two live Inez requests succeeded, including specific kept-promise recall after travel and reload. Mobile map/driving layout inspected at390×844. Independent browser pass inspected mission access and walked town→harbor. Chrome on Apple M4/macOS15.2 measured approximately30FPS in representative High/Low samples; see REGION-RELEASE.md for frame times/counts and precise limits. Screenshots: artifacts/region/.
+
+**Next useful work:** richer district-specific habitats and varied optional work; improve High graphics toward60FPS; longer manual driving/pacing sessions and browser heap profiling. No agent work remains running. Legacy rescue was accessible but not replayed end-to-end this turn. No public deployment performed.
+
+Scope limits: compact authored region, one owned vehicle, two lightweight traffic routes, three finite authored activities, original procedural art. Legacy story missions are explicitly launched separate modes, not a newly merged campaign timeline. No multiplayer, police/crime simulation, unrestricted AI actions, new public deployment or purchased assets. Earlier release records below are historical.
+
+---
+
 # Current: The Living Coast discovery milestone
 
 Default entry is wildlife. Preserved routes: `?rescue`, `?campaign`, `?classic`. See [WILDLIFE-RELEASE.md](WILDLIFE-RELEASE.md), [WILDLIFE-CONTRACT.md](WILDLIFE-CONTRACT.md) and [WILDLIFE-ASSETS.md](WILDLIFE-ASSETS.md). Six original species, deterministic resonance encounters, following companion, three physical abilities, weather conditions, rare reveal and independent validated autosave are implemented.

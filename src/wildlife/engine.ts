@@ -8,6 +8,8 @@ import {
   type Weather,
 } from "./contracts";
 import { clearSegment, findPath, isWalkable } from "../three/navigation";
+import { BOUNDS } from "../three/shared";
+import type { NavigationBounds } from "../three/navigation";
 import type { Point, Collider } from "../three/shared";
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.z - b.z);
 const weather: Weather[] = ["fair", "rain", "dusk", "storm"];
@@ -145,6 +147,7 @@ export function wildlifeCommand(
   input: WildlifeState,
   command: WildlifeCommand,
   base: Collider[] = [],
+  bounds: NavigationBounds = BOUNDS,
 ): { state: WildlifeState; ok: boolean; reason?: string } {
   const s = structuredClone(input),
     colliders = [...base, ...wildlifeColliders(s)];
@@ -157,7 +160,7 @@ export function wildlifeCommand(
         !Number.isFinite(command.point.z)
       )
         return fail("Choose a spot on the ground.");
-      const path = findPath(s.player, command.point, colliders);
+      const path = findPath(s.player, command.point, colliders, bounds);
       if (!path.length) return fail("That route is blocked.");
       s.path = path;
       break;
@@ -169,7 +172,7 @@ export function wildlifeCommand(
         !target.available ||
         target.bonded ||
         distance(s.player, target.position) > 12 ||
-        !clearSegment(s.player, target.position, colliders)
+        !clearSegment(s.player, target.position, colliders, bounds)
       )
         return fail("Find the creature nearby.");
       s.selected = target.id;
@@ -182,7 +185,7 @@ export function wildlifeCommand(
         !c.available ||
         c.bonded ||
         distance(s.player, c.position) > 5 ||
-        !clearSegment(s.player, c.position, colliders)
+        !clearSegment(s.player, c.position, colliders, bounds)
       )
         return fail("Come a little closer.");
       if (c.alarm > 0) return fail("Give it a moment to settle.");
@@ -205,7 +208,7 @@ export function wildlifeCommand(
         !target.available ||
         target.bonded ||
         distance(s.player, target.position) > 5 ||
-        !clearSegment(s.player, target.position, colliders)
+        !clearSegment(s.player, target.position, colliders, bounds)
       )
         return fail("Aim at a nearby creature.");
       const success = receptive(s, target);
@@ -244,7 +247,7 @@ export function wildlifeCommand(
       if (
         distance(s.player, SITES[command.target]) > 6 ||
         distance(s.player, s.companionPosition) > 6 ||
-        !clearSegment(s.player, s.companionPosition, colliders)
+        !clearSegment(s.player, s.companionPosition, colliders, bounds)
       )
         return fail("Bring your companion close to this spot.");
       s.abilities[command.target] = true;
@@ -301,6 +304,7 @@ function walk(
   path: Point[],
   amount: number,
   colliders: Collider[],
+  bounds: NavigationBounds = BOUNDS,
 ): { position: Point; path: Point[] } {
   let p = position,
     remaining = path;
@@ -314,7 +318,8 @@ function walk(
             x: p.x + ((goal.x - p.x) * amount) / d,
             z: p.z + ((goal.z - p.z) * amount) / d,
           };
-    if (!clearSegment(p, next, colliders)) return { position: p, path: [] };
+    if (!clearSegment(p, next, colliders, bounds))
+      return { position: p, path: [] };
     p = next;
     if (d <= amount) {
       remaining = remaining.slice(1);
@@ -327,6 +332,7 @@ export function tickWildlife(
   input: WildlifeState,
   delta: number,
   base: Collider[] = [],
+  bounds: NavigationBounds = BOUNDS,
 ): WildlifeState {
   const dt = Math.max(0, Math.min(0.1, Number.isFinite(delta) ? delta : 0));
   if (!dt) return input;
@@ -342,7 +348,7 @@ export function tickWildlife(
     s.weatherTime = 0;
     event(s, "weather", s.weather);
   }
-  const stepped = walk(s.player, s.path, dt * 2.6, colliders);
+  const stepped = walk(s.player, s.path, dt * 2.6, colliders, bounds);
   s.speed = distance(s.player, stepped.position) / dt;
   s.player = stepped.position;
   s.path = stepped.path;
@@ -360,7 +366,7 @@ export function tickWildlife(
       continue;
     }
     const d = distance(s.player, c.position),
-      seen = d < 12 && clearSegment(s.player, c.position, colliders);
+      seen = d < 12 && clearSegment(s.player, c.position, colliders, bounds);
     if (seen && !c.discovered) {
       c.discovered = true;
       event(
@@ -400,8 +406,8 @@ export function tickWildlife(
       z: c.home.z + Math.cos(c.phase * 0.45) * range * 0.55,
     };
     if (
-      isWalkable(goal, colliders) &&
-      clearSegment(c.position, goal, colliders)
+      isWalkable(goal, colliders, 0.38, bounds) &&
+      clearSegment(c.position, goal, colliders, bounds)
     ) {
       const d = distance(c.position, goal),
         step = Math.min(d, dt * (c.id === "sailpip" ? 1.8 : 0.55));
@@ -433,8 +439,9 @@ export function tickWildlife(
         };
         s.companionPath = findPath(
           s.companionPosition,
-          isWalkable(offset, colliders) ? offset : s.player,
+          isWalkable(offset, colliders, 0.38, bounds) ? offset : s.player,
           colliders,
+          bounds,
         );
       }
       if (d <= 1.5) s.companionPath = [];
@@ -443,6 +450,7 @@ export function tickWildlife(
         s.companionPath,
         dt * 3.6,
         colliders,
+        bounds,
       );
       s.companionPosition = next.position;
       s.companionPath = next.path;
@@ -459,7 +467,10 @@ export function tickWildlife(
   }
   return s;
 }
-export function validateWildlife(v: unknown): v is WildlifeState {
+export function validateWildlife(
+  v: unknown,
+  bounds: NavigationBounds = BOUNDS,
+): v is WildlifeState {
   if (!v || typeof v !== "object") return false;
   const s = v as WildlifeState;
   const point = (p: unknown): p is Point =>
@@ -467,8 +478,10 @@ export function validateWildlife(v: unknown): v is WildlifeState {
     typeof p === "object" &&
     Number.isFinite((p as Point).x) &&
     Number.isFinite((p as Point).z) &&
-    Math.abs((p as Point).x) <= 40 &&
-    Math.abs((p as Point).z) <= 34;
+    (p as Point).x >= bounds.minX &&
+    (p as Point).x <= bounds.maxX &&
+    (p as Point).z >= bounds.minZ &&
+    (p as Point).z <= bounds.maxZ;
   const num = (n: unknown) =>
     typeof n === "number" && Number.isFinite(n) && n >= 0;
   const path = (p: unknown) =>

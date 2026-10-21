@@ -1,17 +1,24 @@
 import { BOUNDS, type Point, type Collider } from "./shared";
+export type NavigationBounds = {
+  minX: number;
+  maxX: number;
+  minZ: number;
+  maxZ: number;
+};
 export const PLAYER_RADIUS = 0.38;
 export function isWalkable(
   p: Point,
   colliders: Collider[],
   radius = PLAYER_RADIUS,
+  bounds: NavigationBounds = BOUNDS,
 ): boolean {
   return (
     Number.isFinite(p.x) &&
     Number.isFinite(p.z) &&
-    p.x >= BOUNDS.minX + radius &&
-    p.x <= BOUNDS.maxX - radius &&
-    p.z >= BOUNDS.minZ + radius &&
-    p.z <= BOUNDS.maxZ - radius &&
+    p.x >= bounds.minX + radius &&
+    p.x <= bounds.maxX - radius &&
+    p.z >= bounds.minZ + radius &&
+    p.z <= bounds.maxZ - radius &&
     !colliders.some(
       (c) =>
         p.x > c.minX - radius &&
@@ -25,8 +32,9 @@ export function clearSegment(
   a: Point,
   b: Point,
   colliders: Collider[],
+  bounds: NavigationBounds = BOUNDS,
 ): boolean {
-  if (!isWalkable(b, colliders)) return false;
+  if (!isWalkable(b, colliders, PLAYER_RADIUS, bounds)) return false;
   const dx = b.x - a.x,
     dz = b.z - a.z;
   for (const c of colliders) {
@@ -63,10 +71,11 @@ export function findPath(
   start: Point,
   goal: Point,
   colliders: Collider[],
+  bounds: NavigationBounds = BOUNDS,
 ): Point[] {
   const size = 0.7,
-    ox = BOUNDS.minX,
-    oz = BOUNDS.minZ;
+    ox = bounds.minX,
+    oz = bounds.minZ;
   const key = (x: number, z: number) => `${x},${z}`;
   const pos = (x: number, z: number): Point => ({
     x: ox + x * size,
@@ -76,7 +85,7 @@ export function findPath(
     Math.round((p.x - ox) / size),
     Math.round((p.z - oz) / size),
   ];
-  if (!isWalkable(goal, colliders)) {
+  if (!isWalkable(goal, colliders, PLAYER_RADIUS, bounds)) {
     let best: Point | undefined;
     let d = Infinity;
     for (let r = 1; r <= 7 && !best; r++)
@@ -86,7 +95,7 @@ export function findPath(
           z: goal.z + Math.cos((i * Math.PI) / 12) * r * 0.5,
         };
         const v = Math.hypot(p.x - start.x, p.z - start.z);
-        if (isWalkable(p, colliders) && v < d) {
+        if (isWalkable(p, colliders, PLAYER_RADIUS, bounds) && v < d) {
           best = p;
           d = v;
         }
@@ -94,7 +103,7 @@ export function findPath(
     if (!best) return [];
     goal = best;
   }
-  if (clearSegment(start, goal, colliders)) return [goal];
+  if (clearSegment(start, goal, colliders, bounds)) return [goal];
   let [sx, sz] = cell(start);
   const [gx, gz] = cell(goal);
   let bestStart = Infinity;
@@ -106,8 +115,8 @@ export function findPath(
       const d = Math.hypot(candidate.x - start.x, candidate.z - start.z);
       if (
         d < bestStart &&
-        isWalkable(candidate, colliders) &&
-        clearSegment(start, candidate, colliders)
+        isWalkable(candidate, colliders, PLAYER_RADIUS, bounds) &&
+        clearSegment(start, candidate, colliders, bounds)
       ) {
         sx = originalX + dx;
         sz = originalZ + dz;
@@ -131,7 +140,7 @@ export function findPath(
     closed.add(k);
     if (
       Math.abs(cur.x - gx) + Math.abs(cur.z - gz) <= 1 &&
-      clearSegment(pos(cur.x, cur.z), goal, colliders)
+      clearSegment(pos(cur.x, cur.z), goal, colliders, bounds)
     ) {
       end = k;
       break;
@@ -152,8 +161,8 @@ export function findPath(
         p = pos(x, z);
       if (
         closed.has(nk) ||
-        !isWalkable(p, colliders) ||
-        !clearSegment(pos(cur.x, cur.z), p, colliders)
+        !isWalkable(p, colliders, PLAYER_RADIUS, bounds) ||
+        !clearSegment(pos(cur.x, cur.z), p, colliders, bounds)
       )
         continue;
       const g = cur.g + Math.hypot(dx, dz);
@@ -175,7 +184,10 @@ export function findPath(
   const result: Point[] = [];
   let anchor = start;
   for (let i = 0; i < path.length; i++) {
-    if (i < path.length - 1 && clearSegment(anchor, path[i + 1], colliders))
+    if (
+      i < path.length - 1 &&
+      clearSegment(anchor, path[i + 1], colliders, bounds)
+    )
       continue;
     result.push(path[i]);
     anchor = path[i];

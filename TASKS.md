@@ -1,3 +1,27 @@
+# Current milestone — Connected coastal region
+
+Checkpoint before expansion: `checkpoint-living-coast-67c9934`. Shared interfaces and ownership: [REGION-CONTRACT.md](REGION-CONTRACT.md).
+
+- Lead: region App/Scene/map/resident AI, integration, actual browser verification and final quality.
+- World agent: connected harbor/wetlands architecture, roads, interiors, physical activity consequences and asset provenance.
+- Vehicle agent: one detailed Coast Runner, deterministic handling, safe exits/recovery, mouse driving, engine/tire/impact audio and vehicle tests.
+- Simulation agent: persistent region state, three optional activities, memories/commitments, 12 routines, yielding traffic, bounded navigation extension, migration and integration tests; independent integration review.
+
+Implemented: preserved town and six-species loop, three connected districts, owned vehicle, 12 physical residents, lightweight yielding traffic, physical cargo delivery, companion-assisted wetland passage and relic, dockside escort, two paid base upgrades, map, contextual resident conversations and deliberate legacy mission launch.
+
+- [x] Recoverable original-build checkpoint and explicit ownership.
+- [x] Backward-compatible navigation extension and save migration without overwriting legacy keys.
+- [x] Delivery, expedition and assistance effects validated and rewarded once.
+- [x] Persistent promise kept/broken outcomes and sourced memories.
+- [x] Continuous automated actual-terrain driving/delivery/home-handoff integration.
+- [x] Population/traffic boundedness, companion boundary crossing, save validation and migration checks.
+- [x] Combined browser playthrough, live memory recall, reload, mobile layout, performance samples and screenshots.
+- [x] Production build, regression suite and recoverable release checkpoint after browser repairs.
+
+**Current verification: 166 tests and production build pass.** See [REGION-RELEASE.md](REGION-RELEASE.md) for actual browser evidence and known scope limits. No agent work remains running. Earlier completed-release records follow.
+
+---
+
 # Current milestone — The Living Coast
 
 Shared interfaces and ownership were established in [WILDLIFE-CONTRACT.md](WILDLIFE-CONTRACT.md) before parallel implementation.

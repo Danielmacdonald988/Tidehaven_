@@ -1,0 +1,204 @@
+.region-map-shade {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: #122a25a8;
+  backdrop-filter: blur(9px);
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  color: #e8e4cf;
+  font-family: "DM Sans", sans-serif;
+}
+.region-map-panel {
+  width: min(1040px, 100%);
+  max-height: 92dvh;
+  overflow: auto;
+  background: #223e36;
+  border: 1px solid #a7b99b55;
+  border-radius: 18px;
+  box-shadow: 0 25px 100px #071c1b80;
+  padding: 25px;
+}
+.region-map-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.region-map-eyebrow {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #afbda6;
+}
+.region-map-panel h2 {
+  font-family: "Libre Caslon Display", Georgia, serif;
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.15;
+  margin: 6px 0;
+}
+.region-map-panel button {
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+}
+.region-map-close {
+  border: 1px solid #9fb69e55;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  font-size: 25px !important;
+  line-height: 1;
+}
+.region-map-note {
+  font-size: 12px;
+  color: #b8c5ad;
+  margin: 12px 0 18px;
+}
+.region-map-chart {
+  border: 1px solid #aeb49a55;
+  border-radius: 9px;
+  overflow: hidden;
+  background: #506f69;
+}
+.region-map-chart svg {
+  display: block;
+  width: 100%;
+  cursor: crosshair;
+  touch-action: manipulation;
+}
+.region-map-district {
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  fill: #f3e9c7;
+  text-anchor: middle;
+  font-weight: 600;
+}
+.region-map-unvisited {
+  font-size: 6px;
+  letter-spacing: 1.8px;
+  text-anchor: middle;
+  fill: #d1d8bd;
+}
+.region-map-landmark {
+  cursor: pointer;
+  outline: none;
+}
+.region-map-landmark text {
+  font-size: 8px;
+  fill: #fff1cc;
+  paint-order: stroke;
+  stroke: #2a443b;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.region-map-landmark:focus circle:last-of-type,
+.region-map-landmark:hover circle:last-of-type {
+  stroke: #fff6b2;
+  stroke-width: 3px;
+}
+.region-map-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 18px;
+}
+.region-map-key {
+  font-size: 11px;
+  color: #d5ddc7;
+}
+.region-map-key i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #f6f4d9;
+  border-radius: 50%;
+  margin-right: 7px;
+}
+.region-map-bottom p {
+  font-size: 11px;
+  color: #aebda6;
+  margin: 6px 0;
+}
+.region-map-travel {
+  border: 1px solid #ded2a3;
+  background: #e2d5a8;
+  color: #263c32 !important;
+  border-radius: 7px;
+  padding: 12px 18px;
+  font-size: 12px !important;
+  min-height: 44px;
+}
+.region-map-travel:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.region-map-travel span {
+  font-size: 18px;
+  margin-left: 16px;
+}
+.region-map-places {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #a7b99b25;
+}
+.region-map-places button {
+  background: #344f43;
+  border: 1px solid #a7b99b35;
+  border-radius: 5px;
+  padding: 9px 13px;
+  font-size: 11px;
+  min-height: 36px;
+}
+.region-map-panel button:focus-visible {
+  outline: 2px solid #f4df9d;
+  outline-offset: 3px;
+}
+.region-map-places button:hover,
+.region-map-close:hover {
+  background: #4b6552;
+}
+@media (max-width: 620px) {
+  .region-map-shade {
+    padding: 12px;
+  }
+  .region-map-panel {
+    padding: 16px;
+    border-radius: 12px;
+  }
+  .region-map-panel h2 {
+    font-size: 28px;
+  }
+  .region-map-chart {
+    overflow-x: auto;
+  }
+  .region-map-chart svg {
+    min-width: 650px;
+    max-width: none;
+  }
+  .region-map-bottom {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .region-map-travel {
+    width: 100%;
+  }
+  .region-map-note {
+    line-height: 1.5;
+    max-width: 260px;
+  }
+  .region-map-places button {
+    min-height: 44px;
+  }
+  .region-map-places {
+    gap: 6px;
+  }
+  .region-map-district {
+    font-size: 11px;
+  }
+}
