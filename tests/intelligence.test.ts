@@ -123,7 +123,7 @@ test("malformed output falls back without mutating context", async () => {
       response('{"text":"I invented a boat","actionIndex":999}'),
   });
   const result = await service.chat(request);
-  assert.equal(result.mode, "demo");
+  assert.equal(result.mode, "fallback");
   assert.match(result.error!, /validation/);
   assert.deepEqual(request, before);
 });
@@ -135,7 +135,7 @@ test("network errors leave demo playable and count reserved budget", async () =>
     },
   });
   const result = await service.chat(request);
-  assert.equal(result.mode, "demo");
+  assert.equal(result.mode, "fallback");
   assert.ok(result.usage!.tokens > 0);
   assert.ok(!result.error!.includes("secret"));
 });
@@ -149,7 +149,7 @@ test("transient failure retries once, request cap stops calls", async () => {
       return new Response("", { status: 503 });
     },
   });
-  assert.equal((await service.chat(request)).mode, "demo");
+  assert.equal((await service.chat(request)).mode, "fallback");
   await service.chat(request);
   assert.equal(calls, 2);
 });
@@ -161,7 +161,7 @@ test("token cap prevents request before spending", async () => {
       throw new Error("must not run");
     },
   });
-  assert.equal((await service.chat(request)).mode, "demo");
+  assert.equal((await service.chat(request)).mode, "fallback");
   assert.equal(service.status().usage.requests, 0);
 });
 test("concurrency bounded to two in-flight requests", async () => {
@@ -177,7 +177,7 @@ test("concurrency bounded to two in-flight requests", async () => {
   const a = service.chat(request),
     b = service.chat(request);
   const c = await service.chat(request);
-  assert.equal(c.mode, "demo");
+  assert.equal(c.mode, "fallback");
   assert.match(c.error!, /busy/);
   resolve();
   await Promise.all([a, b]);

@@ -22,7 +22,8 @@ import {
   actionHours,
 } from "./engine";
 import { validateWorld, makeCheckpoint } from "./persistence";
-import { demoConversation } from "./intelligence";
+import { demoConversation, demoDecision, asFallback } from "./intelligence";
+import { activateLives, getDecisionRequests } from "./lives";
 import type {
   World,
   Action,
@@ -30,8 +31,11 @@ import type {
   ConversationReply,
   SimEvent,
   Resource,
+  AIUsage,
+  ConversationRequest,
 } from "./contracts";
 import "./three.css";
+import { resolveEvidence } from "./evidence";
 interface Save {
   version: 2;
   world: World;
@@ -42,7 +46,7 @@ interface Save {
 const clone = <T,>(x: T): T => structuredClone(x),
   id = () => crypto.randomUUID();
 const fresh = (): Save => {
-  const world = createPhysicalWorld();
+  const world = activateLives(createPhysicalWorld());
   return {
     version: 2,
     world,
@@ -73,7 +77,8 @@ function readSave() {
     const s = JSON.parse(
       localStorage.getItem("afterlight.neighborhood") || "null",
     );
-    if (validSave(s)) return { ...s, world: activateSpatial(s.world) };
+    if (validSave(s))
+      return { ...s, world: activateLives(activateSpatial(s.world)) };
   } catch {}
   return fresh();
 }
@@ -103,7 +108,15 @@ export default function App3D() {
     [reply, setReply] = useState<ConversationReply>(),
     [busy, setBusy] = useState(false),
     [live, setLive] = useState(false),
-    [usage, setUsage] = useState({ requests: 0, tokens: 0, limit: 60 }),
+    [liveVerified, setLiveVerified] = useState(false),
+    [lastMode, setLastMode] = useState<ConversationReply["mode"]>("demo"),
+    [decisionPending, setDecisionPending] = useState<string>(),
+    [requestOwner, setRequestOwner] = useState<string>(),
+    [usage, setUsage] = useState<AIUsage>({
+      requests: 0,
+      tokens: 0,
+      limit: 60,
+    }),
     [quality, setQuality] = useState<Quality>("high"),
     [muted, setMuted] = useState(true),
     [volume, setVolume] = useState(0.35),
@@ -116,6 +129,31 @@ export default function App3D() {
     selectedRef = useRef(selected);
   replayRef.current = !!replay;
   selectedRef.current = selected;
+  const worldEpoch = useRef(0),
+    requestInFlight = useRef(false),
+    lastDecisionAt = useRef(0),
+    lastRequestedTrigger = useRef(new Map<string, number>());
+  const runtime = useRef({
+    intro,
+    ready,
+    busy,
+    replay: !!replay,
+    drawer,
+    evidence: !!evidence,
+  });
+  runtime.current = {
+    intro,
+    ready,
+    busy,
+    replay: !!replay,
+    drawer,
+    evidence: !!evidence,
+  };
+  function invalidateWorldWork() {
+    worldEpoch.current++;
+    lastRequestedTrigger.current.clear();
+    invalidateDialogue();
+  }
   function invalidateDialogue() {
     dialogueEpoch.current++;
     setBusy(false);
@@ -123,7 +161,7 @@ export default function App3D() {
   }
   function viewMoment(snapshot: World) {
     scene.current?.stop();
-    invalidateDialogue();
+    invalidateWorldWork();
     replayRef.current = true;
     setReplay(activateSpatial(clone(snapshot)));
     setSelected(undefined);
@@ -134,7 +172,7 @@ export default function App3D() {
     setDrawer(null);
   }
   function exitReplay() {
-    invalidateDialogue();
+    invalidateWorldWork();
     replayRef.current = false;
     setReplay(undefined);
     setSelected(undefined);
@@ -161,7 +199,9 @@ export default function App3D() {
     fetch("/api/status")
       .then((r) => r.json())
       .then((s) => {
-        setLive(s.mode === "live");
+        setLive(s.configured ?? s.mode === "live");
+        setLiveVerified(s.liveVerified === true);
+        if (s.lastMode) setLastMode(s.lastMode);
         if (s.usage) setUsage(s.usage);
       })
       .catch(() => {});
@@ -211,7 +251,14 @@ export default function App3D() {
     return true;
   }
   function step(p: Point, seconds: number, moving: boolean) {
-    if (intro || replayRef.current) return false;
+    if (
+      intro ||
+      drawer ||
+      evidence ||
+      replayRef.current ||
+      saveRef.current.world.ended
+    )
+      return false;
     return commit(
       { id: id(), kind: moving ? "walk" : "advance", position: p, seconds },
       true,
@@ -231,40 +278,186 @@ export default function App3D() {
     setReply(undefined);
     setHint(i.label);
   }
+  const modeLabel = (mode: ConversationReply["mode"]) =>
+    mode === "live"
+      ? "LIVE MODEL RESPONSE"
+      : mode === "fallback"
+        ? "DETERMINISTIC FALLBACK"
+        : "DETERMINISTIC DEMO";
+  function updateIntelligence(response: ConversationReply) {
+    setLastMode(response.mode);
+    if (response.mode === "live") setLiveVerified(true);
+    if (response.usage) setUsage(response.usage);
+  }
+  async function requestCharacter(
+    request: ConversationRequest,
+  ): Promise<ConversationReply> {
+    setRequestOwner(request.characterId);
+    try {
+      const result = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
+        signal: AbortSignal.timeout(25000),
+      });
+      if (!result.ok) throw new Error("Character service unavailable");
+      const response = await result.json();
+      if (
+        !response ||
+        !["demo", "live", "fallback"].includes(response.mode) ||
+        typeof response.text !== "string"
+      )
+        throw new Error("Malformed response");
+      return response as ConversationReply;
+    } catch {
+      const response =
+        request.purpose === "decision"
+          ? demoDecision(request.context)
+          : demoConversation(request.context, request.message);
+      return asFallback(
+        response,
+        "Connection unavailable. This response uses the deterministic fallback.",
+      );
+    } finally {
+      setRequestOwner(undefined);
+    }
+  }
+  // One bounded request at a time, outside the render loop. Trigger IDs come from the simulation.
+  useEffect(() => {
+    let disposed = false;
+    const tick = async () => {
+      const r = runtime.current,
+        now = Date.now(),
+        current = saveRef.current.world;
+      if (
+        disposed ||
+        document.hidden ||
+        !r.ready ||
+        r.intro ||
+        r.replay ||
+        r.drawer ||
+        r.evidence ||
+        r.busy ||
+        requestInFlight.current ||
+        current.ended ||
+        now - lastDecisionAt.current < 15000
+      )
+        return;
+      const candidates = getDecisionRequests(current);
+      const request = candidates.find((candidate) => {
+        const trigger =
+          candidate.context.decisionTrigger ||
+          candidate.context.availableActions.find((a) => a.decision)?.decision
+            ?.triggerId;
+        return (
+          !!trigger &&
+          now -
+            (lastRequestedTrigger.current.get(
+              candidate.characterId + ":" + trigger,
+            ) || 0) >
+            60000
+        );
+      });
+      if (!request) return;
+      const trigger =
+        request.context.decisionTrigger ||
+        request.context.availableActions.find((a) => a.decision)?.decision
+          ?.triggerId ||
+        "";
+      const generation = worldEpoch.current;
+      lastDecisionAt.current = now;
+      lastRequestedTrigger.current.set(
+        request.characterId + ":" + trigger,
+        now,
+      );
+      requestInFlight.current = true;
+      setDecisionPending(request.characterId);
+      try {
+        const response = await requestCharacter({
+          ...request,
+          purpose: "decision",
+        });
+        if (!disposed) updateIntelligence(response);
+        if (
+          disposed ||
+          generation !== worldEpoch.current ||
+          replayRef.current ||
+          runtime.current.intro ||
+          saveRef.current.world.ended
+        )
+          return;
+        const offered =
+          response.proposal ||
+          request.context.availableActions.find(
+            (a) =>
+              a.kind === "resident_act" && a.decision?.choice === "check_in",
+          );
+        if (offered?.kind === "resident_act" && offered.decision) {
+          commit(
+            {
+              ...offered,
+              id: id(),
+              decision: {
+                ...offered.decision,
+                source: response.mode,
+                summary: response.text.slice(0, 1200),
+              },
+            },
+            true,
+          );
+        }
+      } finally {
+        requestInFlight.current = false;
+        if (!disposed) setDecisionPending(undefined);
+      }
+    };
+    const timer = setInterval(() => void tick(), 1000);
+    return () => {
+      disposed = true;
+      clearInterval(timer);
+    };
+  }, []);
+  useEffect(() => {
+    if (!selected || busy || replay) return;
+    if (
+      distance(
+        world.spatial!.player,
+        physicalResidentPosition(world, selected),
+      ) > 4
+    ) {
+      setSelected(undefined);
+      setReply(undefined);
+    }
+  }, [world, selected, busy, replay]);
   async function speak(text = message) {
     if (
       !character ||
       !text.trim() ||
-      busy ||
       replayRef.current ||
       saveRef.current.world.ended
     )
       return;
+    if (busy || requestInFlight.current) {
+      setNotice(
+        "A resident is still responding. Your draft is still here; send it when the response arrives.",
+      );
+      return;
+    }
     const who = character.id,
       whoName = character.name,
       generation = dialogueEpoch.current,
       context = getCharacterContext(saveRef.current.world, who);
     setBusy(true);
+    requestInFlight.current = true;
     setMessage("");
-    let response: ConversationReply;
-    try {
-      if (live) {
-        const r = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ characterId: who, message: text, context }),
-          signal: AbortSignal.timeout(65000),
-        });
-        if (!r.ok) throw Error();
-        response = await r.json();
-      } else response = demoConversation(context, text);
-    } catch {
-      response = {
-        ...demoConversation(context, text),
-        error:
-          "Live service unavailable. A deterministic response keeps this encounter playable.",
-      };
-    }
+    const response = await requestCharacter({
+      characterId: who,
+      message: text,
+      context,
+      purpose: "conversation",
+    });
+    requestInFlight.current = false;
+    updateIntelligence(response);
     // A response belongs to its original encounter and branch, even when its request finishes later.
     if (
       generation !== dialogueEpoch.current ||
@@ -293,7 +486,6 @@ export default function App3D() {
         )
       ) {
         setReply(response);
-        if (response.usage) setUsage(response.usage);
       } else
         setNotice(
           "The town changed before this conversation could be recorded.",
@@ -323,12 +515,12 @@ export default function App3D() {
   }
   function rewind(w: World, name: string) {
     scene.current?.stop();
-    invalidateDialogue();
+    invalidateWorldWork();
     replayRef.current = false;
     const s = saveRef.current;
     const next: Save = {
       ...s,
-      world: activateSpatial(clone(w)),
+      world: activateLives(activateSpatial(clone(w))),
       archives: [
         ...s.archives,
         {
@@ -336,7 +528,7 @@ export default function App3D() {
           state: clone(s.world),
         },
       ],
-      moments: [clone(w)],
+      moments: [activateLives(activateSpatial(clone(w)))],
     };
     saveRef.current = next;
     setSave(next);
@@ -397,7 +589,7 @@ export default function App3D() {
       <Scene
         ref={scene}
         world={world}
-        readOnly={!!replay || intro}
+        readOnly={!!replay || intro || !!drawer || !!evidence}
         quality={quality}
         muted={muted}
         volume={volume}
@@ -443,9 +635,11 @@ export default function App3D() {
                 ? "Ten kits are in your pack. Walk to Mercy Clinic and deliver them to Mara."
                 : world.inventory.medical >= 10
                   ? "Enter the warehouse and load ten kits into your pack. Carry them to Mara at the clinic."
-                  : world.staff
-                    ? "Promise Mara ten medical kits. Buy them from Eli, then assign your helper to collect them."
-                    : "Find Inez at the warehouse. Ask her to join your crew, then meet Mara at the clinic."}
+                  : Object.values(world.spatial!.staged).some((n) => n > 0)
+                    ? "Find Inez and ask her to collect your purchased supplies. She will consider the request, then make the trip herself."
+                    : world.staff
+                      ? "Promise Mara ten medical kits. Buy them from Eli, then ask a neighbor to collect them."
+                      : "Find Inez at the warehouse. Ask her to join your crew, then meet Mara at the clinic."}
         </p>
         <button
           disabled={!!replay}
@@ -517,7 +711,7 @@ export default function App3D() {
             ×
           </button>
           <span className="nh-eyebrow">
-            {character ? "IN CONVERSATION" : "YOU ARE HERE"}
+            {character ? "WITHIN SPEAKING DISTANCE" : "YOU ARE HERE"}
           </span>
           <h2>{character?.name || place.name}</h2>
           <p className="nh-role">
@@ -532,6 +726,76 @@ export default function App3D() {
               <p className="nh-character-line">
                 {character.recruited ? character.status : character.motivation}
               </p>
+              <div className="nh-resident-life">
+                <span>
+                  {world.lives?.[character.id]?.routine || character.status}
+                </span>
+                {world.lives?.[character.id]?.assignment && (
+                  <small>
+                    Pickup assignment ·{" "}
+                    {world.lives[character.id].assignment!.amount}{" "}
+                    {world.lives[character.id].assignment!.resource} ·{" "}
+                    {world.lives[character.id].assignment!.status}
+                  </small>
+                )}
+              </div>
+              <details className="nh-context-details">
+                <summary>
+                  What matters to {character.name.split(" ")[0]}
+                </summary>
+                <p>{character.goal}</p>
+                <div className="nh-relations">
+                  {Object.entries(character.relationships)
+                    .filter(([who]) => who !== character.id)
+                    .slice(0, 3)
+                    .map(([who, value]) => (
+                      <span key={who}>
+                        {world.characters.find((c) => c.id === who)?.name ||
+                          who}
+                        <b>
+                          {value >= 0 ? "+" : ""}
+                          {value}
+                        </b>
+                      </span>
+                    ))}
+                </div>
+                <small>
+                  Relationships and priorities are recorded simulation state.
+                </small>
+              </details>
+              {world.events.filter(
+                (e) =>
+                  e.action?.kind === "talk" &&
+                  e.action?.target === character.id,
+              ).length > 0 && (
+                <details className="nh-context-details">
+                  <summary>Earlier conversations</summary>
+                  {world.events
+                    .filter(
+                      (e) =>
+                        e.action?.kind === "talk" &&
+                        e.action?.target === character.id,
+                    )
+                    .slice(-3)
+                    .map((e) => (
+                      <button
+                        className="nh-memory-row"
+                        key={e.id}
+                        onClick={() => setEvidence(e)}
+                      >
+                        <small>
+                          Hour {e.hour.toFixed(1)} · recorded conversation
+                        </small>
+                        <span>
+                          {e.description.length > 180
+                            ? e.description.slice(0, 180) + "…"
+                            : e.description}
+                        </span>
+                        <b>Read source ↗</b>
+                      </button>
+                    ))}
+                </details>
+              )}
               {world.commitments
                 .filter((p) => p.characterId === character.id)
                 .map((p) => (
@@ -542,11 +806,34 @@ export default function App3D() {
                 ))}
               {reply && (
                 <div className="nh-dialogue">
-                  <small>
-                    {reply.mode === "live" ? "LIVE AI" : "DEMO DIALOGUE"}
-                  </small>
+                  <small>{modeLabel(reply.mode)}</small>
                   <p>{reply.text}</p>
-                  {reply.error && <small>{reply.error}</small>}
+                  {reply.error && (
+                    <small className="nh-fallback-note">{reply.error}</small>
+                  )}
+                  {!!reply.evidence?.length && (
+                    <details className="nh-reply-evidence">
+                      <summary>
+                        Context from {reply.evidence.length} recorded sources
+                      </summary>
+                      {reply.evidence.map((source, i) => {
+                        const sourceEvent = resolveEvidence(
+                          source,
+                          world.events,
+                        );
+                        return sourceEvent ? (
+                          <button
+                            key={i}
+                            onClick={() => setEvidence(sourceEvent)}
+                          >
+                            {sourceEvent.title} ↗
+                          </button>
+                        ) : (
+                          <span key={i}>{source}</span>
+                        );
+                      })}
+                    </details>
+                  )}
                   {reply.proposal && (
                     <button
                       className="nh-primary"
@@ -557,6 +844,19 @@ export default function App3D() {
                     </button>
                   )}
                 </div>
+              )}
+              {requestOwner && (
+                <small className="nh-thinking" role="status">
+                  {
+                    world.characters
+                      .find((c) => c.id === requestOwner)
+                      ?.name.split(" ")[0]
+                  }{" "}
+                  {decisionPending
+                    ? "is considering their next step"
+                    : "is responding"}
+                  … You can keep walking. Your draft stays here.
+                </small>
               )}
               <form
                 className="nh-talk"
@@ -574,20 +874,20 @@ export default function App3D() {
                 />
                 <button
                   aria-label="Send message"
-                  disabled={busy || !message.trim()}
+                  disabled={busy || !!requestOwner || !message.trim()}
                 >
                   {busy ? "…" : "↗"}
                 </button>
               </form>
               <div className="nh-quick">
                 <button
-                  disabled={busy}
+                  disabled={busy || !!requestOwner}
                   onClick={() => void speak("What do you need?")}
                 >
                   What do you need?
                 </button>
                 <button
-                  disabled={busy}
+                  disabled={busy || !!requestOwner}
                   onClick={() => void speak("Do you remember my promise?")}
                 >
                   Our promise
@@ -638,6 +938,33 @@ export default function App3D() {
           )}
         </aside>
       )}
+      {!intro &&
+        !drawer &&
+        !replay &&
+        !character &&
+        (() => {
+          const neighbor = world.characters.find(
+            (c) =>
+              world.lives?.[c.id]?.initiative &&
+              distance(
+                world.spatial!.player,
+                physicalResidentPosition(world, c.id),
+              ) <= 3.5,
+          );
+          const initiative = neighbor && world.lives?.[neighbor.id]?.initiative;
+          return neighbor && initiative ? (
+            <button
+              className="nh-initiative"
+              onClick={() => scene.current?.approach(neighbor.id)}
+            >
+              <small>
+                {neighbor.name} · {modeLabel(initiative.source)}
+              </small>
+              <span>“{initiative.text.slice(0, 160)}”</span>
+              <b>Listen ↗</b>
+            </button>
+          ) : null;
+        })()}
       {!!active.length && (
         <div className="nh-shipment">
           <span className="nh-eyebrow">RELIEF IN MOTION</span>
@@ -665,7 +992,13 @@ export default function App3D() {
       <footer className="nh-footer">
         <div>
           <span className="nh-mode">
-            {live ? "LIVE CHARACTER AI" : "DETERMINISTIC DEMO"}
+            {lastMode === "fallback"
+              ? "DETERMINISTIC FALLBACK"
+              : liveVerified
+                ? "LIVE AI VERIFIED"
+                : live
+                  ? "LIVE CONFIGURED · UNVERIFIED"
+                  : "DETERMINISTIC DEMO"}
           </span>
           <p>{replay ? "Recorded moment · read only" : hint}</p>
           <small data-testid="player-position">
@@ -743,10 +1076,13 @@ export default function App3D() {
             <small>
               Complete local scenario ·{" "}
               {live
-                ? "Live conversation enabled"
+                ? liveVerified
+                  ? "Live AI verified in this session"
+                  : "Live configured; awaiting successful response"
                 : "Deterministic demo; no API key required"}
               <br />
-              Sound starts muted. Walking and decisions advance the storm clock.
+              Sound starts muted. The town clock runs while you explore; field
+              desk and replay pause it.
             </small>
           </section>
         </div>
@@ -825,9 +1161,27 @@ export default function App3D() {
                   </p>
                 </div>
                 <p>
+                  {liveVerified
+                    ? "Live provider response verified."
+                    : live
+                      ? "Live AI configured; no successful provider response verified yet."
+                      : "Deterministic demo mode."}{" "}
+                  Last response: {lastMode}.<br />
                   AI: {usage.requests}/{usage.limit} requests · {usage.tokens}{" "}
-                  tokens. Rendering and movement continue while a reply is
-                  pending.
+                  tokens.
+                  {usage.budgetUsd !== undefined && (
+                    <>
+                      {" "}
+                      Budget ${usage.spentUsd?.toFixed(3) || "0.000"} spent / $
+                      {usage.budgetUsd.toFixed(2)}; $
+                      {usage.reservedUsd?.toFixed(3) || "0.000"} reserved.
+                    </>
+                  )}
+                  <br />
+                  One request at a time. Background decisions are at least 15
+                  seconds apart and only run for simulation triggers. A repeated
+                  unresolved trigger is retried no sooner than 60 seconds.
+                  Rendering and movement continue while a reply is pending.
                 </p>
                 <p>
                   Click ground to walk, click residents to approach, drag to
@@ -951,7 +1305,7 @@ export default function App3D() {
                           const s = JSON.parse(await f.text());
                           if (validSave(s)) {
                             scene.current?.stop();
-                            invalidateDialogue();
+                            invalidateWorldWork();
                             replayRef.current = false;
                             setReplay(undefined);
                             setSelected(undefined);
@@ -959,7 +1313,7 @@ export default function App3D() {
                             setShowRoute(false);
                             const restored = {
                               ...s,
-                              world: activateSpatial(s.world),
+                              world: activateLives(activateSpatial(s.world)),
                             };
                             saveRef.current = restored;
                             setSave(restored);

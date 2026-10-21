@@ -20,3 +20,14 @@
 - Geometry, lights, fog, water and audio respond to the storm clock; exposed harbor access closes at hour 54. Camera orbit, click navigation and WASD operate without pointer lock.
 - Performance target 60 FPS high / 30 FPS low. High uses shadows and up to 1.5 device-pixel ratio; low disables shadows and uses 1 pixel ratio. Actual browser samples are documented separately from targets.
 - 3D saves contain authoritative physical state, checkpoints, archived branches and the latest 60 meaningful event snapshots. Recorded moments are read-only snapshots, not cinematic motion replay. Legacy exact action replay remains tested and available in the preserved 2D edition.
+
+## 3.0 character intelligence
+
+- Keep the existing direct HTTPS OpenAI Responses integration rather than adding a second provider or agent framework. Official SDK, model and structured-output documentation were checked; references are in AI-AUDIT.md.
+- A player's assignment is a pending request. A separate resident decision accepts/refuses it; accepting reserves staged goods and starts the existing physical shipment. Model text never credits the warehouse.
+- Decisions use exact offered action indices, stable event/routine triggers, current-state validation and saved source provenance. Null choices resolve to an offered no-effect check-in or refusal, preventing repeated polling and starvation.
+- Background requests are serialized, spaced at least fifteen seconds apart and fenced by world generation. Discarded replies still update usage accounting. Render frames never call a model.
+- Twelve authored routines and relationship networks supply context. Important memories outrank conversational noise; strangers do not receive global inventory/budget facts. Nearby witnesses receive sourced memories; raw dialogue is not proof.
+- 3.0 supersedes the earlier idle-time rule: active gameplay advances time even while stationary; intro, field desk, evidence, replay and hidden tabs pause. This lets residents continue without requiring player commands.
+- Retain scripted storm milestones alongside optional model choices. Routine travel updates logical destination before visual arrival; interactions are suppressed in transit. Cargo remains authoritative throughout its route.
+- Credential setup is a hidden local terminal prompt, with no secret in commands or chat. USD limits are conservative per-process estimates, not provider account billing caps. Provider verification requires a real successful request, not merely a configured key.

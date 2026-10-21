@@ -111,6 +111,53 @@ export function validateWorld(x: unknown): x is World {
     )
   )
     return false;
+  if (x.lives !== undefined) {
+    if (
+      !record(x.lives) ||
+      Object.keys(x.lives).length !== 12 ||
+      !x.characters.every((c: any) => record(x.lives[c.id]))
+    )
+      return false;
+    for (const life of Object.values(x.lives) as any[]) {
+      if (
+        typeof life.routine !== "string" ||
+        !Number.isFinite(life.lastDecisionHour) ||
+        life.lastDecisionHour < -8 ||
+        life.lastDecisionHour > x.hour ||
+        !Array.isArray(life.handledTriggers) ||
+        life.handledTriggers.length > 80 ||
+        !life.handledTriggers.every((t: any) => typeof t === "string") ||
+        new Set(life.handledTriggers).size !== life.handledTriggers.length
+      )
+        return false;
+      if (life.assignment !== undefined) {
+        const a = life.assignment;
+        if (
+          !record(a) ||
+          typeof a.id !== "string" ||
+          !resources.includes(a.resource) ||
+          !Number.isInteger(a.amount) ||
+          a.amount < 1 ||
+          a.amount > 10 ||
+          !["pending", "accepted", "declined", "complete"].includes(a.status) ||
+          typeof a.eventId !== "string" ||
+          !x.events.some((e: any) => e.id === a.eventId)
+        )
+          return false;
+      }
+      if (life.initiative !== undefined) {
+        const i = life.initiative;
+        if (
+          !record(i) ||
+          typeof i.text !== "string" ||
+          typeof i.eventId !== "string" ||
+          !["demo", "live", "fallback"].includes(i.source) ||
+          !x.events.some((e: any) => e.id === i.eventId)
+        )
+          return false;
+      }
+    }
+  }
   if (x.spatial !== undefined) {
     const p = (v: any) =>
       record(v) &&

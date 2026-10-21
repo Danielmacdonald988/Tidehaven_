@@ -149,6 +149,21 @@ const residents: [
     "They know a footpath around the flooded underpass.",
   ],
 ];
+/** Familiar ties, working trust and friction are intentionally asymmetric. */
+export const INITIAL_RELATIONSHIPS: Record<string, Record<string, number>> = {
+  mara: { luis: 85, eli: 35, rosa: 70 },
+  eli: { bea: 70, inez: 40, ada: 30 },
+  jo: { theo: 65, inez: 75, luis: 60 },
+  rosa: { noah: 85, bea: 75, kit: 60 },
+  sam: { kit: 80, jo: 55, ada: 65 },
+  inez: { ada: 70, eli: 45, jo: 80 },
+  theo: { jo: 75, inez: 55, sam: 35 },
+  bea: { eli: 65, rosa: 80, noah: 55 },
+  noah: { rosa: 90, inez: 60, ada: 50 },
+  ada: { inez: 80, sam: 70, eli: 35 },
+  luis: { mara: 90, jo: 65, rosa: 50 },
+  kit: { sam: 85, rosa: 70, theo: 40 },
+};
 export function createCharacters(): Character[] {
   return residents.map(
     ([id, name, role, location, color, motivation, style, goal, secret]) => ({
@@ -165,10 +180,7 @@ export function createCharacters(): Character[] {
         "A hurricane arrives in 72 hours.",
         "The old warehouse is available for relief.",
       ],
-      relationships: {
-        mara: id === "luis" ? 85 : 30,
-        jo: id === "theo" ? 65 : 20,
-      },
+      relationships: { ...INITIAL_RELATIONSHIPS[id] },
       trust: 50,
       status: "Preparing for the storm",
       recruited: false,

@@ -1,4 +1,12 @@
 import {
+  assignmentError,
+  applyResidentChoice,
+  recordLifeEvent,
+  completeAssignment,
+  routineDescription,
+  residentChoices,
+} from "./lives";
+import {
   spatialError,
   physicalLocation,
   dispatchShipment,
@@ -285,6 +293,8 @@ export function applyAction(world: World, a: Action): ActionResult {
     !a.id.trim() ||
     a.id.length > 200 ||
     ![
+      "assign",
+      "resident_act",
       "walk",
       "advance",
       "dispatch",
@@ -321,8 +331,29 @@ export function applyAction(world: World, a: Action): ActionResult {
       `Budget: $${w.money}`,
     ],
     constraints: string[] = [];
-  if (a.actor && a.actor !== "player")
+  if (a.actor && a.actor !== "player" && a.kind !== "resident_act")
     return fail("Only the player can submit relief actions.");
+  if (a.kind === "resident_act") {
+    const result = applyResidentChoice(w, a);
+    if (result.error) return fail(result.error);
+    w.appliedActions.push(a.id);
+    const decisionEvent = event(
+      w,
+      result.title!,
+      result.description!,
+      "resident_decision",
+      result.facts,
+      result.constraints,
+      result.effects,
+      a,
+    );
+    remember(w, a.actor!, decisionEvent, result.description!, [
+      "decision",
+      a.decision!.choice,
+    ]);
+    recordLifeEvent(w, decisionEvent, a.actor);
+    return { ok: true, state: w, message: result.description! };
+  }
   const spatialProblem = spatialError(w, a);
   if (spatialProblem) return fail(spatialProblem);
   if (a.kind === "walk" || a.kind === "advance") {
@@ -343,6 +374,8 @@ export function applyAction(world: World, a: Action): ActionResult {
         ["Goods credited only after physical route completed"],
         [`${shipment.resource} +${shipment.amount}`],
       );
+      completeAssignment(w, shipment.workerId, arrived);
+      recordLifeEvent(w, arrived, shipment.workerId);
       remember(w, shipment.workerId, arrived, arrived.description, [
         "shipment",
       ]);
@@ -354,6 +387,22 @@ export function applyAction(world: World, a: Action): ActionResult {
     };
   }
   switch (a.kind) {
+    case "assign": {
+      const error = assignmentError(w, a);
+      if (error) return fail(error);
+      hours = 0.1;
+      title = `A request for ${c!.name}`;
+      desc = `You ask ${c!.name} to pick up ${quantity} ${a.resource} from Salt Market and bring it to the warehouse. They will decide whether to accept.`;
+      w.lives![c!.id].assignment = {
+        id: a.id,
+        resource: a.resource!,
+        amount: quantity,
+        status: "pending",
+        eventId: `e${w.events.length + 1}`,
+      };
+      effects = ["Assignment pending; no goods moved or reserved"];
+      break;
+    }
     case "load": {
       if (
         !w.spatial ||
@@ -592,6 +641,7 @@ export function applyAction(world: World, a: Action): ActionResult {
     );
   w.appliedActions.push(a.id);
   const e = event(w, title, desc, a.kind, facts, constraints, effects, a);
+  recordLifeEvent(w, e, c?.id);
   if (c && a.kind === "talk") {
     c.memories.push({
       eventId: e.id,
@@ -660,6 +710,27 @@ export function getAvailableActions(w: World, characterId?: string): Action[] {
       add("recruit", "Ask them to join your relief crew", { target: c.id });
     if (c.id === "mara" && w.hour < 24 && !w.commitments.length)
       add("promise", "Promise 10 medical kits by hour 24", { target: "mara" });
+    if (
+      w.lives &&
+      w.spatial &&
+      !["pending", "accepted"].includes(
+        w.lives[c.id]?.assignment?.status || "",
+      ) &&
+      !w.spatial.shipments.some(
+        (s) => s.workerId === c.id && s.status !== "arrived",
+      )
+    )
+      for (const resource of ["medical", "food", "water", "fuel"] as Resource[])
+        if (w.spatial.staged[resource] > 0)
+          add(
+            "assign",
+            `Ask ${c.name.split(" ")[0]} to collect ${Math.min(10, w.spatial.staged[resource])} ${resource}`,
+            {
+              target: c.id,
+              resource,
+              amount: Math.min(10, w.spatial.staged[resource]),
+            },
+          );
     const logistics = getAvailableActions(w).filter((a) =>
       [
         "buy",
@@ -734,17 +805,62 @@ export function getCharacterContext(w: World, id: string): CharacterContext {
       ...c.knowledge.slice(-12),
       ...c.privateFacts.map((f) => `Your private knowledge: ${f}`),
     ],
-    memories: c.memories.slice(-6),
+    memories: w.lives
+      ? [...c.memories]
+          .map((m, i) => ({
+            m,
+            score:
+              i +
+              (m.tags.some((t) =>
+                ["promise", "kept", "broken", "assign", "shipment"].includes(t),
+              )
+                ? c.memories.length
+                : 0),
+          }))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 6)
+          .map((x) => x.m)
+      : c.memories.slice(-6),
+    ...(w.lives
+      ? {
+          priorities: [
+            c.goal,
+            c.motivation,
+            ...(w.lives[id].assignment
+              ? [
+                  `Pickup assignment ${w.lives[id].assignment!.status}: ${w.lives[id].assignment!.amount} ${w.lives[id].assignment!.resource}.`,
+                ]
+              : []),
+          ],
+          relationships: Object.entries(c.relationships).map(
+            ([other, value]) =>
+              `${w.characters.find((n) => n.id === other)?.name || other}: ${value >= 60 ? "trusted relationship" : "acquaintance"}`,
+          ),
+          routine: routineDescription(w, id),
+        }
+      : {}),
     publicFacts: [
       ...(recruitReason(w, id)
         ? [`Recruitment condition: ${recruitReason(w, id)}`]
         : ["Ready to join your crew if asked."]),
       `Storm arrives at hour 72. Current hour ${Number(w.hour.toFixed(1))}.`,
-      `Relief effort has ${w.staff} helpers and ${w.transport} transport seats.`,
-      `Relief reserve: food ${w.inventory.food}, water ${w.inventory.water}, medical ${w.inventory.medical}, fuel ${w.inventory.fuel}. Budget $${w.money}.`,
-      ...(w.spatial
+      ...(!w.lives || c.recruited
         ? [
-            `Purchased supplies awaiting a helper at market: food ${w.spatial.staged.food}, water ${w.spatial.staged.water}, medical ${w.spatial.staged.medical}, fuel ${w.spatial.staged.fuel}. Supplies enter warehouse inventory only when a shipment arrives. Carried: food ${w.spatial.carried.food}, water ${w.spatial.carried.water}, medical ${w.spatial.carried.medical}. Delivery requires carrying supplies from the warehouse.`,
+            `Relief effort has ${w.staff} helpers and ${w.transport} transport seats.`,
+            `Relief reserve: food ${w.inventory.food}, water ${w.inventory.water}, medical ${w.inventory.medical}, fuel ${w.inventory.fuel}. Budget $${w.money}.`,
+            ...(w.spatial
+              ? [
+                  `Purchased supplies awaiting a helper at market: food ${w.spatial.staged.food}, water ${w.spatial.staged.water}, medical ${w.spatial.staged.medical}, fuel ${w.spatial.staged.fuel}. Supplies enter warehouse inventory only when a shipment arrives. Carried: food ${w.spatial.carried.food}, water ${w.spatial.carried.water}, medical ${w.spatial.carried.medical}. Delivery requires carrying supplies from the warehouse.`,
+                ]
+              : []),
+          ]
+        : []),
+      ...(w.lives && c.location === "clinic"
+        ? [`Clinic medicine received: ${w.delivered.medical} kits.`]
+        : []),
+      ...(w.lives && c.id === "eli" && w.spatial
+        ? [
+            `Your market has ${w.spatial.staged.medical} medical, ${w.spatial.staged.food} food, ${w.spatial.staged.water} water and ${w.spatial.staged.fuel} fuel staged for collection.`,
           ]
         : []),
       ...w.commitments
@@ -772,6 +888,8 @@ export function replayTimeline(t: Timeline): World {
 }
 
 export function actionHours(action: Action): number {
+  if (action.kind === "resident_act") return 0;
+  if (action.kind === "assign") return 0.1;
   if (action.kind === "load") return 0.25;
   if (action.kind === "dispatch") return 0;
   if (action.kind === "walk" || action.kind === "advance")

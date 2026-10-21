@@ -114,7 +114,7 @@ export function spatialError(w: World, a: Action): string | undefined {
   const place = PLACES.find((p) => p.id === w.location)!;
   if (distance(s.player, pointAtLocation(place.id)) > 4)
     return "Move closer to the location before taking this action.";
-  if (["talk", "recruit", "promise"].includes(a.kind) && a.target) {
+  if (["talk", "recruit", "promise", "assign"].includes(a.kind) && a.target) {
     if (distance(s.player, physicalResidentPosition(w, a.target)) > 3.5)
       return "Move within speaking distance of this resident.";
     if (
@@ -131,7 +131,10 @@ function route(from: Point, fromId: LocationId, toId: LocationId): Point[] {
 export function dispatchShipment(w: World, a: Action): string | undefined {
   const s = w.spatial!,
     worker = w.characters.find((c) => c.id === a.target);
-  if (!["warehouse", "market"].includes(w.location))
+  if (
+    a.kind !== "resident_act" &&
+    !["warehouse", "market"].includes(w.location)
+  )
     return "Dispatch supplies from the warehouse or market.";
   if (!worker?.recruited)
     return "Recruit this helper before assigning a shipment.";

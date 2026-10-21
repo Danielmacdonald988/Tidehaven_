@@ -666,7 +666,11 @@ export function buildResidents(world: World): ResidentHandle {
     const avatar = buildAvatar(c.id, c.color);
     const home = residentHome(world, c.id);
     const shipment = world.spatial?.shipments
-      .filter((s) => s.workerId === c.id)
+      .filter(
+        (s) =>
+          s.workerId === c.id &&
+          (s.status !== "arrived" || c.location === "warehouse"),
+      )
       .at(-1);
     const initial = shipment?.position || home;
     avatar.group.position.set(initial.x, 0, initial.z);
@@ -699,12 +703,17 @@ export function buildResidents(world: World): ResidentHandle {
       return e ? { ...e.interaction.position } : undefined;
     },
     update(next, dt, elapsed, player, selected) {
+      interactions.length = 0;
       for (const e of entries) {
         const c = next.characters.find((c) => c.id === e.id);
         if (!c) continue;
         const goal = residentHome(next, e.id);
         const shipment = next.spatial?.shipments
-          .filter((s) => s.workerId === e.id)
+          .filter(
+            (s) =>
+              s.workerId === e.id &&
+              (s.status !== "arrived" || c.location === "warehouse"),
+          )
           .at(-1);
         let speed = 0;
         const position = e.avatar.group.position;
@@ -770,6 +779,9 @@ export function buildResidents(world: World): ResidentHandle {
         e.interaction.position.x = position.x;
         e.interaction.position.z = position.z;
         e.interaction.location = c.location;
+        // A routine commuter is visible but cannot be addressed at a logical destination before arriving.
+        if (!e.path.length && (!shipment || shipment.status === "arrived"))
+          interactions.push(e.interaction);
         e.avatar.animate(
           elapsed,
           speed,

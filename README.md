@@ -1,6 +1,22 @@
-# AFTERLIGHT — the walkable neighborhood
+# AFTERLIGHT 3.0 — lives behind the doors
 
 The default experience is now a **playable Three.js neighborhood**. The original simulation, promises, negotiations, outcomes and tests remain underneath it. The previous 2D edition is preserved at `?classic`, with its original browser save untouched.
+
+## 3.0: character decisions, with honest provenance
+
+The existing OpenAI Responses adapter now powers both conversation and bounded resident decisions when a project credential is configured. Without one, the game explicitly uses **deterministic demo** behavior. Provider failures or exhausted limits display **deterministic fallback**. A configured key is not shown as verified until a structured provider response succeeds.
+
+Try the new interaction: buy ten medical kits at Salt Market, walk to Inez, and type **“Can you collect the ten medical kits I bought while I check on Mara?”** Accept the proposed request, then walk away. The request remains pending until Inez considers it. Acceptance recruits her if eligible and starts a real capacity-limited supply trip; refusal leaves your goods untouched. Return after delivery to hear her sourced recollection. Ask Mara for the same pickup before supplying her patients and her competing responsibilities constrain the answer.
+
+Residents now have distinct priorities, relationships, routines, retrieved event memories and nearby initiatives. A single background decision is dispatched at a time, at least fifteen seconds apart, for pending tasks, known events or eight-hour routine cycles. Model prose never creates facts or inventory. Specialist residents keep their duties; eligible mobile residents may choose to stay or follow their routine. The world advances while the active game is open; the field desk, evidence, replay and hidden tabs pause it.
+
+**Enable real AI securely:** run `npm run setup:ai` in your own project terminal. Paste your OpenAI project key into its hidden input, never chat. It writes only ignored `.env.local` with owner-only permissions. Restart the server afterward. `npm run smoke:ai` then makes at most one real request (a $0.05 local smoke cap) and verifies its chosen action against an actual assignment/delivery fixture. It skips explicitly when no key is present. A refusal is reported as a refusal, not a successful shipment.
+
+Limits live in `.env.example`: requests, tokens, concurrency, output tokens, timeout and conservative USD reservations. Defaults are sixty requests, 100,000 tokens, two concurrent server requests, 400 output tokens and $1 per server process. Counters reset on restart; these are not account-wide billing caps. Set an OpenAI project budget separately if needed. Choosing another model requires its correct input/output rates. Failed requests conservatively consume their reserved allowance.
+
+**3.0 verification:** 84 automated tests pass, including mocked provider-to-shipment integration, failure limits, knowledge boundaries, persistence and exact event evidence. Chrome demo play verified the Inez pickup, independent arrival, recalled completion, Mara’s kept promise, and a 390×844 encounter/evidence layout.
+
+See [AI-AUDIT.md](AI-AUDIT.md) for what was scripted before, what models can now decide, official documentation references, and verification boundaries. In this build session no project credential was available, so **real upstream behavior remains unverified**; mocked integration and actual browser demo playthrough are separate evidence.
 
 ## Start the 3D build
 
@@ -22,7 +38,7 @@ Open **http://127.0.0.1:5173**. For production, stop dev first, then `npm run bu
 
 Click ground to move, click people/doors/supplies to approach, and drag to rotate the camera. Camera buttons provide a mouse-only alternative; WASD is optional. Featured buildings have open interiors and cutaway roofs. Workers and the player carry at most ten units per load. The relief truck retains its twelve-seat capacity.
 
-Walking and active deliveries advance one simulation hour per 60 seconds of physical progress; deliberate decisions retain their displayed hour costs. Idle reading does not advance time unless a shipment is moving. Background/hidden tabs pause rendering and physical progress. Do not expect offline deliveries.
+In 3.0 the active neighborhood advances one simulation hour per 60 seconds, including idle time; deliberate decisions retain their displayed hour costs. Open the field desk or evidence inspector to pause. Background/hidden tabs pause rendering and physical progress. Do not expect offline deliveries.
 
 **Field desk** includes saved checkpoints, preserved branches, event evidence, import/export, and read-only recorded moments. 3D saves use a separate namespace from the original game. Importing a legacy save migrates its world state; retain the original export for its complete legacy timeline. The neighborhood keeps the latest 60 meaningful-event snapshots, not every animation frame. Reload resumes partial shipments.
 
@@ -32,11 +48,11 @@ Walking and active deliveries advance one simulation hour per 60 seconds of phys
 
 Original procedural architecture, articulated character models, material textures, signage, and synthesized sound are documented in [ASSETS.md](ASSETS.md). No external model downloads or unlicensed artwork are required. This is a stylized neighborhood, not photorealistic scanned scenery. All six featured locations are enterable; one background cottage is decorative.
 
-Performance targets are **60 FPS High / 30 FPS Low**. Settings displays rolling 2-second measurements including p95 frame time, draws, triangles and renderer. Production Chrome on **Apple M4 / ANGLE** measured **60 FPS, p95 17.5 ms** at the warehouse: High **2565×1213** render pixels, **828 draws / 126,070 triangles**; Low **1710×809**, **431 draws / 69,546 triangles**. A 390×844 emulated viewport sampled 60 FPS, p95 17.2 ms. These are short, scene-dependent samples, not sustained benchmarks or measurements from a physical phone. Low removes shadows and rain and caps pixel ratio at 1.
+Performance targets are **60 FPS High / 30 FPS Low**. The following measurements are from the 2.0 world release; 3.0 performance has not been re-benchmarked. Settings displays rolling 2-second measurements including p95 frame time, draws, triangles and renderer. Production Chrome on **Apple M4 / ANGLE** measured **60 FPS, p95 17.5 ms** at the warehouse: High **2565×1213** render pixels, **828 draws / 126,070 triangles**; Low **1710×809**, **431 draws / 69,546 triangles**. A 390×844 emulated viewport sampled 60 FPS, p95 17.2 ms. These are short, scene-dependent samples, not sustained benchmarks or measurements from a physical phone. Low removes shadows and rain and caps pixel ratio at 1.
 
 Verified in the actual browser: mouse-only recruitment, promise, store negotiation, staged purchase, dispatched collection, reload during transit, visible crate arrival, loading/carrying/delivery, remembered kept promise (trust 75), rewind and remembered broken promise (trust 25), mobile encounters, snapshot inspection, and camera controls. Tests include resource conservation, capacity, replay, promises, knowledge boundaries, API failures and collision-safe route following.
 
-Live AI still uses the existing server-side adapter and bounded, validated proposals. No upstream call has been made without credentials. Autonomous behavior is rule-based. Vehicles are interactive transport resources but are not drivable; evacuation remains a validated timed action rather than a fully animated passenger sequence. Full cinematic motion replay and mechanic generation are outside this neighborhood milestone.
+Live AI still uses the existing server-side adapter and bounded, validated proposals. No upstream call has been made without credentials. Storm milestones and resource rules remain authored. In 3.0, optional model decisions choose task acceptance/refusal and bounded routine alternatives; demo mode uses deterministic choices. Vehicles are interactive transport resources but are not drivable; evacuation remains a validated timed action rather than a fully animated passenger sequence. Full cinematic motion replay and mechanic generation are outside this neighborhood milestone.
 
 ---
 

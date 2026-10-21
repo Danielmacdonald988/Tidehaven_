@@ -44,3 +44,21 @@ Shared 3D contracts in src/three/shared.ts, simulation contracts remain src/cont
 - [x] Preserved classic edition, saves, partial shipments, branching and read-only snapshots.
 - [x] Browser success run, broken-promise rewind, mobile layout and measured performance.
 - [x] Collision corner regression, cutaway occlusion fixes, stale AI reply and replay mutation guards.
+
+# 3.0 character intelligence
+
+Shared additions and file ownership established in V3-CONTRACT.md before parallel implementation.
+
+- Intelligence agent: Responses conversation/decision adapter, budgets, provenance, safe smoke and provider tests.
+- World agent: assignments, validated choices, routines, relationships, witnessed knowledge, sourced memories and replay tests.
+- Experience agent: async scheduler, nearby initiatives, contextual encounter details and request UX.
+- Lead: shared contracts, secure local setup, end-to-end tests, actual browser playthrough, integration and docs.
+
+- [x] Audit scripted versus model-backed behavior.
+- [x] Pending task → resident choice → real shipment → remembered completion.
+- [x] Bounded routine/known-event decisions with distinct priorities and relationships.
+- [x] Explicit demo/live/fallback and configured-versus-verified status.
+- [x] Configurable request/token/concurrency/USD limits and safe credential setup.
+- [x] Mocked provider integration, invariant tests, typecheck and production build.
+- [x] 84 passing tests and actual Chrome demo assignment, independent delivery, remembered completion, fulfilled promise and mobile evidence inspection.
+- [ ] Actual upstream request/effect verification: no project credential available. Secure setup and one-request smoke are implemented; no live result claimed.

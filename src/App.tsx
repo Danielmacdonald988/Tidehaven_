@@ -265,6 +265,7 @@ export default function App() {
       }
       const fallback = {
         ...demoConversation(context, text),
+        mode: "fallback" as const,
         error:
           "Live AI is unavailable. This response uses the deterministic fallback; your world is safe.",
       };
@@ -424,7 +425,7 @@ export default function App() {
           </div>
           <div className="mode-label">
             <i />
-            {live ? "Live character AI" : "Deterministic demo"}
+            {live ? "Live AI configured" : "Deterministic demo"}
             <button onClick={() => setPanel("help")}>ⓘ</button>
           </div>
         </section>
@@ -515,7 +516,9 @@ export default function App() {
                     <span className="eyebrow">
                       {reply.mode === "live"
                         ? "LIVE RESPONSE"
-                        : "DEMO RESPONSE"}
+                        : reply.mode === "fallback"
+                          ? "DETERMINISTIC FALLBACK"
+                          : "DEMO RESPONSE"}
                     </span>
                     <p>{reply.text}</p>
                     {reply.error && (
@@ -988,7 +991,7 @@ export default function App() {
                 <div className="mode-detail">
                   <b>
                     {live
-                      ? "Live character intelligence enabled"
+                      ? "Live character AI configured"
                       : "Deterministic demo mode"}
                   </b>
                   <p>

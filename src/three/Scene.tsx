@@ -245,7 +245,11 @@ const Scene = forwardRef<SceneControl, Props>(function Scene(props, ref) {
       const active = current.current.world.spatial!.shipments.some(
         (s) => s.status !== "arrived",
       );
-      if (moved || active) {
+      if (
+        moved ||
+        active ||
+        (!!current.current.world.lives && !current.current.world.ended)
+      ) {
         const accepted = current.current.onStep(
           { ...position },
           Math.min(5, stepSeconds),

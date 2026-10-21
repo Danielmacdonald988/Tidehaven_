@@ -8,7 +8,9 @@
     "build": "tsc --noEmit && vite build",
     "start": "tsx server/index.ts",
     "test": "tsx --test tests/*.test.ts",
-    "format": "prettier --write src server tests *.ts *.json *.md index.html"
+    "format": "prettier --write src server tests *.ts *.json *.md index.html",
+    "setup:ai": "node scripts/configure-ai.mjs",
+    "smoke:ai": "tsx server/smoke.ts"
   },
   "dependencies": {
     "dotenv": "^16.4.7",

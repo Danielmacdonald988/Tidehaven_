@@ -1,7 +1,18 @@
 export type Resource = "food" | "water" | "medical" | "fuel";
 export type LocationId =
   "warehouse" | "market" | "clinic" | "harbor" | "heights" | "radio";
+export type IntelligenceMode = "demo" | "live" | "fallback";
+export interface AIUsage {
+  requests: number;
+  tokens: number;
+  limit: number;
+  spentUsd?: number;
+  reservedUsd?: number;
+  budgetUsd?: number;
+}
 export type ActionKind =
+  | "assign"
+  | "resident_act"
   | "load"
   | "walk"
   | "advance"
@@ -28,6 +39,12 @@ export interface Action {
   position?: Point;
   seconds?: number;
   text?: string;
+  decision?: {
+    triggerId: string;
+    choice: "collect" | "decline" | "routine" | "check_in";
+    source: IntelligenceMode;
+    summary: string;
+  };
 }
 export interface Memory {
   eventId: string;
@@ -105,6 +122,7 @@ export interface World {
   ended: boolean;
   outcome?: Outcome;
   spatial?: SpatialState;
+  lives?: Record<string, ResidentLife>;
 }
 export interface ActionResult {
   ok: boolean;
@@ -131,6 +149,7 @@ export interface ConversationRequest {
   characterId: string;
   message: string;
   context: CharacterContext;
+  purpose?: "conversation" | "decision";
 }
 export interface CharacterContext {
   name: string;
@@ -143,12 +162,17 @@ export interface CharacterContext {
   memories: Memory[];
   publicFacts: string[];
   availableActions: Action[];
+  priorities?: string[];
+  relationships?: string[];
+  routine?: string;
+  decisionTrigger?: string;
 }
 export interface ConversationReply {
-  mode: "demo" | "live";
+  mode: IntelligenceMode;
   text: string;
   proposal?: Action;
-  usage?: { requests: number; tokens: number; limit: number };
+  usage?: AIUsage;
+  evidence?: string[];
   error?: string;
 }
 export const LOCATIONS: {
@@ -224,4 +248,18 @@ export interface SpatialState {
   staged: Record<Resource, number>;
   shipments: Shipment[];
   elapsedSeconds: number;
+}
+
+export interface ResidentLife {
+  routine: string;
+  lastDecisionHour: number;
+  handledTriggers: string[];
+  assignment?: {
+    id: string;
+    resource: Resource;
+    amount: number;
+    status: "pending" | "accepted" | "declined" | "complete";
+    eventId: string;
+  };
+  initiative?: { text: string; eventId: string; source: IntelligenceMode };
 }

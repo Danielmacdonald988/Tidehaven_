@@ -14,12 +14,29 @@ const bounded = (name: string, fallback: number, maximum: number) => {
     ? Math.min(Math.floor(n), maximum)
     : fallback;
 };
+const decimal = (name: string, fallback: number, max: number) => {
+  const value = process.env[name];
+  if (value === undefined || value.trim() === "") return fallback;
+  const n = Number(value);
+  return Number.isFinite(n) && n >= 0 ? Math.min(n, max) : fallback;
+};
+const optionalPrice = (name: string) => {
+  const value = process.env[name];
+  if (!value?.trim()) return undefined;
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? n : undefined;
+};
 const intelligence = createIntelligence({
   apiKey: process.env.OPENAI_API_KEY,
   model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-  maxRequests: bounded("AI_MAX_REQUESTS", 60, 1000),
-  maxTokens: bounded("AI_MAX_TOKENS", 100000, 1000000),
+  maxRequests: Math.floor(decimal("AI_MAX_REQUESTS", 60, 1000)),
+  maxTokens: Math.floor(decimal("AI_MAX_TOKENS", 100000, 1000000)),
   timeoutMs: bounded("AI_TIMEOUT_MS", 12000, 30000),
+  maxConcurrency: bounded("AI_MAX_CONCURRENCY", 2, 4),
+  maxUsd: decimal("AI_MAX_USD", 1, 100),
+  maxOutputTokens: bounded("AI_MAX_OUTPUT_TOKENS", 400, 1600),
+  inputUsdPerMillion: optionalPrice("AI_INPUT_USD_PER_MILLION"),
+  outputUsdPerMillion: optionalPrice("AI_OUTPUT_USD_PER_MILLION"),
 });
 export function createApp(service = intelligence) {
   const app = express();
@@ -85,7 +102,7 @@ if (
 ) {
   createApp().listen(port, "127.0.0.1", () =>
     console.log(
-      `AFTERLIGHT at http://127.0.0.1:${port} — ${intelligence.status().mode} characters`,
+      `AFTERLIGHT at http://127.0.0.1:${port} — ${intelligence.status().configured ? "OpenAI configured; not yet live-verified" : "deterministic demo"}`,
     ),
   );
 }
