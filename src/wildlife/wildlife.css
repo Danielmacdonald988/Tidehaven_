@@ -1,0 +1,465 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Libre+Caslon+Display&display=swap");
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #1e444b;
+}
+.wildlife-root {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  color: #f5efdc;
+  font-family: "DM Sans", sans-serif;
+}
+.wildlife-canvas {
+  position: absolute;
+  inset: 0;
+}
+.wildlife-canvas canvas {
+  display: block;
+  outline: none;
+  touch-action: none;
+}
+.wildlife-shade {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    #173c3f77,
+    transparent 25%,
+    transparent 70%,
+    #173c3f55
+  );
+}
+.wildlife-root button,
+.wildlife-root input,
+.wildlife-root select {
+  font: inherit;
+}
+.wildlife-root button {
+  color: inherit;
+  border: 1px solid #e5eee03b;
+  background: #234a4cc9;
+  border-radius: 30px;
+  cursor: pointer;
+  padding: 12px 20px;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.wildlife-root button:hover {
+  background: #39706bdc;
+  transform: translateY(-1px);
+}
+.wildlife-root button:focus-visible,
+.wildlife-root a:focus-visible {
+  outline: 2px solid #f5d785;
+  outline-offset: 4px;
+}
+.wildlife-root button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.wildlife-root a {
+  color: inherit;
+}
+.wildlife-header {
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  top: 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.wildlife-header > div > span {
+  font:
+    25px Georgia,
+    serif;
+  letter-spacing: 0.22em;
+}
+.wildlife-header small {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  margin-top: 8px;
+}
+.wildlife-header nav {
+  display: flex;
+  gap: 8px;
+}
+.wildlife-header button {
+  font-size: 11px;
+}
+.wildlife-header b {
+  font-size: 10px;
+  margin-left: 12px;
+  color: #ead2a3;
+}
+.wildlife-weather {
+  position: absolute;
+  top: 117px;
+  left: 32px;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 10px #18383b;
+}
+.wildlife-weather small {
+  display: block;
+  font-size: 9px;
+  opacity: 0.75;
+  margin-top: 8px;
+}
+.weather-dot {
+  display: inline-block;
+  background: #ead29b;
+  width: 7px;
+  height: 7px;
+  border-radius: 100%;
+  margin-right: 10px;
+}
+.weather-dot.rain {
+  background: #99d8d9;
+}
+.weather-dot.dusk {
+  background: #d1b0e2;
+}
+.weather-dot.storm {
+  background: #b5caed;
+}
+.wildlife-first {
+  position: absolute;
+  bottom: 118px;
+  left: 32px;
+  pointer-events: none;
+  text-shadow: 0 2px 12px #18383b;
+}
+.wildlife-first p {
+  font:
+    29px "Libre Caslon Display",
+    Georgia,
+    serif;
+  margin: 0 0 9px;
+}
+.wildlife-first span {
+  font-size: 11px;
+}
+.wildlife-encounter {
+  position: absolute;
+  bottom: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(620px, 94vw);
+  padding: 23px 27px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: #eff0e2f0;
+  border: 1px solid #fff7;
+  border-radius: 18px;
+  color: #254849;
+  box-shadow: 0 16px 50px #163c3944;
+}
+.wildlife-encounter small {
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.wildlife-encounter h1 {
+  font:
+    36px "Libre Caslon Display",
+    Georgia,
+    serif;
+  margin: 4px 0;
+}
+.wildlife-encounter p {
+  font-size: 11px;
+  margin: 0;
+}
+.wildlife-encounter > div {
+  flex: 1;
+}
+.wildlife-encounter > button {
+  background: #416a63;
+  color: #fff;
+  font-size: 12px;
+  max-width: 240px;
+}
+.wildlife-encounter button span {
+  font-size: 22px;
+  margin-left: 10px;
+}
+.wildlife-root .dismiss {
+  position: absolute;
+  right: 5px;
+  top: 0;
+  background: none !important;
+  color: inherit;
+  border: 0;
+  padding: 6px 11px;
+  font-size: 23px;
+}
+.wildlife-root .resonance.ready {
+  background: #d5bc7c;
+  color: #2c4742;
+  box-shadow: 0 0 22px #d5bc7c55;
+}
+.wildlife-root .resonance.charging {
+  transform: scale(0.97);
+  box-shadow: 0 0 30px #e9d39c;
+}
+.wildlife-context {
+  position: absolute;
+  bottom: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  max-width: 90vw;
+  justify-content: center;
+}
+.wildlife-context button {
+  font-size: 12px;
+  white-space: nowrap;
+  box-shadow: 0 8px 30px #183b3933;
+}
+.wildlife-context span {
+  margin-left: 14px;
+  color: #ead29b;
+}
+.wildlife-root .ability {
+  background: #d8c492;
+  color: #284b48;
+  border-color: #f5e2b6;
+}
+.wildlife-companion {
+  position: absolute;
+  left: 32px;
+  bottom: 65px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px !important;
+  text-align: left;
+}
+.wildlife-companion > span {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 3px solid #f4efd6aa;
+}
+.wildlife-companion small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  margin-bottom: 3px;
+}
+.wildlife-companion b {
+  font-weight: 400;
+  opacity: 0.6;
+}
+.wildlife-footer {
+  position: absolute;
+  bottom: 23px;
+  left: 32px;
+  right: 32px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #e0e8dc;
+  text-shadow: 0 1px 6px #193c3c;
+}
+.wildlife-footer small {
+  font-size: 9px;
+}
+.wildlife-notice {
+  position: absolute;
+  top: 85px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 500px;
+  text-align: center;
+  background: #244b4be8;
+  border-radius: 25px;
+  padding: 14px 22px;
+  font-size: 12px;
+}
+.wildlife-bond {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+  text-shadow: 0 3px 25px #143330;
+}
+.wildlife-bond small {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: #ffe6b1;
+}
+.wildlife-bond h2 {
+  font:
+    56px "Libre Caslon Display",
+    Georgia,
+    serif;
+  margin: 8px 0;
+}
+.wildlife-bond span {
+  font-size: 12px;
+}
+.wildlife-options {
+  position: absolute;
+  right: 25px;
+  top: 90px;
+  width: min(390px, calc(100vw - 30px));
+  max-height: calc(100vh - 110px);
+  overflow: auto;
+  padding: 28px;
+  background: #eeeede;
+  color: #294b48;
+  border-radius: 14px;
+  box-shadow: 0 20px 70px #143d3c44;
+}
+.wildlife-options h2 {
+  font:
+    34px "Libre Caslon Display",
+    Georgia,
+    serif;
+  margin: 0 0 20px;
+}
+.wildlife-options label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 12px;
+  margin: 18px 0;
+}
+.wildlife-options p,
+.wildlife-options small {
+  font-size: 10px;
+  line-height: 1.6;
+  display: block;
+  opacity: 0.8;
+}
+.wildlife-options input {
+  accent-color: #608c7a;
+}
+.wildlife-options select {
+  background: white;
+  border: 0;
+  padding: 8px;
+  color: #234a48;
+}
+.wildlife-options button:not(.dismiss) {
+  display: block;
+  width: 100%;
+  margin: 20px 0;
+  color: white;
+}
+.wildlife-options nav {
+  display: flex;
+  gap: 15px;
+  font-size: 11px;
+  margin-top: 22px;
+}
+.wildlife-root:has(.wildlife-options) .wildlife-context {
+  display: none;
+}
+@media (max-width: 600px) {
+  .wildlife-header {
+    top: 19px;
+    left: 16px;
+    right: 16px;
+  }
+  .wildlife-header > div > span {
+    font-size: 17px;
+  }
+  .wildlife-header small {
+    font-size: 7px;
+  }
+  .wildlife-header nav {
+    gap: 4px;
+  }
+  .wildlife-header button {
+    padding: 9px 11px;
+    font-size: 9px;
+  }
+  .wildlife-header b {
+    margin-left: 4px;
+  }
+  .wildlife-weather {
+    top: 94px;
+    left: 17px;
+    font-size: 10px;
+  }
+  .wildlife-weather small {
+    font-size: 8px;
+  }
+  .wildlife-encounter {
+    bottom: 105px;
+    gap: 10px;
+    padding: 20px;
+    align-items: flex-end;
+  }
+  .wildlife-encounter h1 {
+    font-size: 29px;
+  }
+  .wildlife-encounter p {
+    font-size: 9px;
+    max-width: 140px;
+  }
+  .wildlife-encounter > button {
+    font-size: 10px;
+    padding: 12px;
+    max-width: 155px;
+  }
+  .wildlife-encounter button span {
+    display: none;
+  }
+  .wildlife-companion {
+    left: 16px;
+    bottom: 47px;
+    padding: 8px 12px !important;
+  }
+  .wildlife-context {
+    bottom: 113px;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .wildlife-context button {
+    white-space: normal;
+    font-size: 11px;
+  }
+  .wildlife-footer {
+    left: 16px;
+    right: 16px;
+    bottom: 17px;
+    font-size: 8px;
+  }
+  .wildlife-footer small {
+    display: none;
+  }
+  .wildlife-options {
+    right: 15px;
+    top: 79px;
+  }
+  .wildlife-first {
+    left: 18px;
+    bottom: 180px;
+  }
+  .wildlife-first p {
+    font-size: 25px;
+  }
+  .wildlife-notice {
+    top: 135px;
+    width: 85%;
+    font-size: 11px;
+  }
+  .wildlife-bond h2 {
+    font-size: 45px;
+  }
+}

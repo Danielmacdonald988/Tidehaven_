@@ -5,7 +5,9 @@ const App = lazy(() =>
     ? import("./App")
     : new URLSearchParams(location.search).has("campaign")
       ? import("./App3D")
-      : import("./rescue/RescueApp"),
+      : new URLSearchParams(location.search).has("rescue")
+        ? import("./rescue/RescueApp")
+        : import("./wildlife/App"),
 );
 createRoot(document.getElementById("root")!).render(
   <Suspense

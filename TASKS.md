@@ -1,3 +1,27 @@
+# Current milestone — The Living Coast
+
+Shared interfaces and ownership were established in [WILDLIFE-CONTRACT.md](WILDLIFE-CONTRACT.md) before parallel implementation.
+
+- Lead: default routing, world staging, Scene/App, controls, integration and actual browser playtesting.
+- Creature art agent: six original articulated models, animations and asset provenance.
+- Wildlife engine agent: deterministic habitats, encounters, companion navigation, ability validation and engine tests.
+- Journal/audio/verification agent: compact model journal, procedural sound, isolated persistence, independent full-chain tests, read-only integration review and current docs.
+
+Completed implementation: six physical species; encounter greetings and resonance; one active following companion; tracks, obstruction and light abilities; weather-driven appearances and authored rare reveal; independent collection autosave; optional bounded AI animation reactions; preservation of rescue/campaign.
+
+Release verification: **139 tests pass; production build passes.** Actual Chrome play completed all six species, all three abilities, rare reveal, companion following, collection reload and archive/restore. Real bounded companion AI request verified. Desktop and mobile layouts inspected; measured performance and remaining limits are recorded in the release notes.
+
+- [x] First physical encounter → companion → ability → save/load.
+- [x] All six species and deterministic rare encounter.
+- [x] Isolated saves, duplicate rejection, archive recovery and complete collision-safe chain.
+- [x] Actual browser six-species playthrough and real AI response.
+- [x] Mobile journal and encounter inspection; High/Low measurements; screenshots.
+- [x] Integration fixes, final regression/build and release handoff.
+
+See [WILDLIFE-RELEASE.md](WILDLIFE-RELEASE.md) for measured performance and precise verification boundaries. Earlier milestone records follow.
+
+---
+
 # AFTERLIGHT release status
 
 ## Ownership
@@ -63,7 +87,6 @@ Shared additions and file ownership established in V3-CONTRACT.md before paralle
 - [x] 84 passing tests and actual Chrome demo assignment, independent delivery, remembered completion, fulfilled promise and mobile evidence inspection.
 - [x] Actual upstream request/effect verification subsequently completed in 4.0 with the user-configured credential.
 
-
 # 4.0 — The Last Good Road
 
 Ownership established in V4-CONTRACT.md before implementation: gameplay engine/campaign; world presentation/audio; character intelligence followed by independent strategy tests; lead UI/integration and actual browser play.
@@ -76,7 +99,6 @@ Ownership established in V4-CONTRACT.md before implementation: gameplay engine/c
 - [x] Live repair proposal and live market cooperation verified against engine effects.
 - [x] Independent automated alternate-strategy and failure/recovery playtests.
 - [x] Final complete browser campaign, mobile polish, 111 passing tests, production build and release checkpoint.
-
 
 # Storm rescue presentation milestone
 

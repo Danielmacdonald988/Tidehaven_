@@ -1,3 +1,26 @@
+# AFTERLIGHT — The Living Coast
+
+The default experience is now creature discovery: follow tracks and calls, approach an original coastal creature, offer a gentle greeting, and release resonance. Befriend six distinct species, choose a visible companion, and use its abilities to open new routes. This is free exploration with changing weather and **no rescue countdown**.
+
+```sh
+npm install
+npm run dev
+```
+
+Open **http://127.0.0.1:5173**. For the production build, run `npm run build` then `npm start` and open **http://127.0.0.1:3001**. Use the existing server if it is already running; do not launch a duplicate on its port.
+
+**Controls:** click ground to walk; click a creature to approach; use its contextual greeting, then release the resonance button or click the receptive creature. Drag to turn the camera, scroll to zoom; WASD is optional. **Field journal** selects a bonded companion. Contextual buttons let companions help nearby. **Space** pauses; **J** opens the journal. Options includes timing assistance, sound/volume, camera sensitivity and Low graphics. Sound starts muted. Rest at the seaside bench to change the weather without waiting.
+
+Your collection, companion and discovery progress autosave separately from previous modes. Optional server-side AI chooses occasional brief companion animations; discovery, movement, bonding and abilities remain deterministic and work offline. No creature chat or new API setup is required. Existing configured live AI remains server-side.
+
+Previous modes and saves remain available: **[Storm rescue](http://127.0.0.1:3001/?rescue)**, **[Campaign](http://127.0.0.1:3001/?campaign)** and **[Classic](http://127.0.0.1:3001/?classic)**. See [WILDLIFE-RELEASE.md](WILDLIFE-RELEASE.md) for current verification and limitations, and [WILDLIFE-ASSETS.md](WILDLIFE-ASSETS.md) for original art provenance.
+
+Options → **New expedition** preserves one recoverable previous expedition. **Restore previous expedition** swaps it back.
+
+---
+
+The sections below describe earlier releases; their default-entry and verification statements are historical.
+
 # AFTERLIGHT — When the lights go out
 
 The default build now opens a focused playable storm rescue. **Enter the storm**, reach Bay Radio, ask Inez for physical help or use its side entrance, collect the emergency case if you can, and escort Jo into the lit warehouse. The awning collapse changes the actual route; shelter completion requires Jo to arrive.

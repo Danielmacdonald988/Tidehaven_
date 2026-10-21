@@ -1,3 +1,20 @@
+Latest playtest refinements: approach points are selected from reachable sight-clear candidates, screen-space aim assistance eases selection of moving creatures, foreground roofs/palms fade when obstructing the encounter, and portrait framing includes both explorer and creature. Weather benches are physical local rest points. New expeditions archive one validated previous save; restore swaps rather than deletes.
+
+# Current decisions — The Living Coast
+
+- Make discovery the default gameplay loop in the existing 3D neighborhood. Preserve rescue, campaign and their saves behind explicit routes; do not add management or dialogue systems.
+- Keep movement, habitats, receptivity, bonding, weather conditions and ability effects in a deterministic engine. Failures permit immediate retries; assisted resonance is the default. A visible bench changes weather without a disaster deadline.
+- Author six original articulated creature designs with different silhouettes and motion, using local procedural geometry. Use original synthesized species calls and spatial audio; no imported creature assets or borrowed franchise designs. Provenance: [WILDLIFE-ASSETS.md](WILDLIFE-ASSETS.md).
+- Abilities reveal physical tracks, remove a blocking garden gate or illuminate/open a dark passage. The rare encounter depends on reproducible world conditions and completed actions, never a tiny random spawn chance.
+- Persist wildlife separately under `afterlight-living-coast-v1`; validate saves and reject duplicate bonds. Existing disaster timelines remain untouched. Collection is browser-local, not cloud-synchronized.
+- Reuse the existing server-side AI adapter only for bounded, nonverbal companion animation choices. Client caps these at six requests per page session and at least one minute apart, in addition to existing server limits. No model call drives rendering or gates an encounter; failures leave deterministic play available.
+- Show six animated journal portraits with one shared renderer at approximately 15 FPS. Unknown specimens are silhouettes. Keep field-guide text short and do not expose the rare encounter's exact location in the main guide.
+- Report automated physical-world coverage separately from actual browser play and short performance samples. Browser verification is still being completed at this documentation checkpoint.
+
+---
+
+Earlier decisions follow as historical context.
+
 # Design decisions
 
 - The simulation is a pure TypeScript reducer. Player actions and model proposals use the same validated action boundary. UI text never grants resources.
@@ -40,7 +57,6 @@
 - Let manual supplies and independent donations contribute to shelter readiness. Stocking only consumes missing supplies; no double billing for aid already delivered.
 - Explicit zero-based indices on model-visible actions avoid ambiguous selection. Model output is never heuristically converted into a different action. Displayed action terms remain authoritative.
 - Favor original stateful geometry and seeded material textures over new asset downloads. Lower graphics remains available; measure actual browser rendering separately from simulation tests.
-
 
 ## Storm rescue: physical presentation first
 

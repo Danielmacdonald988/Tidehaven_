@@ -9,7 +9,10 @@ import {
 } from "./shared";
 
 /** Original procedural architecture. Dimensions use metres, Y is up. */
-export function buildEnvironment(campaignEnabled = true): EnvironmentHandle {
+export function buildEnvironment(
+  campaignEnabled = true,
+  wildlifeHabitats = false,
+): EnvironmentHandle {
   const group = new THREE.Group();
   group.name = "Bellwether neighborhood";
   const colliders: Collider[] = [];
@@ -697,6 +700,7 @@ export function buildEnvironment(campaignEnabled = true): EnvironmentHandle {
   ).userData.interactionId = "location-harbor";
   for (const x of [-6.6, -1.4]) block(x, 1.25, 28.25, 0.1, 2.5, 0.1, M.wood);
   const stormGate = new THREE.Group();
+  stormGate.name = "legacy-storm-gate";
   group.add(stormGate);
   for (const x of [-1, 11]) {
     const post = mesh(boxGeo, M.coral, stormGate);
@@ -1204,6 +1208,8 @@ export function buildEnvironment(campaignEnabled = true): EnvironmentHandle {
     [-4, 10],
     [3, 9],
   ]) {
+    if (wildlifeHabitats && ((x < -30 && z < 0) || (x === 16 && z === -23)))
+      continue;
     for (let i = 0; i < 4; i++) {
       const y = 0.45 + (i % 2) * 0.16;
       const mat = new THREE.Matrix4().compose(

@@ -1,3 +1,17 @@
+# Current: The Living Coast discovery milestone
+
+Default entry is wildlife. Preserved routes: `?rescue`, `?campaign`, `?classic`. See [WILDLIFE-RELEASE.md](WILDLIFE-RELEASE.md), [WILDLIFE-CONTRACT.md](WILDLIFE-CONTRACT.md) and [WILDLIFE-ASSETS.md](WILDLIFE-ASSETS.md). Six original species, deterministic resonance encounters, following companion, three physical abilities, weather conditions, rare reveal and independent validated autosave are implemented.
+
+Commands remain `npm run dev` (5173), or `npm run build` then `npm start` (3001). Existing production server serves 3001 during this session. `npm test` runs the full regression suite. Never read, print or log `.env.local`; existing configured server-side OpenAI works. The wildlife loop requires no credentials. Collection key is `afterlight-living-coast-v1`; never clear legacy saves to test it.
+
+**Verified release:** 139 tests and production build pass. Actual Chrome play completed all six friendships, all three abilities, the rare reveal, companion following, mouse-only encounters, save reload and archive/restore. Mobile390×844 journal/encounter inspected. Real Cairnback AI selection succeeded. Chrome on AppleM4/macOS15.2 measured30–60FPS in short samples, with High storm512draws/93,842triangles and Low154draws/41,020triangles. See release notes for exact measurements and limits.
+
+Fixed during play: occluding palms/roofs/lintel, hidden initial tracks, garden vegetation clipping, moving-creature targeting, approach points behind walls, Sailpip's unreadable greeting window, bond celebration timer, first-bond animation override, Space propagation and pagehide save flushing. Local weather benches avoid repeated cross-town waiting trips. New expedition archives the previous one; Restore previous expedition swaps them.
+
+The browser is left with a fresh expedition; completed test collection is recoverable in Options. No agents continue after delivery. Next useful work: human discovery/feel assessment and measured optimization on physical mobile hardware. Core milestone is complete; no public deployment, purchases or new credentials. No recording was captured; screenshots are in artifacts/wildlife. Main guide intentionally omits the rare location. Earlier mode records below are historical.
+
+---
+
 # Current: storm rescue presentation milestone
 
 Default entry is RescueApp; campaign retained at ?campaign, classic at ?classic. See RESCUE-RELEASE.md and RESCUE-CONTRACT.md. Build/server commands unchanged. Existing production server serves port3001. Never read/print .env.local; live AI verified through actual rescue instruction.
