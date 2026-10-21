@@ -76,3 +76,14 @@ Ownership established in V4-CONTRACT.md before implementation: gameplay engine/c
 - [x] Live repair proposal and live market cooperation verified against engine effects.
 - [x] Independent automated alternate-strategy and failure/recovery playtests.
 - [x] Final complete browser campaign, mobile polish, 111 passing tests, production build and release checkpoint.
+
+
+# Storm rescue presentation milestone
+
+- [x] Audit actual campaign and establish RESCUE-CONTRACT.md ownership.
+- [x] Authoritative physical rescue, alternate entrance, assistance, collapse, escort and checkpoints.
+- [x] World weather/power/collision/aftermath, original storm rigs and spatial synthesized audio.
+- [x] Focused camera, acceleration, context actions, preserved campaign/AI and separate save.
+- [x] Live AI assistance verified in browser; complete assisted rescue and aftermath.
+- [x] 121 tests pass, production build, desktop/mobile controls and short performance samples.
+- [ ] Timed human pacing study against 5–8-minute target; optimal route is shorter.

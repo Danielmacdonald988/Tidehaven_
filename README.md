@@ -1,3 +1,13 @@
+# AFTERLIGHT — When the lights go out
+
+The default build now opens a focused playable storm rescue. **Enter the storm**, reach Bay Radio, ask Inez for physical help or use its side entrance, collect the emergency case if you can, and escort Jo into the lit warehouse. The awning collapse changes the actual route; shelter completion requires Jo to arrive.
+
+Run `npm run dev` and open http://127.0.0.1:5173. For production, `npm run build` then `npm start` at http://127.0.0.1:3001. Existing live AI configuration stays server-side. The previous campaign and all its saves remain at `?campaign`; the original 2D mode remains at `?classic`.
+
+Click to move/interact, drag to turn the camera, optional WASD; Space pauses. Options includes sound, volume, low graphics, camera sensitivity, impact toggle and safe checkpoint recovery. Rescue autosaves separately. See [RESCUE-RELEASE.md](RESCUE-RELEASE.md) for verification and scope.
+
+---
+
 # AFTERLIGHT 4.0 — The Last Good Road
 
 The default experience is now a **playable Three.js neighborhood**. The original simulation, promises, negotiations, outcomes and tests remain underneath it. The previous 2D edition is preserved at `?classic`, with its original browser save untouched.

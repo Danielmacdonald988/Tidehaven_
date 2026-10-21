@@ -1,0 +1,443 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Libre+Caslon+Display&display=swap");
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #10242b;
+}
+.rescue-root {
+  position: fixed;
+  inset: 0;
+  color: #f5eddc;
+  font-family: "DM Sans", sans-serif;
+  overflow: hidden;
+}
+.rescue-canvas {
+  position: absolute;
+  inset: 0;
+}
+.rescue-canvas canvas {
+  display: block;
+  outline: none;
+  touch-action: none;
+}
+.rescue-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    #08191c88,
+    transparent 28%,
+    transparent 65%,
+    #071e27a0
+  );
+  box-shadow: inset 0 0 150px #0a1b2940;
+}
+.rescue-root button,
+.rescue-root input,
+.rescue-root select {
+  font: inherit;
+}
+.rescue-root button {
+  cursor: pointer;
+  border: 1px solid #f7e6c740;
+  color: inherit;
+  background: #122d3499;
+  border-radius: 3px;
+  padding: 12px 18px;
+  transition: background 0.2s;
+}
+.rescue-root button:hover {
+  background: #3c565be6;
+}
+.rescue-root button:focus-visible,
+.rescue-root a:focus-visible {
+  outline: 2px solid #f1ca7e;
+  outline-offset: 4px;
+}
+.rescue-root button:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+.rescue-root a {
+  color: inherit;
+  text-decoration: none;
+}
+.rescue-header {
+  position: absolute;
+  top: 25px;
+  left: 35px;
+  right: 35px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.rescue-header > a {
+  font:
+    26px Georgia,
+    serif;
+  letter-spacing: 0.23em;
+}
+.rescue-header a span {
+  display: block;
+  font:
+    9px "DM Sans",
+    sans-serif;
+  letter-spacing: 0.28em;
+  margin-top: 9px;
+  color: #d2d9cd;
+}
+.rescue-header nav {
+  display: flex;
+  gap: 8px;
+}
+.rescue-header button {
+  font-size: 11px;
+  background: #12282e66;
+}
+.rescue-title {
+  position: absolute;
+  left: 8%;
+  top: 22%;
+  max-width: 480px;
+  text-shadow: 0 2px 25px #091d25;
+}
+.rescue-title > p:first-child,
+.rescue-objective > span,
+.rescue-aftermath > p:first-child {
+  font-size: 10px;
+  letter-spacing: 0.26em;
+  color: #edcc91;
+}
+.rescue-title h1 {
+  font:
+    clamp(58px, 7vw, 108px)/0.98 "Libre Caslon Display",
+    Georgia,
+    serif;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  margin: 25px 0;
+}
+.rescue-intro {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #dae3df;
+}
+.rescue-root .rescue-primary {
+  background: #e8c78c;
+  color: #17313b;
+  border: 0;
+  padding: 16px 24px;
+  margin-top: 20px;
+  min-width: 220px;
+  text-shadow: none;
+}
+.rescue-primary span {
+  float: right;
+  margin-left: 40px;
+}
+.rescue-title small,
+.rescue-title > a {
+  display: block;
+  font-size: 10px;
+  margin-top: 18px;
+  color: #cbd3ce;
+}
+.rescue-objective {
+  position: absolute;
+  left: 35px;
+  top: 120px;
+  max-width: 350px;
+  pointer-events: none;
+  text-shadow: 0 2px 12px #000;
+}
+.rescue-objective h1 {
+  font:
+    32px/1.12 "Libre Caslon Display",
+    Georgia,
+    serif;
+  font-weight: 400;
+  margin: 12px 0;
+}
+.rescue-objective p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #d2dedf;
+  max-width: 280px;
+}
+.rescue-actions {
+  position: absolute;
+  bottom: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  max-width: 90vw;
+}
+.rescue-actions button {
+  background: #163139ed;
+  box-shadow: 0 8px 35px #07161c55;
+  min-width: 180px;
+  font-size: 12px;
+  text-align: left;
+}
+.rescue-actions button span {
+  float: right;
+  margin-left: 16px;
+  color: #e9c888;
+}
+.rescue-footer {
+  position: absolute;
+  bottom: 25px;
+  left: 35px;
+  right: 35px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: #c2d2d5;
+}
+.rescue-footer small {
+  font-size: 10px;
+}
+.rescue-instruction,
+.rescue-options {
+  position: absolute;
+  bottom: 70px;
+  right: 35px;
+  width: min(420px, calc(100vw - 30px));
+  padding: 28px;
+  background: #e9e5d6;
+  color: #20383c;
+  box-shadow: 0 25px 90px #0005;
+  border-top: 3px solid #d6a95d;
+}
+.rescue-instruction h2,
+.rescue-options h2 {
+  font:
+    32px/1.1 "Libre Caslon Display",
+    Georgia,
+    serif;
+  font-weight: 400;
+  margin: 15px 0;
+}
+.rescue-instruction small,
+.rescue-options small {
+  font-size: 9px;
+  line-height: 1.7;
+  display: block;
+}
+.rescue-instruction form {
+  display: flex;
+  gap: 6px;
+}
+.rescue-instruction input {
+  min-width: 0;
+  flex: 1;
+  border: 1px solid #75878360;
+  background: #f6f2e8;
+  color: #1f393b;
+  padding: 12px;
+  font-size: 12px;
+}
+.rescue-instruction form button,
+.rescue-options button {
+  background: #25464e;
+  color: #fff;
+  font-size: 11px;
+}
+.rescue-instruction p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+.rescue-root .rescue-close {
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  background: none;
+  border: 0;
+  color: inherit;
+  font-size: 26px;
+  padding: 4px 10px;
+}
+.rescue-root .rescue-alternative {
+  font-size: 11px;
+  margin: 16px 0;
+  background: none;
+  color: #26444c;
+  border: 0;
+  padding: 5px 0;
+}
+.rescue-options {
+  top: 100px;
+  bottom: auto;
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+}
+.rescue-options label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 12px;
+  margin: 22px 0;
+}
+.rescue-options button:not(.rescue-close),
+.rescue-options a {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+}
+.rescue-options a {
+  font-size: 11px;
+  text-decoration: underline;
+}
+.rescue-options input {
+  accent-color: #a27635;
+}
+.rescue-progress {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  text-align: center;
+}
+.rescue-progress progress {
+  display: block;
+  margin: 12px auto;
+  accent-color: #e6c188;
+  height: 5px;
+  width: 220px;
+}
+.rescue-warning {
+  position: absolute;
+  top: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  background: #985436d9;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+.rescue-notice {
+  position: absolute;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #17333edb;
+  padding: 12px 20px;
+  max-width: 500px;
+  font-size: 12px;
+  text-align: center;
+}
+.rescue-aftermath {
+  position: absolute;
+  right: 5%;
+  bottom: 14%;
+  max-width: 330px;
+  padding: 25px;
+  background: #17363cd9;
+}
+.rescue-aftermath h2 {
+  font:
+    42px/1.1 "Libre Caslon Display",
+    Georgia,
+    serif;
+  margin: 14px 0;
+}
+.rescue-aftermath p {
+  font-size: 12px;
+  line-height: 1.8;
+}
+.rescue-aftermath button {
+  font-size: 11px;
+}
+.rescue-root select {
+  background: #fff;
+  color: #17333c;
+  padding: 8px;
+  border: 1px solid #b2bdb7;
+}
+@media (max-width: 600px) {
+  .rescue-header {
+    left: 16px;
+    right: 16px;
+    top: 18px;
+  }
+  .rescue-header > a {
+    font-size: 18px;
+  }
+  .rescue-header a span {
+    font-size: 7px;
+  }
+  .rescue-header button {
+    padding: 8px;
+    font-size: 9px;
+  }
+  .rescue-header nav {
+    gap: 4px;
+  }
+  .rescue-title {
+    left: 7%;
+    top: 24%;
+  }
+  .rescue-title h1 {
+    font-size: 64px;
+  }
+  .rescue-objective {
+    left: 18px;
+    top: 95px;
+    max-width: 260px;
+  }
+  .rescue-objective h1 {
+    font-size: 26px;
+  }
+  .rescue-objective p {
+    font-size: 10px;
+    max-width: 220px;
+  }
+  .rescue-actions {
+    bottom: 75px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 90%;
+  }
+  .rescue-actions button {
+    min-width: 140px;
+    flex: 1;
+  }
+  .rescue-footer {
+    left: 18px;
+    right: 18px;
+    bottom: 20px;
+    gap: 15px;
+    flex-direction: column;
+  }
+  .rescue-instruction {
+    right: 15px;
+    bottom: 65px;
+    padding: 22px;
+  }
+  .rescue-options {
+    right: 15px;
+    top: 85px;
+  }
+  .rescue-aftermath {
+    right: 15px;
+    bottom: 135px;
+    max-width: 290px;
+  }
+  .rescue-warning {
+    top: 77px;
+    white-space: nowrap;
+    font-size: 8px;
+    padding: 9px;
+  }
+  .rescue-notice {
+    bottom: 190px;
+    width: 85%;
+  }
+}

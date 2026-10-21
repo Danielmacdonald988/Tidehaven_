@@ -1,3 +1,13 @@
+# Current: storm rescue presentation milestone
+
+Default entry is RescueApp; campaign retained at ?campaign, classic at ?classic. See RESCUE-RELEASE.md and RESCUE-CONTRACT.md. Build/server commands unchanged. Existing production server serves port3001. Never read/print .env.local; live AI verified through actual rescue instruction.
+
+121 tests pass; complete physical assisted and alternate-route browser rescues, save reload and desktop/mobile checks completed. Target5–8min remains human-pacing validation work; optimal route2–3min. Rigged characters and sound are authored procedural assets, not imported mocap/voiceacting. No new secrets, purchases or deployment.
+
+Next useful work is human feel/pacing assessment, then higher-fidelity character assets and more detailed action staging within this sequence—not additional management systems.
+
+---
+
 # AFTERLIGHT 4.0 — current handoff
 
 The Last Good Road is implemented around the existing neighborhood and verified server-side AI. The former 3.0 credential blocker below is historical: a user-supplied ignored .env.local now configures OpenAI, and actual repair/cooperation requests have succeeded. Never read or print its contents.

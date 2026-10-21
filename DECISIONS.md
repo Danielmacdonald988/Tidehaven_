@@ -40,3 +40,10 @@
 - Let manual supplies and independent donations contribute to shelter readiness. Stocking only consumes missing supplies; no double billing for aid already delivered.
 - Explicit zero-based indices on model-visible actions avoid ambiguous selection. Model output is never heuristically converted into a different action. Displayed action terms remain authoritative.
 - Favor original stateful geometry and seeded material textures over new asset downloads. Lower graphics remains available; measure actual browser rendering separately from simulation tests.
+
+
+## Storm rescue: physical presentation first
+
+A separate short rescue mode becomes the entry point while the complete campaign remains unchanged at ?campaign. A small authoritative rescue engine owns all actor positions, case location, dynamic blockers and event/checkpoint state; the existing bounded server AI selects only an offered Inez assistance task. Original articulated storm rigs are retained rather than claiming unavailable mocap assets. Authored hazards change collision but never demand reflexes. No extra management UI, resource economy, dialogue system or secret configuration was added.
+
+Camera uses one elevated tracking approach with user drag and distance adjustment; indoor façade cutaways protect actor visibility. Audio is gesture-started WebAudio with explicit mute. Short optimal path is documented honestly rather than padded with forced waits to claim 5–8minutes.

@@ -3,7 +3,9 @@ import { createRoot } from "react-dom/client";
 const App = lazy(() =>
   new URLSearchParams(location.search).has("classic")
     ? import("./App")
-    : import("./App3D"),
+    : new URLSearchParams(location.search).has("campaign")
+      ? import("./App3D")
+      : import("./rescue/RescueApp"),
 );
 createRoot(document.getElementById("root")!).render(
   <Suspense
