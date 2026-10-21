@@ -1,3 +1,6 @@
+## Visual release decisions
+Retain Three.js/WebGL2 and authoritative simulation. Use original procedural geometry/materials, one bounded shadow light, optional half-resolution ambient occlusion, prefiltered environment lighting, scalable roof-aware rain and capped render resolution. Preserve all save keys and server adapters. Target60FPS, but report observed M4 results around30FPS honestly; reduced preset decreases rendering work without a demonstrated cadence increase. Asset provenance: VISUAL-ASSETS.md.
+
 # Current decisions — Connected coast
 
 - Expand the existing Three.js scene, deterministic wildlife reducer and server AI adapter; no framework migration. The checkpoint tag `checkpoint-living-coast-67c9934` preserves the prior release.

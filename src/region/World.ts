@@ -1,4 +1,10 @@
 import * as THREE from "three";
+import {
+  coastalFrond,
+  tropicalCrown,
+  mineralFinish,
+  coastalWater,
+} from "./VisualDetails";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import { buildWildlifeWorld } from "../wildlife/World";
 import {
@@ -30,7 +36,7 @@ export function buildRegionWorld() {
     earth: mat("#9eaa8a"),
     mud: mat("#71846d"),
     sand: mat("#c4b797"),
-    road: mat("#69746f"),
+    road: mat("#414e51", 0.92),
     line: mat("#d1c6a1"),
     stone: mat("#8b9686"),
     wood: mat("#84694d"),
@@ -39,8 +45,8 @@ export function buildRegionWorld() {
     rust: mat("#ae7055"),
     cream: mat("#ded1ac"),
     roof: mat("#667f79"),
-    leaf: mat("#54785c"),
-    leaf2: mat("#7e9666"),
+    leaf: mat("#426f50"),
+    leaf2: mat("#64844d"),
     trunk: mat("#7f7860"),
     water: mat("#568e8b", 0.2),
     brass: mat("#b99d61", 0.5),
@@ -101,6 +107,18 @@ export function buildRegionWorld() {
   weathered(M.wood, 19, "wood");
   weathered(M.teal, 64, "grain");
   weathered(M.cream, 91, "grain");
+  M.leaf.side = M.leaf2.side = THREE.DoubleSide;
+  for (const [m, style, seed] of [
+    [M.road, "asphalt", 41],
+    [M.cream, "plaster", 73],
+    [M.wood, "wood", 66],
+    [M.roof, "metal", 77],
+  ] as const)
+    textures.push(mineralFinish(m, style, seed));
+  const updateWater = coastalWater(M.water);
+  const botanical = tropicalCrown(),
+    pinnate = coastalFrond();
+  geometries.push(botanical, pinnate);
   const cube = new THREE.BoxGeometry(1, 1, 1),
     cylinder = new THREE.CylinderGeometry(1, 1, 1, 8),
     sphere = new THREE.IcosahedronGeometry(1, 1);
@@ -202,30 +220,88 @@ export function buildRegionWorld() {
   box(76, -0.35, 44, 72, 0.12, 28, M.water);
   box(-77, -0.15, 30, 62, 0.15, 6, M.mud);
   // Continuous sampled surfaces eliminate intersecting stair-box seams on slopes.
-  function terrain(minX:number,maxX:number,minZ:number,maxZ:number,m:THREE.Material,offset=0){
-    const geo=new THREE.PlaneGeometry(maxX-minX,maxZ-minZ,Math.ceil((maxX-minX)*4),Math.ceil((maxZ-minZ)*4));geo.rotateX(-Math.PI/2);geo.translate((minX+maxX)/2,0,(minZ+maxZ)/2);
-    const pos=geo.attributes.position;for(let i=0;i<pos.count;i++)pos.setY(i,surfaceHeight({x:pos.getX(i),z:pos.getZ(i)})+offset);geo.computeVertexNormals();geometries.push(geo);const mesh=new THREE.Mesh(geo,m);mesh.receiveShadow=true;group.add(mesh);
+  function terrain(
+    minX: number,
+    maxX: number,
+    minZ: number,
+    maxZ: number,
+    m: THREE.Material,
+    offset = 0,
+  ) {
+    const geo = new THREE.PlaneGeometry(
+      maxX - minX,
+      maxZ - minZ,
+      Math.ceil((maxX - minX) * 4),
+      Math.ceil((maxZ - minZ) * 4),
+    );
+    geo.rotateX(-Math.PI / 2);
+    geo.translate((minX + maxX) / 2, 0, (minZ + maxZ) / 2);
+    const pos = geo.attributes.position;
+    for (let i = 0; i < pos.count; i++)
+      pos.setY(i, surfaceHeight({ x: pos.getX(i), z: pos.getZ(i) }) + offset);
+    geo.computeVertexNormals();
+    geometries.push(geo);
+    const mesh = new THREE.Mesh(geo, m);
+    mesh.receiveShadow = true;
+    group.add(mesh);
   }
-  function ribbon(a:{x:number;z:number},b:{x:number;z:number},width:number,m:THREE.Material,offset:number,start=0,end=1){
-    const dx=b.x-a.x,dz=b.z-a.z,len=Math.hypot(dx,dz),steps=Math.max(1,Math.ceil(len*(end-start)*3)),nx=dz/len*width/2,nz=-dx/len*width/2;
-    const positions:number[]=[],uv:number[]=[];
-    for(let i=0;i<steps;i++){
-      const t0=start+(end-start)*i/steps,t1=start+(end-start)*(i+1)/steps;
-      const corners=[[a.x+dx*t0+nx,a.z+dz*t0+nz],[a.x+dx*t0-nx,a.z+dz*t0-nz],[a.x+dx*t1+nx,a.z+dz*t1+nz],[a.x+dx*t1-nx,a.z+dz*t1-nz]];
-      for(const j of [0,1,2,2,1,3]){const [x,z]=corners[j];positions.push(x,surfaceHeight({x,z})+offset,z);uv.push((j%2),((j<2?t0:t1)*len)/6);}
+  function ribbon(
+    a: { x: number; z: number },
+    b: { x: number; z: number },
+    width: number,
+    m: THREE.Material,
+    offset: number,
+    start = 0,
+    end = 1,
+  ) {
+    const dx = b.x - a.x,
+      dz = b.z - a.z,
+      len = Math.hypot(dx, dz),
+      steps = Math.max(1, Math.ceil(len * (end - start) * 3)),
+      nx = ((dz / len) * width) / 2,
+      nz = ((-dx / len) * width) / 2;
+    const positions: number[] = [],
+      uv: number[] = [];
+    for (let i = 0; i < steps; i++) {
+      const t0 = start + ((end - start) * i) / steps,
+        t1 = start + ((end - start) * (i + 1)) / steps;
+      const corners = [
+        [a.x + dx * t0 + nx, a.z + dz * t0 + nz],
+        [a.x + dx * t0 - nx, a.z + dz * t0 - nz],
+        [a.x + dx * t1 + nx, a.z + dz * t1 + nz],
+        [a.x + dx * t1 - nx, a.z + dz * t1 - nz],
+      ];
+      for (const j of [0, 1, 2, 2, 1, 3]) {
+        const [x, z] = corners[j];
+        positions.push(x, surfaceHeight({ x, z }) + offset, z);
+        uv.push(j % 2, ((j < 2 ? t0 : t1) * len) / 6);
+      }
     }
-    const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));geo.computeVertexNormals();geometries.push(geo);const mesh=new THREE.Mesh(geo,m);mesh.receiveShadow=true;group.add(mesh);
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute(
+      "position",
+      new THREE.Float32BufferAttribute(positions, 3),
+    );
+    geo.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+    geo.computeVertexNormals();
+    geometries.push(geo);
+    const mesh = new THREE.Mesh(geo, m);
+    mesh.receiveShadow = true;
+    group.add(mesh);
   }
-  terrain(-108,-87.75,-35,-14.75,M.earth,-.025);
-  for (let n=1;n<ROAD_ROUTE.length;n++) {
-    const a=ROAD_ROUTE[n-1],b=ROAD_ROUTE[n],len=Math.hypot(b.x-a.x,b.z-a.z);
+  terrain(-108, -87.75, -35, -14.75, M.earth, -0.025);
+  for (let n = 1; n < ROAD_ROUTE.length; n++) {
+    const a = ROAD_ROUTE[n - 1],
+      b = ROAD_ROUTE[n],
+      len = Math.hypot(b.x - a.x, b.z - a.z);
     // The recognizable town keeps its original road artwork.
-    if(a.x>=-40&&b.x<=40)continue;
-    ribbon(a,b,6.2,M.road,.065);
-    for(let d=0;d<len;d+=4)ribbon(a,b,.09,M.line,.075,d/len,Math.min(1,(d+1.8)/len));
+    if (a.x >= -40 && b.x <= 40) continue;
+    ribbon(a, b, 6.2, M.road, 0.065);
+    for (let d = 0; d < len; d += 4)
+      ribbon(a, b, 0.09, M.line, 0.075, d / len, Math.min(1, (d + 1.8) / len));
   }
-  ribbon({x:-40,z:20.5},{x:-38.5,z:20.5},6.2,M.road,.065);
-  ribbon({x:38.5,z:20.5},{x:40,z:20.5},6.2,M.road,.065);
+  ribbon({ x: -40, z: 20.5 }, { x: -38.5, z: 20.5 }, 6.2, M.road, 0.065);
+  ribbon({ x: 38.5, z: 20.5 }, { x: 40, z: 20.5 }, 6.2, M.road, 0.065);
   // Marsh channel passes beneath a real raised road deck. Rails leave the road unobstructed.
   box(-52.5, -0.02, 4, 14, 0.08, 27, M.water);
   box(-52.5, -0.02, 28.5, 14, 0.08, 7, M.water);
@@ -242,6 +318,13 @@ export function buildRegionWorld() {
     sign("TIDAL CROSSING", x, 1.7, 16, 3);
     post(x, 1, 16, 0.09, 2, M.wood);
   }
+  const regionalRoofs: {
+    group: THREE.Group;
+    x: number;
+    z: number;
+    w: number;
+    d: number;
+  }[] = [];
   // Harbor freight house: open front, sheltered counter and walk-in loading bays.
   function building(
     x: number,
@@ -260,6 +343,26 @@ export function buildRegionWorld() {
       box(x + side * (w / 2 - 1.5), 1.8, z + d / 2, 3, 3.6, 0.25, color);
       solid(x + side * (w / 2 - 1.5), z + d / 2, 3, 0.25, name + " front");
     }
+    // Deep joinery, weatherboard ends and sills share the town's salt-worn treatment.
+    for (const side of [-1, 1]) {
+      box(
+        x + side * (w / 2 - 0.1),
+        1.8,
+        z + d / 2 + 0.16,
+        0.18,
+        3.6,
+        0.2,
+        M.cream,
+      );
+      box(x + side * (w / 2 - 0.2), 3.55, z, 0.22, 0.18, d + 0.6, M.cream);
+      for (let y = 0.25; y < 3.5; y += 0.28)
+        box(x + side * (w / 2 + 0.14), y, z, 0.025, 0.025, d, M.dark);
+    }
+    // Individually cut away the pitched roof when inside, like the original neighborhood.
+    const roofGroup = new THREE.Group();
+    roofGroup.name = `${name} removable roof`;
+    group.add(roofGroup);
+    regionalRoofs.push({ group: roofGroup, x, z, w, d });
     // Pitched roof halves keep tall central entrance legible from a follow camera.
     for (const side of [-1, 1])
       shape(
@@ -273,10 +376,28 @@ export function buildRegionWorld() {
         d + 0.7,
         0,
         side * -0.19,
+        roofGroup,
       );
+    for (const side of [-1, 1])
+      for (let rib = z - d / 2; rib <= z + d / 2; rib += 0.8)
+        shape(
+          cube,
+          M.dark,
+          x + (side * w) / 4,
+          4.065,
+          rib,
+          w / 2 + 0.45,
+          0.025,
+          0.035,
+          0,
+          side * -0.19,
+          roofGroup,
+        );
+    box(x, 3.99 + w * 0.0475, z, 0.09, 0.12, d + 0.75, M.dark, 0, roofGroup);
     for (let px = x - w / 2 + 0.6; px < x + w / 2; px += 1.1)
       box(px, 1.8, z - d / 2 + 0.15, 0.045, 3.5, 0.04, M.cream);
-    sign(name, x, 3.05, z + d / 2 + 0.18, Math.min(w - 1, 7));
+    if (name !== "TIDEWAY FREIGHT")
+      sign(name, x, 3.05, z + d / 2 + 0.18, Math.min(w - 1, 7));
   }
   building(70, 5, 16, 12, M.teal, "TIDEWAY FREIGHT");
   box(65, 1, 6, 3.5, 1.1, 1.1, M.wood);
@@ -315,10 +436,20 @@ export function buildRegionWorld() {
     }
     post(70 + side * 7.7, 1.5, 11.35, 0.08, 3, M.dark);
   }
-  box(70, 3.3, 12.2, 9, 0.13, 2.5, M.roof);
-  for (const x of [66, 74]) {
-    box(x, 2.9, 11.8, 0.07, 0.75, 0.09, M.dark);
+  // Thin supported canopy: no visually floating concrete slab or obstructing posts.
+  box(70, 3.3, 11.95, 8, 0.055, 1.8, M.dark);
+  box(70, 3.23, 12.84, 8, 0.16, 0.06, M.teal);
+  for (const x of [66.1, 73.9]) {
+    box(x, 2.9, 11.2, 0.1, 0.8, 0.1, M.dark);
+    // Braces are baked by shape; sloped beam geometry carries its angle directly.
+    const g = new THREE.BoxGeometry(0.075, 0.075, 1.7);
+    g.rotateX(-0.3);
+    geometries.push(g);
+    shape(g, M.dark, x, 3.02, 11.92, 1, 1, 1);
   }
+  for (let rib = 0; rib < 10; rib++)
+    box(66.15 + rib * 0.85, 3.345, 11.95, 0.035, 0.025, 1.82, M.roof);
+  sign("TIDEWAY FREIGHT", 70, 3.58, 12.88, 6.2);
   sign("COLLECTION  /  8 CRATES", 74, 1.6, 11.25, 3.7);
   sign("DISPATCH", 65, 1.8, 6.6, 2.7);
   for (const x of [58, 81]) {
@@ -377,7 +508,7 @@ export function buildRegionWorld() {
   const lifeRingGeo = new THREE.TorusGeometry(0.45, 0.1, 8, 20);
   geometries.push(lifeRingGeo);
   shape(lifeRingGeo, M.rust, 84, 1.2, 17, 1, 1, 1);
-  sign("SAFE QUAY",84,2.1,17.1,2.5);
+  sign("SAFE QUAY", 84, 2.1, 17.1, 2.5);
   // Mooring equipment and stacked timber sit beyond the driving lane, each at credible human scale.
   const ropeGeo = new THREE.TorusGeometry(0.42, 0.035, 5, 20);
   ropeGeo.rotateX(Math.PI / 2);
@@ -410,24 +541,25 @@ export function buildRegionWorld() {
     post(x, 0.1, z, 0.44, 0.08, M.dark);
     solid(x, z, 0.9, 0.9, "quay-barrel");
   }
+  const harborFrond = pinnate.clone().rotateX(-Math.PI / 2 + 0.3);
+  geometries.push(harborFrond);
   for (const [x, z] of [
     [45, -15],
     [103, 15],
     [55, 1],
   ] as const) {
     post(x, 2.2, z, 0.19, 4.4, M.trunk);
-    for (let i = 0; i < 7; i++)
+    for (let i = 0; i < 9; i++)
       shape(
-        sphere,
+        harborFrond,
         i % 2 ? M.leaf : M.leaf2,
-        x + Math.sin(i) * 0.9,
-        4.5,
-        z + Math.cos(i) * 0.9,
-        1.25,
-        0.25,
-        0.55,
-        i,
-        Math.sin(i) * 0.15,
+        x,
+        4.45,
+        z,
+        1,
+        1,
+        1,
+        (i * Math.PI * 2) / 9,
       );
     solid(x, z, 0.45, 0.45, "harbor-palm");
   }
@@ -441,8 +573,8 @@ export function buildRegionWorld() {
   sign("FERN REACH • 03", -63, 2.5, 24, 4);
   post(-63, 1.25, 24, 0.13, 2.5, M.wood);
   // Footpath and gate reveal a separate northbound expedition route.
-  ribbon({x:-75,z:10},{x:-81,z:-5},2.3,M.sand,.035);
-  ribbon({x:-81,z:-5},{x:-92,z:-23},2.4,M.sand,.035);
+  ribbon({ x: -75, z: 10 }, { x: -81, z: -5 }, 2.3, M.sand, 0.035);
+  ribbon({ x: -81, z: -5 }, { x: -92, z: -23 }, 2.4, M.sand, 0.035);
   const gate = new THREE.Group();
   gate.position.set(-81, 0, -5);
   group.add(gate);
@@ -490,7 +622,7 @@ export function buildRegionWorld() {
       solid(x, z, 1, 1, "observatory-column");
     }
   box(-93, 5, -27, 12, 0.55, 1.2, M.stone);
-  terrain(-96.5,-89.5,-27.5,-22.5,M.stone,.01);
+  terrain(-96.5, -89.5, -27.5, -22.5, M.stone, 0.01);
   sign("TIDAL OBSERVATORY", -90, 3.2, -27.65, 4);
   const relic = new THREE.Group();
   relic.position.set(
@@ -547,6 +679,33 @@ export function buildRegionWorld() {
       height = 3.3 + (i % 5) * 0.6;
     instance(trunks, x, h + height / 2, z, 0.23, height, 0.23);
     instance(crowns, x, h + height, z, 1.7 + (i % 3) * 0.3, 1.6, 1.8);
+    // Split branches and root buttresses connect the open leaf silhouette to the ground.
+    for (const side of [-1, 1])
+      shape(
+        cylinder,
+        M.trunk,
+        x + side * 0.35,
+        h + height * 0.8,
+        z,
+        0.11,
+        height * 0.45,
+        0.11,
+        0,
+        side * 0.44,
+      );
+    for (let root = 0; root < 3; root++)
+      shape(
+        cylinder,
+        M.trunk,
+        x + Math.sin(root * 2.1) * 0.2,
+        h + 0.3,
+        z + Math.cos(root * 2.1) * 0.2,
+        0.1,
+        0.65,
+        0.1,
+        root * 2.1,
+        0.36,
+      );
     solid(x, z, 0.55, 0.55, "mangrove");
     for (let j = 0; j < 3; j++)
       instance(
@@ -561,11 +720,11 @@ export function buildRegionWorld() {
   }
   for (const [geo, m, list] of [
     [cylinder, M.trunk, trunks],
-    [sphere, M.leaf, crowns],
-    [sphere, M.leaf2, ferns],
+    [botanical, M.leaf, crowns],
+    [botanical, M.leaf2, ferns],
   ] as const) {
     const mesh = new THREE.InstancedMesh(geo, m, list.length);
-    if(list===crowns)mesh.name="region-canopy";
+    if (list === crowns) mesh.name = "region-canopy";
     list.forEach((a, i) => mesh.setMatrixAt(i, a));
     mesh.castShadow = mesh.receiveShadow = true;
     group.add(mesh);
@@ -622,8 +781,8 @@ export function buildRegionWorld() {
   homeCargo.position.set(-26, 0, 12);
   group.add(homeCargo);
   const shelter = new THREE.Group();
-  shelter.name="cutaway awning creature shelter";
-  shelter.position.set(-8.5,0,-7);
+  shelter.name = "cutaway awning creature shelter";
+  shelter.position.set(-8.5, 0, -7);
   group.add(shelter);
   for (const x of [-28, -23])
     for (const z of [19, 23]) post(x, 1.2, z, 0.09, 2.4, M.wood, shelter);
@@ -659,6 +818,110 @@ export function buildRegionWorld() {
     marker.userData.regionTarget = id;
     group.add(marker);
   }
+  // Deliberate roadside salt gardens stitch the empty transition parcels to existing landmarks.
+  // Flat gravel and soft planting stay outside the road ribbon and never change collision.
+  for (const [x, z] of [
+    [43, 13],
+    [48, 12],
+    [54, 10],
+    [59, 8],
+    [98, 10],
+    [100, 4],
+    [-42, 13],
+    [-43, 9],
+    [-61, 3],
+    [-73, 3],
+  ]) {
+    const y = surfaceHeight({ x, z });
+    shape(sphere, M.sand, x, y + 0.025, z, 2.15, 0.035, 1.15, 0.3);
+    for (let i = 0; i < 7; i++) {
+      const dx = Math.sin(i * 2.4) * (1 + (i % 2)) * 0.55,
+        dz = Math.cos(i * 2.4) * 0.6;
+      shape(
+        botanical,
+        i % 2 ? M.leaf : M.leaf2,
+        x + dx,
+        y + 0.25,
+        z + dz,
+        0.42,
+        0.4 + (i % 3) * 0.06,
+        0.42,
+        i * 0.9,
+      );
+    }
+    for (let i = 0; i < 3; i++)
+      shape(sphere, M.stone, x - 1 + i, y + 0.12, z + 0.7, 0.3, 0.14, 0.23, i);
+  }
+  // Merge roof seams per material while retaining each cutaway parent.
+  for (const roof of regionalRoofs) {
+    const parts = new Map<THREE.Material, THREE.Mesh[]>();
+    for (const child of roof.group.children)
+      if (child instanceof THREE.Mesh && !Array.isArray(child.material)) {
+        const a = parts.get(child.material) || [];
+        a.push(child);
+        parts.set(child.material, a);
+      }
+    for (const [m, meshes] of parts) {
+      const copies = meshes.map((o) => {
+        o.updateMatrix();
+        return (
+          o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone()
+        ).applyMatrix4(o.matrix);
+      });
+      const merged = mergeGeometries(copies);
+      copies.forEach((g) => g.dispose());
+      if (merged) {
+        geometries.push(merged);
+        meshes.forEach((o) => roof.group.remove(o));
+        const mesh = new THREE.Mesh(merged, m);
+        mesh.castShadow = mesh.receiveShadow = true;
+        roof.group.add(mesh);
+      }
+    }
+  }
+  // Eight authored depressions catch the sky only in actual wet weather, one instanced draw.
+  const puddleGeo = new THREE.CircleGeometry(1, 24);
+  puddleGeo.rotateX(-Math.PI / 2);
+  const pp = puddleGeo.attributes.position;
+  for (let i = 1; i < pp.count; i++) {
+    const f = 0.86 + Math.sin(i * 2.31) * 0.1;
+    pp.setX(i, pp.getX(i) * f);
+    pp.setZ(i, pp.getZ(i) * f);
+  }
+  pp.needsUpdate = true;
+  geometries.push(puddleGeo);
+  const puddleMat = new THREE.MeshStandardMaterial({
+    color: "#284c57",
+    roughness: 0.28,
+    metalness: 0.12,
+    envMapIntensity: 0.18,
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    polygonOffset: true,
+    polygonOffsetFactor: -1,
+  });
+  materials.push(puddleMat);
+  const puddles = new THREE.InstancedMesh(puddleGeo, puddleMat, 8);
+  const patches = [
+    [-26, 22, 2.1, 0.6],
+    [-15, 18.7, 1.4, 0.48],
+    [62, 21.7, 2, 0.65],
+    [78, 16.5, 1.3, 0.45],
+    [82, 10.5, 1.4, 0.55],
+    [-64, 21.8, 1.8, 0.55],
+    [-44, 22, 1.3, 0.4],
+    [8, 22.5, 1.6, 0.5],
+  ];
+  patches.forEach(([x, z, w, d], i) => {
+    dummy.position.set(x, surfaceHeight({ x, z }) + 0.079, z);
+    dummy.rotation.set(0, i * 0.64, 0);
+    dummy.scale.set(w, 1, d);
+    dummy.updateMatrix();
+    puddles.setMatrixAt(i, dummy.matrix);
+  });
+  puddles.receiveShadow = true;
+  group.add(puddles);
   for (const [m, gs] of batches) {
     const merged = mergeGeometries(gs);
     gs.forEach((g) => g.dispose());
@@ -666,6 +929,7 @@ export function buildRegionWorld() {
       geometries.push(merged);
       const mesh = new THREE.Mesh(merged, m);
       mesh.castShadow = mesh.receiveShadow = true;
+      mesh.userData.visualStatic = true;
       group.add(mesh);
     }
   }
@@ -674,6 +938,21 @@ export function buildRegionWorld() {
     colliders,
     update(s: RegionState, dt: number, time: number, quality: Quality) {
       base.update(s.wildlife, dt, time, quality);
+      updateWater(time);
+      puddleMat.opacity = THREE.MathUtils.damp(
+        puddleMat.opacity,
+        s.wildlife.weather === "rain" || s.wildlife.weather === "storm"
+          ? 0.42
+          : 0.025,
+        1.5,
+        dt,
+      );
+      puddles.visible = puddleMat.opacity > 0.03;
+      for (const roof of regionalRoofs)
+        roof.group.visible = !(
+          Math.abs(s.wildlife.player.x - roof.x) < roof.w / 2 &&
+          Math.abs(s.wildlife.player.z - roof.z) < roof.d / 2
+        );
       cargo.visible =
         s.delivery.status === "accepted" || s.delivery.status === "available";
       homeCargo.visible = s.delivery.status === "complete";

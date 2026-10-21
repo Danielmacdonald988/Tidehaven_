@@ -1,3 +1,12 @@
+# Current: coastal visual release
+Local game: http://127.0.0.1:3001/ (existing server retained). Commands: `npm test`, `npm run build`, `npm start`. Recovery baseline: `checkpoint-before-visual-e85a4a2`. No key files read or changed. All save keys and simulation/server AI adapters preserved.
+
+Visual implementation and177 tests/build verified; graphics settings persist. Actual Mac: M4/16GiB/macOS15.2, Chrome ANGLE Metal. Observed1440×900 samples approximately30FPS;60FPS remains unverified. Full evidence/limits: VISUAL-RELEASE.md, artifacts/visual/. Primary new modules: Presentation.ts, VisualDetails.ts, visualPerformance.ts, ClipRecorder.tsx. Parallel contributors finished; no background agent work remains.
+
+Exact next useful actions: profile30FPS cadence with native browser GPU/frame tooling; conduct repeated district-loop heap/resource plateau soak; refine broad ground parcels/road transitions and human head/hair assets. Re-run177 tests and matched-view captures after edits. Legacy rescue/provider integration were preserved but not replayed/recalled live in this visual milestone. Historical handoffs below.
+
+---
+
 # Current: connected coastal region expansion
 
 Default entry is the persistent region; standalone creature exploration remains `?wildlife`, storm rescue `?rescue`, campaign `?campaign`, classic `?classic`. Existing missions keep their original checkpoints. Shared contracts are in `src/region/contracts.ts` and [REGION-CONTRACT.md](REGION-CONTRACT.md). Recoverable baseline tag: `checkpoint-living-coast-67c9934`.

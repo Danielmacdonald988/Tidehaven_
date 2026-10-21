@@ -1,4 +1,11 @@
 import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import {
+  coastalFrond,
+  tropicalCrown,
+  mineralFinish,
+  coastalWater,
+} from "../region/VisualDetails";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {
   PLACES,
@@ -29,9 +36,9 @@ export function buildEnvironment(
   };
   const M = {
     sand: material("#d5c5a0"),
-    ground: material("#9eae91"),
-    road: material("#78817b"),
-    curb: material("#dcd8c2"),
+    ground: material("#839479"),
+    road: material("#414e51", 0.92),
+    curb: material("#b9b8a8"),
     cream: material("#e2d8bc"),
     white: material("#f3ebd5"),
     wood: material("#886f51"),
@@ -39,12 +46,12 @@ export function buildEnvironment(
     teal: material("#5c8980"),
     darkTeal: material("#315d57"),
     coral: material("#bb765c"),
-    roof: material("#727e76"),
+    roof: material("#526b69"),
     glass: material("#426d72", 0.32),
     metal: material("#5e706b", 0.5),
     brass: material("#b6a473", 0.5),
-    leaf: material("#758b61"),
-    leafLight: material("#92a078"),
+    leaf: material("#315b42"),
+    leafLight: material("#64844d"),
     trunk: material("#95846b"),
     shadow: material("#596c5b"),
     food: material("#b7a16f"),
@@ -111,7 +118,7 @@ export function buildEnvironment(
       }
       ctx.strokeStyle = "rgba(86,83,69,.18)";
       ctx.lineWidth = 1;
-      ctx.strokeRect(6, 6, 244, 244);
+      // No painted texture border: real architecture supplies its own seams.
     }
     const texture = new THREE.CanvasTexture(canvas);
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
@@ -131,6 +138,18 @@ export function buildEnvironment(
   weathered(M.cream, 199, 1, "paint");
   weathered(M.teal, 291, 1, "paint");
   weathered(M.white, 744, 1, "paint");
+  for (const [mat, style, seed] of [
+    [M.road, "asphalt", 41],
+    [M.cream, "plaster", 73],
+    [M.white, "plaster", 91],
+    [M.wood, "wood", 66],
+    [M.roof, "metal", 77],
+    [M.curb, "plaster", 81],
+  ] as const)
+    textures.push(mineralFinish(mat, style, seed));
+  M.glass.metalness = 0.28;
+  M.glass.roughness = 0.24;
+  M.leaf.side = M.leafLight.side = THREE.DoubleSide;
   const buckets = new Map<THREE.Material, THREE.Matrix4[]>();
   function block(
     x: number,
@@ -351,7 +370,11 @@ export function buildEnvironment(
     for (const sx of [-1, 1]) {
       const wx = x + sx * (opening / 2 + (w - opening) / 4);
       block(wx, 2.15, front + 0.19, 1.8, 1.7, 0.08, M.white);
-      block(wx, 2.15, front + 0.25, 1.5, 1.4, 0.07, M.glass);
+      block(wx, 2.15, front + 0.245, 1.63, 1.53, 0.065, M.darkWood);
+      block(wx, 2.15, front + 0.285, 1.41, 1.31, 0.04, M.glass);
+      // A tilted blind behind the glass adds depth without exposing inaccessible room space.
+      for (let slat = 0; slat < 3; slat++)
+        block(wx, 2.57 + slat * 0.1, front + 0.309, 1.38, 0.055, 0.025, M.wood);
       block(wx, 2.15, front + 0.3, 0.08, 1.45, 0.08, M.white);
       block(wx, 2.15, front + 0.3, 1.55, 0.08, 0.08, M.white);
       block(wx, 1.27, front + 0.35, 2, 0.13, 0.42, M.white);
@@ -369,6 +392,39 @@ export function buildEnvironment(
           );
       }
     }
+    // Salt-worn joinery: deep fascia, rain pipes and a proper raised sill ground each facade.
+    for (const side of [-1, 1]) {
+      block(
+        x + side * (w / 2 - 0.28),
+        h / 2,
+        front + 0.27,
+        0.095,
+        h,
+        0.095,
+        M.metal,
+      );
+      block(
+        x + side * (w / 2 - 0.28),
+        0.22,
+        front + 0.35,
+        0.19,
+        0.11,
+        0.3,
+        M.metal,
+      );
+      block(
+        x + side * (w / 4 + opening / 4),
+        0.14,
+        front + 0.21,
+        (w - opening) / 2,
+        0.24,
+        0.32,
+        M.darkTeal,
+      );
+      for (let y = 0.38; y < h; y += 0.26)
+        block(x + side * (w / 2 + 0.015), y, z, 0.035, 0.025, d, M.darkWood);
+    }
+    cutawayBlock(x, h - 0.12, front + 0.24, w + 0.48, 0.19, 0.38, M.white);
     // Pitched hip-like roofs, not flat boxes; full assembly hides inside.
     const roof = new THREE.Group();
     roof.name = `${id} removable roof`;
@@ -472,6 +528,39 @@ export function buildEnvironment(
     for (const xx of [x - 1.1, x + 1.1])
       for (const zz of [4.2, 11.8])
         block(xx, 1.3, zz, 0.11, 2.6, 0.11, M.metal);
+    // Permanent workshop dressing, deliberately distinct from authoritative supply crates.
+    for (const z of [5, 8, 11]) {
+      for (let book = 0; book < 5; book++) {
+        const bx = x - 0.84 + book * 0.19;
+        block(
+          bx,
+          1.1,
+          z - 0.15,
+          0.15,
+          0.55 + (book % 2) * 0.12,
+          0.65,
+          book % 2 ? M.darkTeal : M.coral,
+        );
+        block(bx, 1.15, z + 0.18, 0.095, 0.13, 0.016, M.cream);
+      }
+      block(x + 0.55, 0.87, z, 0.65, 0.11, 0.7, M.darkWood);
+      block(x + 0.55, 0.94, z, 0.49, 0.055, 0.58, M.cream);
+      // Open bins with visible rims contain rolled charts, not food or purchasable inventory.
+      for (const side of [-1, 1])
+        block(x + side * 0.85, 2.35, z, 0.08, 0.42, 1.05, M.wood);
+      block(x, 2.18, z, 1.75, 0.09, 1.05, M.wood);
+      block(x, 2.35, z - 0.49, 1.75, 0.42, 0.08, M.wood);
+      for (let roll = 0; roll < 4; roll++)
+        block(
+          x - 0.55 + roll * 0.35,
+          2.3,
+          z,
+          0.16,
+          0.16,
+          0.85,
+          roll % 2 ? M.cream : M.darkTeal,
+        );
+    }
     collider(x, 8, 2.5, 8, "warehouse-shelves");
   }
   block(-22, 0.95, 4.1, 4, 1.9, 1.2, M.wood);
@@ -830,6 +919,7 @@ export function buildEnvironment(
     metalness: 0.16,
   });
   materials.push(waterMat);
+  const updateWater = coastalWater(waterMat);
   const water = mesh(waterGeo, waterMat);
   water.position.set(0, -0.38, 82);
   water.receiveShadow = true;
@@ -854,19 +944,84 @@ export function buildEnvironment(
     o.scale.set(w, h, d);
     return o;
   };
-  tm(0, 0.72, 0, 2.8, 0.5, 5.8, M.darkTeal);
-  tm(0, 1.5, 1.7, 2.8, 1.3, 2.1, M.teal);
-  tm(0, 1.68, 2.77, 2.3, 0.7, 0.04, M.glass);
-  tm(0, 1.6, -0.8, 2.8, 1.2, 3.2, M.cream);
+  const roundedTruckPart = (
+    w: number,
+    h: number,
+    d: number,
+    x: number,
+    y: number,
+    z: number,
+    mat: THREE.Material,
+    r = 0.1,
+  ) => {
+    const geometry = new RoundedBoxGeometry(w, h, d, 1, r);
+    geometries.push(geometry);
+    const part = mesh(geometry, mat, truck);
+    part.position.set(x, y, z);
+    return part;
+  };
+  roundedTruckPart(2.8, 0.5, 5.8, 0, 0.72, 0, M.darkTeal);
+  roundedTruckPart(2.75, 1.28, 2.1, 0, 1.49, 1.7, M.teal, 0.13);
+  roundedTruckPart(2.82, 0.13, 2.12, 0, 2.15, 1.7, M.white, 0.055);
+  tm(0, 1.74, 2.765, 2.3, 0.64, 0.045, M.glass);
+  tm(0, 1.74, 2.798, 0.055, 0.65, 0.03, M.white);
+  tm(0, 1.12, 2.79, 1.3, 0.25, 0.05, M.darkWood);
+  for (let bar = 0; bar < 5; bar++)
+    tm((bar - 2) * 0.24, 1.12, 2.83, 0.035, 0.23, 0.025, M.metal);
+  for (const side of [-1, 1]) {
+    tm(side * 1.385, 1.76, 1.72, 0.025, 0.6, 1.5, M.glass);
+    tm(side * 1.408, 1.74, 1.67, 0.025, 0.64, 0.05, M.white);
+    tm(side * 1.39, 1.31, 1.15, 0.035, 0.05, 0.23, M.metal);
+    tm(side * 1.48, 1.77, 2.35, 0.18, 0.25, 0.24, M.metal);
+    tm(side * 1.06, 1.15, 2.81, 0.4, 0.25, 0.05, M.white);
+    tm(side * 1.39, 0.72, 1.67, 0.2, 0.1, 1.6, M.metal);
+    tm(side * 1.41, 0.91, -0.8, 0.03, 0.07, 3.45, M.white);
+    tm(side * 1.2, 0.98, -2.94, 0.18, 0.26, 0.04, M.coral);
+  }
+  // A fitted canvas hood with external hoops and tied lower edges replaces the cargo cube.
+  roundedTruckPart(2.72, 1.3, 3.3, 0, 1.62, -0.89, M.cream, 0.22);
+  for (const z of [-2.42, -1.65, -0.88, -0.11, 0.64]) {
+    tm(0, 2.286, z, 2.33, 0.035, 0.045, M.white);
+    for (const side of [-1, 1]) {
+      tm(side * 1.365, 1.72, z, 0.035, 0.79, 0.045, M.white);
+      tm(side * 1.405, 1.15, z, 0.03, 0.27, 0.05, M.wood);
+    }
+  }
+  tm(0, 1.58, -2.558, 0.035, 1.08, 0.035, M.wood);
   tm(0, 0.73, 2.94, 2.9, 0.14, 0.18, M.metal);
+  tm(0, 0.7, -2.96, 2.9, 0.15, 0.18, M.metal);
   for (const x of [-1.35, 1.35])
     for (const z of [-1.8, 1.8]) {
-      const g = new THREE.CylinderGeometry(0.5, 0.5, 0.28, 12);
+      const g = new THREE.CylinderGeometry(0.5, 0.5, 0.28, 20);
       geometries.push(g);
       const wheel = mesh(g, M.darkWood, truck);
       wheel.rotation.z = Math.PI / 2;
       wheel.position.set(x, 0.5, z);
+      const rimGeo = new THREE.CylinderGeometry(0.28, 0.28, 0.3, 16);
+      geometries.push(rimGeo);
+      const rim = mesh(rimGeo, M.metal, truck);
+      rim.rotation.z = Math.PI / 2;
+      rim.position.set(x, 0.5, z);
+      const hubGeo = new THREE.CylinderGeometry(0.105, 0.105, 0.315, 12);
+      geometries.push(hubGeo);
+      const hub = mesh(hubGeo, M.darkTeal, truck);
+      hub.rotation.z = Math.PI / 2;
+      hub.position.set(x, 0.5, z);
+      for (let tread = 0; tread < 16; tread++) {
+        const angle = (tread / 16) * Math.PI * 2;
+        const block = tm(
+          x,
+          0.5 + Math.cos(angle) * 0.495,
+          z + Math.sin(angle) * 0.495,
+          0.29,
+          0.025,
+          0.1,
+          M.darkWood,
+        );
+        block.rotation.x = angle;
+      }
     }
+  batchDetails(truck);
   collider(16, 26.5, 3, 6, "relief-truck");
   interactions.push({
     id: "transport-truck",
@@ -1134,6 +1289,46 @@ export function buildEnvironment(
     block(x, 0.058, z, w, 0.008, d, M.metal);
   for (const x of [-25, -20, -15])
     block(x, 0.07, 22.3, 0.07, 0.01, 2.8, M.cream);
+  const lampMat = new THREE.MeshStandardMaterial({
+    color: "#f8d298",
+    emissive: "#ffb952",
+    emissiveIntensity: 1.1,
+    roughness: 0.4,
+  });
+  materials.push(lampMat);
+  for (const x of [-26.3, -17.7]) {
+    block(x, 3.1, 15.3, 0.4, 0.52, 0.16, M.darkTeal);
+    block(x, 3.1, 15.41, 0.22, 0.3, 0.08, lampMat);
+    block(x, 3.4, 15.37, 0.46, 0.08, 0.3, M.metal);
+  }
+  // Warehouse forecourt: worn loading apron, iron drainage and a striped canvas entrance canopy.
+  block(-22, 0.045, 16.25, 8, 0.035, 1.9, M.curb);
+  for (let x = -26; x <= -18; x += 1.33)
+    block(x, 0.067, 16.25, 0.017, 0.008, 1.86, M.metal);
+  block(-22, 0.068, 16.25, 7.98, 0.008, 0.017, M.metal);
+  for (let i = 0; i < 18; i++)
+    block(-26 + i * 0.46, 0.071, 17.12, 0.28, 0.012, 0.16, M.metal);
+  for (const x of [-27.2, -16.8]) {
+    block(x, 3.4, 15.25, 0.09, 1.9, 0.09, M.metal);
+    block(x, 4.32, 15.9, 0.11, 0.09, 1.4, M.metal);
+  }
+  for (let i = 0; i < 22; i++)
+    block(
+      -27.25 + i * 0.5,
+      4.43,
+      15.95,
+      0.49,
+      0.07,
+      1.9,
+      i % 2 ? M.cream : M.darkTeal,
+    );
+  block(-22, 4.2, 16.9, 11, 0.32, 0.055, M.darkTeal);
+  // Cut granite curb joints and irregular planted margins keep the street edge deliberate.
+  for (let i = 0; i < 24; i++) {
+    const x = -34 + i * 1.15;
+    block(x, 0.115, 24.1, 1.09, 0.19, 0.38, M.curb);
+    if (i % 4 === 0) block(x, 0.02, 24.47, 0.53, 0.025, 0.32, M.sand);
+  }
   const aftermathDebris = new THREE.Group();
   group.add(aftermathDebris);
   for (let i = 0; i < 12; i++) {
@@ -1162,16 +1357,9 @@ export function buildEnvironment(
     collider(x, z, 0.5, 0.5, "palm");
     for (let k = 0; k < 7; k++) {
       const angle = (k / 7) * Math.PI * 2;
-      const shape = new THREE.Shape();
-      shape.moveTo(0, 0);
-      shape.quadraticCurveTo(0.65, 1.4, 0.05, 3.3);
-      shape.quadraticCurveTo(-0.6, 1.4, 0, 0);
-      const geo = new THREE.ShapeGeometry(shape);
+      const geo = coastalFrond();
       geometries.push(geo);
-      const leafMat = (k % 2 ? M.leaf : M.leafLight).clone();
-      leafMat.side = THREE.DoubleSide;
-      materials.push(leafMat);
-      const leaf = mesh(geo, leafMat);
+      const leaf = mesh(geo, k % 2 ? M.leaf : M.leafLight);
       leaf.position.set(x + 0.35, height, z);
       leaf.rotation.set(-Math.PI / 2 + 0.35, 0, angle);
       fronds.push({
@@ -1192,7 +1380,7 @@ export function buildEnvironment(
     [8, -24, 7],
   ] as number[][])
     palm(x, z, h);
-  const bushGeo = new THREE.IcosahedronGeometry(1, 1);
+  const bushGeo = tropicalCrown();
   geometries.push(bushGeo);
   const bushMatrices: THREE.Matrix4[] = [];
   for (const [x, z] of [
@@ -1295,7 +1483,19 @@ export function buildEnvironment(
       if (pieces.length < 2) continue;
       const copies = pieces.map((piece) => {
         piece.updateMatrix();
-        return piece.geometry.clone().applyMatrix4(piece.matrix);
+        const g = piece.geometry.index
+          ? piece.geometry.toNonIndexed()
+          : piece.geometry.clone();
+        if (!g.attributes.normal) g.computeVertexNormals();
+        if (!g.attributes.uv)
+          g.setAttribute(
+            "uv",
+            new THREE.Float32BufferAttribute(
+              new Float32Array(g.attributes.position.count * 2),
+              2,
+            ),
+          );
+        return g.applyMatrix4(piece.matrix);
       });
       const merged = mergeGeometries(copies, false);
       copies.forEach((g) => g.dispose());
@@ -1316,6 +1516,7 @@ export function buildEnvironment(
     batch.castShadow = true;
     batch.receiveShadow = true;
     batch.computeBoundingSphere();
+    batch.userData.visualStatic = true;
     group.add(batch);
   }
   return {
@@ -1363,6 +1564,7 @@ export function buildEnvironment(
           : world.hour >= 24
             ? 0.55
             : 0.25;
+      updateWater(elapsed);
       waterMat.color.set(world.hour >= 48 ? "#527c7b" : "#548f8b");
       if (quality === "high") {
         const a = waterGeo.attributes.position;
@@ -1396,7 +1598,11 @@ export function buildEnvironment(
           Math.abs(player.z - r.center.z) < r.d / 2,
       );
       rain.visible =
-        !world.ended && world.hour >= 48 && quality === "high" && !indoors;
+        !wildlifeHabitats &&
+        !world.ended &&
+        world.hour >= 48 &&
+        quality === "high" &&
+        !indoors;
       if (rain.visible) {
         rainMaterial.opacity = 0.17 + ((world.hour - 48) / 24) * 0.18;
         for (let i = 0; i < 160; i++) {
@@ -1408,6 +1614,14 @@ export function buildEnvironment(
             y,
             player.z + z,
           );
+          // Reject each drop below a roof, even when its viewer remains outside.
+          const covered = roofs.some(
+            (r) =>
+              Math.abs(rainDummy.position.x - r.center.x) < r.w / 2 + 0.45 &&
+              Math.abs(rainDummy.position.z - r.center.z) < r.d / 2 + 0.45 &&
+              y < 7,
+          );
+          rainDummy.scale.setScalar(covered ? 0 : 1);
           rainDummy.updateMatrix();
           rain.setMatrixAt(i, rainDummy.matrix);
         }

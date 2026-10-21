@@ -108,7 +108,7 @@ const identities: Record<
 };
 const material = (color: string, roughness = 0.85) =>
   new THREE.MeshStandardMaterial({ color, roughness });
-const sphere = (radius: number) => new THREE.SphereGeometry(radius, 12, 8);
+const sphere = (radius: number) => new THREE.SphereGeometry(radius, 16, 10);
 function lathe(profile: [number, number][], segments = 12) {
   const ordered =
     profile[0][1] > profile.at(-1)![1] ? [...profile].reverse() : profile;
@@ -350,7 +350,8 @@ export function buildAvatar(id: string, color: string): AvatarHandle {
     );
   const hips = joint(body, "hips", 0, 0.83, 0);
   const legs: THREE.Group[] = [],
-    knees: THREE.Group[] = [];
+    knees: THREE.Group[] = [],
+    ankles: THREE.Group[] = [];
   for (const side of [-1, 1]) {
     const leg = joint(
       hips,
@@ -388,8 +389,17 @@ export function buildAvatar(id: string, color: string): AvatarHandle {
       0,
       0,
     );
-    part(knee, sphere(0.085), shoe, 0, -0.365, 0.035, [0.79, 0.62, 1.5]);
-    box(knee, dark, [0.13, 0.025, 0.22], [0, -0.405, 0.035]);
+    const ankle = joint(knee, "ankle", 0, -0.35, 0);
+    ankles.push(ankle);
+    part(ankle, sphere(0.085), shoe, 0, -0.015, 0.035, [0.79, 0.62, 1.5]);
+    box(ankle, dark, [0.13, 0.025, 0.22], [0, -0.055, 0.035]);
+    for (let lace = 0; lace < 3; lace++)
+      box(
+        ankle,
+        cream,
+        [0.075, 0.008, 0.008],
+        [0, 0.023, 0.045 + lace * 0.018],
+      );
   }
   const arms: THREE.Group[] = [],
     elbows: THREE.Group[] = [];
@@ -599,6 +609,20 @@ export function buildAvatar(id: string, color: string): AvatarHandle {
     clipboard.rotation.x = 0.3;
     box(clipboard, cream, [0.145, 0.19, 0.008], [0, 0, 0.018]);
   }
+  // Rolled seams, a chest pocket and leather pack construction read at normal play distance.
+  const seam = material(new THREE.Color(color).multiplyScalar(0.68).getStyle());
+  box(body, seam, [0.105, 0.105, 0.012], [-0.095, 1.23, 0.143]);
+  box(body, cloth, [0.105, 0.018, 0.017], [-0.095, 1.28, 0.148]);
+  for (let button = 0; button < 4; button++)
+    part(body, sphere(0.009), dark, 0, 1.05 + button * 0.08, 0.155);
+  if (gear === "backpack") {
+    const leather = material("#71513b");
+    box(body, leather, [0.23, 0.035, 0.025], [0, 1.31, -0.28]);
+    for (const side of [-1, 1]) {
+      box(body, leather, [0.028, 0.27, 0.025], [side * 0.09, 1.16, -0.275]);
+      box(body, cream, [0.04, 0.032, 0.012], [side * 0.09, 1.12, -0.294]);
+    }
+  }
   // Crate appears only for an authoritative active shipment or explicit player carry state.
   const cargo = joint(body, "carried-supply", 0, 1.05, 0.37);
   cargo.visible = false;
@@ -608,6 +632,7 @@ export function buildAvatar(id: string, color: string): AvatarHandle {
   box(cargo, cream, [0.1, 0.09, 0.012], [0, 0, 0.163]);
   mergeStaticParts(group);
   let phase = 0,
+    blendedGait = 0,
     lastElapsed: number | undefined;
   return {
     group,
@@ -618,17 +643,52 @@ export function buildAvatar(id: string, color: string): AvatarHandle {
           : Math.min(0.1, Math.max(0, elapsed - lastElapsed));
       lastElapsed = elapsed;
       phase += dt * Math.max(0, speed) * 5.3;
-      const gait = Math.min(1, Math.max(0, speed) / 1.25),
+      blendedGait +=
+        (Math.min(1, Math.max(0, speed) / 1.25) - blendedGait) *
+        (1 - Math.exp(-dt * 14));
+      const gait = blendedGait,
         wave = Math.sin(phase);
       body.position.y =
         -0.04 +
         Math.abs(Math.sin(phase)) * gait * 0.022 +
         Math.sin(elapsed * 1.7) * 0.005;
       torso.scale.y = 0.99 + Math.sin(elapsed * 1.7) * 0.008;
-      legs[0].rotation.x = wave * 0.48 * gait;
-      legs[1].rotation.x = -wave * 0.48 * gait;
-      knees[0].rotation.x = Math.max(0, -wave) * 0.65 * gait;
-      knees[1].rotation.x = Math.max(0, wave) * 0.65 * gait;
+      // Two-bone leg solve: the stance foot stays level while the swing foot clears the ground.
+      // Cycle is driven by travelled speed, not wall time, so stopping cannot keep feet skating.
+      for (let i = 0; i < 2; i++) {
+        const cycle = (((phase / (Math.PI * 2) + i * 0.5) % 1) + 1) % 1;
+        const stance = cycle < 0.62;
+        const progress = stance ? cycle / 0.62 : (cycle - 0.62) / 0.38;
+        const footZ =
+          (stance ? 0.27 - progress * 0.54 : -0.27 + progress * 0.54) * gait;
+        const lift = stance ? 0 : Math.sin(progress * Math.PI) * 0.12 * gait;
+        const down = 0.695 - lift;
+        const distance = Math.min(0.719, Math.hypot(footZ, down));
+        const knee = Math.acos(
+          Math.max(
+            -1,
+            Math.min(
+              1,
+              (distance * distance - 0.37 ** 2 - 0.35 ** 2) / (2 * 0.37 * 0.35),
+            ),
+          ),
+        );
+        const hip =
+          Math.atan2(-footZ, down) -
+          Math.acos(
+            Math.max(
+              -1,
+              Math.min(
+                1,
+                (0.37 ** 2 + distance * distance - 0.35 ** 2) /
+                  (2 * 0.37 * distance),
+              ),
+            ),
+          );
+        legs[i].rotation.x = hip;
+        knees[i].rotation.x = knee;
+        ankles[i].rotation.x = -hip - knee;
+      }
       arms.forEach((arm, i) => {
         const side = i === 0 ? -1 : 1;
         arm.rotation.x = carrying ? -0.65 : -wave * side * 0.4 * gait;

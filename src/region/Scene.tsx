@@ -1,7 +1,13 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { SSAOPass } from "three/examples/jsm/postprocessing/SSAOPass.js";
+import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { buildRegionWorld } from "./World";
 import { buildVehicle } from "./Vehicle";
+import { batchStaticVisuals } from "./visualPerformance";
+import { createPresentation } from "./Presentation";
 import { DriveSound } from "./DriveSound";
 import { trafficPositions } from "./engine";
 import { surfaceHeight, type RegionState, type DriveInput } from "./contracts";
@@ -24,6 +30,9 @@ export interface Metrics {
   triangles: number;
   geometries: number;
   textures: number;
+  resolution: string;
+  gpu: string;
+  capabilities: string;
 }
 interface Props {
   getRegion: () => RegionState;
@@ -35,6 +44,8 @@ interface Props {
   muted: boolean;
   volume: number;
   quality: Quality;
+  renderScale: number;
+  ambientOcclusion: boolean;
   sensitivity: number;
   reaction: { id: SpeciesId; until: number; kind: string } | null;
   onTick: (dt: number, base: Collider[], input: DriveInput) => void;
@@ -55,7 +66,7 @@ export default function RegionScene(props: Props) {
     });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.3;
+    renderer.toneMappingExposure = 1.12;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFShadowMap;
     mount.appendChild(renderer.domElement);
@@ -68,24 +79,69 @@ export default function RegionScene(props: Props) {
     scene.background = new THREE.Color("#bad0ce");
     scene.fog = new THREE.FogExp2("#bad0ce", 0.008);
     const camera = new THREE.PerspectiveCamera(46, 1, 0.1, 260);
-    const sky = new THREE.HemisphereLight("#d6eee8", "#8a7861", 2.2);
+    const composer = new EffectComposer(
+      renderer,
+      new THREE.WebGLRenderTarget(1, 1, {
+        type: THREE.HalfFloatType,
+        samples: 4,
+      }),
+    );
+    const beauty = new RenderPass(scene, camera);
+    const ao = new SSAOPass(scene, camera, 512, 512, 12);
+    ao.kernelRadius = 1.6;
+    ao.minDistance = 0.002;
+    ao.maxDistance = 0.035;
+    const drawAO = ao.render.bind(ao);
+    ao.render = (...args: Parameters<SSAOPass["render"]>) => {
+      const hidden: THREE.Object3D[] = [];
+      scene.traverse((o) => {
+        if (o instanceof THREE.Mesh && o.visible) {
+          const mats = Array.isArray(o.material) ? o.material : [o.material];
+          if (mats.every((m) => m.transparent && m.opacity < 0.5)) {
+            hidden.push(o);
+            o.visible = false;
+          }
+        }
+      });
+      try {
+        drawAO(...args);
+      } finally {
+        hidden.forEach((o) => (o.visible = true));
+      }
+    };
+    const output = new OutputPass();
+    composer.addPass(beauty);
+    composer.addPass(ao);
+    composer.addPass(output);
+    renderer.info.autoReset = false;
+    const sky = new THREE.HemisphereLight("#c2d8ed", "#63513e", 1.5);
     scene.add(sky);
     const sun = new THREE.DirectionalLight("#ffe0b3", 2.8);
     sun.position.set(-25, 45, 24);
     sun.castShadow = true;
+    sun.shadow.autoUpdate = false;
     sun.shadow.mapSize.set(2048, 2048);
     Object.assign(sun.shadow.camera, {
-      left: -50,
-      right: 50,
-      top: 50,
-      bottom: -50,
+      left: -25,
+      right: 25,
+      top: 25,
+      bottom: -25,
       near: 1,
       far: 120,
     });
-    sun.shadow.normalBias = 0.04;
+    sun.shadow.normalBias = 0.025;
+    sun.shadow.bias = -0.00015;
     scene.add(sun);
     scene.add(sun.target);
+    const presentation = createPresentation(renderer, scene);
+    const gl = renderer.getContext();
+    const debug = gl.getExtension("WEBGL_debug_renderer_info");
+    const gpu = debug
+      ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL))
+      : "WebGL2 renderer";
+    const capabilities = `WebGL2 · MSAA ${gl.getParameter(gl.SAMPLES)} · texture max ${renderer.capabilities.maxTextureSize} · anisotropy ${renderer.capabilities.getMaxAnisotropy()}`;
     const world = buildRegionWorld();
+    const staticBatches = batchStaticVisuals(world.group);
     scene.add(world.group);
     const car = buildVehicle();
     car.group.userData.regionTarget = "vehicle";
@@ -107,7 +163,11 @@ export default function RegionScene(props: Props) {
       SPECIES.map((sp, i) => {
         const m = buildCreature(sp.id, i);
         m.group.scale.setScalar(0.72);
-        m.group.position.set(-35.5 + (i % 3) * 1.5, 0, 13 + Math.floor(i / 3) * 2);
+        m.group.position.set(
+          -35.5 + (i % 3) * 1.5,
+          0,
+          13 + Math.floor(i / 3) * 2,
+        );
         scene.add(m.group);
         return [sp.id, m] as const;
       }),
@@ -163,6 +223,7 @@ export default function RegionScene(props: Props) {
       string,
       { mesh: THREE.InstancedMesh; index: number; matrix: THREE.Matrix4 }
     >();
+    let lastOcclusion = -1;
     const zeroCrown = new THREE.Matrix4().makeScale(0, 0, 0);
     const occlusionRay = new THREE.Raycaster(),
       occluderMeshes = occluders.map((o) => o.mesh),
@@ -190,6 +251,8 @@ export default function RegionScene(props: Props) {
       pointer = new THREE.Vector2(),
       plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0),
       hit = new THREE.Vector3();
+    let pitch = 0.75,
+      lastY = 0;
     let yaw = 0.1,
       distance = mount.clientWidth < 600 ? 19 : 13,
       dragging = false,
@@ -251,12 +314,16 @@ export default function RegionScene(props: Props) {
       hearts.add(mesh);
     }
     const resize = () => {
-      renderer.setPixelRatio(
-        current.current.quality === "low" ? 1 : Math.min(devicePixelRatio, 1.5),
-      );
+      renderer.setPixelRatio(current.current.renderScale);
       renderer.setSize(mount.clientWidth, mount.clientHeight);
       camera.aspect = mount.clientWidth / mount.clientHeight;
       camera.updateProjectionMatrix();
+      composer.setPixelRatio(current.current.renderScale);
+      composer.setSize(mount.clientWidth, mount.clientHeight);
+      ao.setSize(
+        Math.round(mount.clientWidth * current.current.renderScale * 0.5),
+        Math.round(mount.clientHeight * current.current.renderScale * 0.5),
+      );
     };
     resize();
     const observer = new ResizeObserver(resize);
@@ -333,7 +400,7 @@ export default function RegionScene(props: Props) {
       mount.querySelector("canvas")?.focus();
       dragging = true;
       startX = lastX = e.clientX;
-      startY = e.clientY;
+      startY = lastY = e.clientY;
       moved = 0;
       renderer.domElement.setPointerCapture(e.pointerId);
     };
@@ -343,8 +410,15 @@ export default function RegionScene(props: Props) {
           moved,
           Math.hypot(e.clientX - startX, e.clientY - startY),
         );
-        if (moved > 5)
+        if (moved > 5) {
           yaw -= (e.clientX - lastX) * 0.003 * current.current.sensitivity;
+          pitch = THREE.MathUtils.clamp(
+            pitch + (e.clientY - lastY) * 0.002 * current.current.sensitivity,
+            0.38,
+            1.05,
+          );
+        }
+        lastY = e.clientY;
         lastX = e.clientX;
       } else {
         renderer.domElement.style.cursor = pickCreature(e.clientX, e.clientY)
@@ -480,6 +554,7 @@ export default function RegionScene(props: Props) {
       sun.target.position.set(s.player.x, 0, s.player.z);
       world.update(region, dt, elapsed, p.quality);
       car.update(region.vehicle, dt);
+      presentation.update(region, dt, p.quality === "low");
       avatar.group.visible = !region.vehicle.occupied;
       driveSound.set(p.muted, p.volume);
       driveSound.update(region.vehicle, dt);
@@ -490,6 +565,13 @@ export default function RegionScene(props: Props) {
             : person;
         const a = people.get(r.id);
         if (!a) continue;
+        a.group.visible =
+          Math.hypot(r.position.x - s.player.x, r.position.z - s.player.z) <
+          (p.quality === "low" ? 38 : 52);
+        if (!a.group.visible) {
+          lastPositions.set("resident-" + r.id, { ...r.position });
+          continue;
+        }
         const prev = lastPositions.get("resident-" + r.id) || r.position;
         const v =
           Math.hypot(r.position.x - prev.x, r.position.z - prev.z) /
@@ -499,11 +581,18 @@ export default function RegionScene(props: Props) {
           surfaceHeight(r.position),
           r.position.z,
         );
-        if (v > 0.05)
-          a.group.rotation.y = Math.atan2(
+        if (v > 0.05) {
+          const target = Math.atan2(
             r.position.x - prev.x,
             r.position.z - prev.z,
           );
+          a.group.rotation.y +=
+            Math.atan2(
+              Math.sin(target - a.group.rotation.y),
+              Math.cos(target - a.group.rotation.y),
+            ) *
+            (1 - Math.exp(-dt * 10));
+        }
         a.animate(elapsed, Math.min(3, v));
         lastPositions.set("resident-" + r.id, { ...r.position });
       }
@@ -526,19 +615,19 @@ export default function RegionScene(props: Props) {
           s.creatures.some((c) => c.id === id && c.bonded) &&
           s.companion !== id &&
           Math.hypot(s.player.x + 22, s.player.z - 9) < 65;
-        m.animate("idle", elapsed, 0, 0);
+        if (m.group.visible) m.animate("idle", elapsed, 0, 0);
       }
 
       sound.set(p.muted, p.volume);
       sound.update(s, p.paused ? 0 : dt);
       const pal =
         s.weather === "fair"
-          ? ["#b8d5d0", "#ffe0b0", 2.2, 2.8]
+          ? ["#a9cbdc", "#ffdda8", 1.35, 3.4]
           : s.weather === "rain"
-            ? ["#779d9e", "#c0d9d9", 1.8, 1.4]
+            ? ["#8cabbc", "#d5e5f2", 1.2, 1.6]
             : s.weather === "dusk"
-              ? ["#655c81", "#efb6a2", 1.1, 0.8]
-              : ["#3a576a", "#bbc8e5", 1.25, 0.7];
+              ? ["#737d9c", "#ffd0a0", 0.85, 1.6]
+              : ["#667e95", "#bdd2ec", 0.95, 1.15];
       (scene.background as THREE.Color).lerp(
         new THREE.Color(pal[0] as string),
         dt * 0.8,
@@ -553,7 +642,8 @@ export default function RegionScene(props: Props) {
       );
       sun.intensity = THREE.MathUtils.damp(
         sun.intensity,
-        pal[3] as number,
+        (pal[3] as number) +
+          (s.weather === "storm" && s.elapsed % 22 < 0.16 ? 2.8 : 0),
         2,
         dt,
       );
@@ -734,73 +824,84 @@ export default function RegionScene(props: Props) {
         : distance;
       const cam = new THREE.Vector3(
         focus.x + Math.sin(yaw) * cameraDistance,
-        focus.y + cameraDistance * (region.vehicle.occupied ? 0.48 : 0.75),
+        focus.y + cameraDistance * (region.vehicle.occupied ? 0.48 : pitch),
         focus.z + Math.cos(yaw) * cameraDistance,
       );
       camera.position.lerp(cam, 1 - Math.exp(-dt * 7));
       camera.lookAt(focus);
-      renderer.shadowMap.enabled = p.quality === "high";
-      if (
-        renderer.getPixelRatio() !==
-        (p.quality === "low" ? 1 : Math.min(devicePixelRatio, 1.5))
-      )
-        resize();
-      for (const h of hiddenCrowns.values()) {
-        h.mesh.setMatrixAt(h.index, h.matrix);
-        h.mesh.instanceMatrix.needsUpdate = true;
-      }
-      hiddenCrowns.clear();
-      scene.updateMatrixWorld(true);
-      const faded = new Set<string>(),
-        targets = [new THREE.Vector3(s.player.x, 0.9, s.player.z)];
-      if (selected)
-        targets.push(
-          new THREE.Vector3(
-            selected.position.x,
-            SPECIES.find((c) => c.id === selected.id)!.height + 0.55,
-            selected.position.z,
-          ),
-        );
-      for (const target of targets)
-        for (const offset of [-0.5, 0, 0.5]) {
-          const point = target.clone();
-          point.x += Math.cos(yaw) * offset;
-          point.z -= Math.sin(yaw) * offset;
-          const direction = point.sub(camera.position);
-          occlusionRay.set(camera.position, direction.clone().normalize());
-          occlusionRay.far = Math.max(0, direction.length() - 0.25);
-          for (const hit of occlusionRay.intersectObjects(
-            [...occluderMeshes, ...canopy],
-            false,
-          )) {
-            if (!hit.object.visible) continue;
-            if (
-              hit.object instanceof THREE.InstancedMesh &&
-              hit.instanceId !== undefined
-            ) {
-              const mesh = hit.object,
-                index = hit.instanceId,
-                key = mesh.uuid + index;
-              if (!hiddenCrowns.has(key)) {
-                const matrix = new THREE.Matrix4();
-                mesh.getMatrixAt(index, matrix);
-                hiddenCrowns.set(key, { mesh, index, matrix });
-                mesh.setMatrixAt(index, zeroCrown);
-                mesh.instanceMatrix.needsUpdate = true;
-              }
-              continue;
-            }
-            const key = occluderKeys.get(hit.object.uuid);
-            if (key) faded.add(key);
-          }
-        }
-      for (const o of occluders)
-        o.materials.forEach((m, i) => {
-          const goal = faded.has(o.key) ? 0.12 : o.opacity[i];
-          m.opacity = THREE.MathUtils.damp(m.opacity, goal, 10, dt);
-          m.depthWrite = m.opacity > 0.95;
+      if (renderer.shadowMap.enabled !== (p.quality === "high")) {
+        renderer.shadowMap.enabled = p.quality === "high";
+        sun.castShadow = renderer.shadowMap.enabled;
+        scene.traverse((o) => {
+          if (o instanceof THREE.Mesh)
+            (Array.isArray(o.material) ? o.material : [o.material]).forEach(
+              (m) => (m.needsUpdate = true),
+            );
         });
-      renderer.render(scene, camera);
+      }
+      if (renderer.getPixelRatio() !== p.renderScale) resize();
+      if (elapsed - lastOcclusion > 1 / 15) {
+        lastOcclusion = elapsed;
+        for (const h of hiddenCrowns.values()) {
+          h.mesh.setMatrixAt(h.index, h.matrix);
+          h.mesh.instanceMatrix.needsUpdate = true;
+        }
+        hiddenCrowns.clear();
+        scene.updateMatrixWorld(true);
+        const faded = new Set<string>(),
+          targets = [new THREE.Vector3(s.player.x, 0.9, s.player.z)];
+        if (selected)
+          targets.push(
+            new THREE.Vector3(
+              selected.position.x,
+              SPECIES.find((c) => c.id === selected.id)!.height + 0.55,
+              selected.position.z,
+            ),
+          );
+        for (const target of targets)
+          for (const offset of [-0.5, 0, 0.5]) {
+            const point = target.clone();
+            point.x += Math.cos(yaw) * offset;
+            point.z -= Math.sin(yaw) * offset;
+            const direction = point.sub(camera.position);
+            occlusionRay.set(camera.position, direction.clone().normalize());
+            occlusionRay.far = Math.max(0, direction.length() - 0.25);
+            for (const hit of occlusionRay.intersectObjects(
+              [...occluderMeshes, ...canopy],
+              false,
+            )) {
+              if (!hit.object.visible) continue;
+              if (
+                hit.object instanceof THREE.InstancedMesh &&
+                hit.instanceId !== undefined
+              ) {
+                const mesh = hit.object,
+                  index = hit.instanceId,
+                  key = mesh.uuid + index;
+                if (!hiddenCrowns.has(key)) {
+                  const matrix = new THREE.Matrix4();
+                  mesh.getMatrixAt(index, matrix);
+                  hiddenCrowns.set(key, { mesh, index, matrix });
+                  mesh.setMatrixAt(index, zeroCrown);
+                  mesh.instanceMatrix.needsUpdate = true;
+                }
+                continue;
+              }
+              const key = occluderKeys.get(hit.object.uuid);
+              if (key) faded.add(key);
+            }
+          }
+        for (const o of occluders)
+          o.materials.forEach((m, i) => {
+            const goal = faded.has(o.key) ? 0.12 : o.opacity[i];
+            m.opacity = THREE.MathUtils.damp(m.opacity, goal, 10, dt);
+            m.depthWrite = m.opacity > 0.95;
+          });
+      }
+      renderer.info.reset();
+      sun.shadow.needsUpdate = p.quality === "high";
+      if (p.ambientOcclusion && p.quality === "high") composer.render(dt);
+      else renderer.render(scene, camera);
       frames.push(raw * 1000);
       if (now - lastSample > 2000) {
         const sorted = frames.slice().sort((a, b) => a - b);
@@ -813,6 +914,9 @@ export default function RegionScene(props: Props) {
           triangles: renderer.info.render.triangles,
           geometries: renderer.info.memory.geometries,
           textures: renderer.info.memory.textures,
+          resolution: `${renderer.domElement.width} × ${renderer.domElement.height}`,
+          gpu,
+          capabilities,
         });
         frames.length = 0;
         lastSample = now;
@@ -821,6 +925,12 @@ export default function RegionScene(props: Props) {
     loop();
     return () => {
       cancelAnimationFrame(raf);
+      presentation.dispose();
+      composer.dispose();
+      ao.dispose();
+      ao.ssaoMaterial.dispose();
+      ao.noiseTexture.dispose();
+      output.dispose();
       observer.disconnect();
       document.removeEventListener("pointerdown", unlock);
       window.removeEventListener("keyup", keyup);
@@ -844,6 +954,7 @@ export default function RegionScene(props: Props) {
         o.mesh.material = o.original;
         o.materials.forEach((m) => m.dispose());
       });
+      staticBatches.dispose();
       world.dispose();
       models.forEach((m) => m.dispose());
       avatar.group.traverse((o) => {

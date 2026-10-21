@@ -1,3 +1,6 @@
+## Coastal visual release
+Run `npm run build` then `npm start`; open http://127.0.0.1:3001/. Existing saves and AI setup are unchanged. Open **… → Graphics** for Coastal/Performance, optional depth shading, and75/100/125% render scale (remembered). Drag horizontally/vertically to orbit/tilt; click to walk, use contextual vehicle controls or WASD/B. Options also records a12-second silent gameplay clip. See [visual evidence and measured Mac performance](VISUAL-RELEASE.md); observed samples were approximately30FPS, not verified60FPS.
+
 # AFTERLIGHT — A connected coast
 
 The default experience expands the existing neighborhood into three compact districts: coastal town, working harbor and wetlands. Leave your warehouse on foot or in your Coast Runner, discover creatures, speak to residents, or choose an optional delivery, expedition or dockside assistance. Free roam has **no disaster countdown**. The original six species and all their abilities remain available.

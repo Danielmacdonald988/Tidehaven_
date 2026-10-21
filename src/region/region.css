@@ -170,3 +170,40 @@
 .wildlife-root .region-map-travel:hover {
   background: #f0e4bd;
 }
+
+.region-clip-panel {
+  position: absolute;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 40;
+  background: #173f43;
+  padding: 10px;
+  border-radius: 12px;
+  max-width: 90vw;
+}
+.region-clip {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.region-clip a {
+  color: #f1d6a3;
+  font-size: 12px;
+}
+.region-clip-panel[hidden] {
+  display: none;
+}
+@media (max-width: 600px) {
+  .wildlife-root:has(.region-clip-panel:not([hidden])) .wildlife-options {
+    max-height: calc(100dvh - 155px);
+    overflow-y: auto;
+  }
+  .region-clip-panel {
+    bottom: 8px;
+    width: calc(100% - 30px);
+    box-sizing: border-box;
+  }
+  .region-clip { justify-content: center; }
+  .region-clip button { font-size: 12px; padding: 9px 12px; }
+}

@@ -172,6 +172,35 @@ export class WildlifeSound {
       c.currentTime,
       0.5,
     );
+    if (
+      previous &&
+      storm &&
+      dt > 0 &&
+      Math.floor((state.elapsed - 0.85) / 22) >
+        Math.floor((previous.elapsed - 0.85) / 22)
+    ) {
+      // Authored distant thunder follows the regional lightning flash by 850 ms.
+      this.note(
+        { x: state.player.x + 15, z: state.player.z - 20 },
+        state.player,
+        48,
+        24,
+        2.6,
+        0.17,
+        0,
+        "triangle",
+      );
+      this.note(
+        { x: state.player.x + 15, z: state.player.z - 20 },
+        state.player,
+        67,
+        30,
+        1.8,
+        0.09,
+        0.15,
+        "triangle",
+      );
+    }
     if (previous) {
       const distance = Math.hypot(
         state.player.x - previous.player.x,

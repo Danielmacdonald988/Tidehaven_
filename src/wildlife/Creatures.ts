@@ -48,7 +48,9 @@ export function buildCreature(id: SpeciesId, variant = 0): CreatureRig {
     materials.add(m);
     return m;
   };
-  const skin = material(skinColor),
+  const skin = material(skinColor, {
+      roughness: id === "pluvlet" ? 0.32 : id === "cairnback" ? 0.91 : 0.7,
+    }),
     cream = material(palette[1]),
     accent = material(palette[2]),
     dark = material("#142e38", { roughness: 0.2 }),
@@ -183,6 +185,41 @@ export function buildCreature(id: SpeciesId, variant = 0): CreatureRig {
     oval(head, cream, 0, -0.09, 0.19, 0.23, 0.12, 0.12);
     eye(head, -0.18, 0.06, 0.205);
     eye(head, 0.18, 0.06, 0.205);
+    // Deliberate cheek freckles and swept whiskers make the starter expressive up close.
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < 3; i++) {
+        oval(
+          head,
+          accent,
+          side * (0.14 + i * 0.035),
+          -0.055 - i * 0.014,
+          0.28 - i * 0.02,
+          0.012,
+          0.012,
+          0.008,
+        );
+        tube(
+          head,
+          cream,
+          [
+            [side * 0.19, -0.07, 0.26],
+            [side * 0.29, -0.045 + i * 0.035, 0.28],
+            [side * 0.39, -0.04 + i * 0.055, 0.25],
+          ],
+          0.007,
+        );
+      }
+      tube(
+        head,
+        accent,
+        [
+          [side * 0.105, 0.14, 0.18],
+          [side * 0.18, 0.16, 0.2],
+          [side * 0.24, 0.125, 0.17],
+        ],
+        0.018,
+      );
+    }
     oval(head, accent, 0, -0.035, 0.295, 0.055, 0.035, 0.025);
     for (const s of [-1, 1]) {
       const j = joint(head, s * 0.23, 0.13, -0.06);
@@ -626,13 +663,27 @@ export function buildCreature(id: SpeciesId, variant = 0): CreatureRig {
         }
       }
   }
+  const limbHeights = limbs.map((limb) => limb.position.y);
   const baseHeadY = head.position.y,
     baseBodyY = body.position.y;
-  let disposed = false;
+  let disposed = false,
+    gaitPhase = 0,
+    lastElapsed: number | undefined,
+    gaitBlend = 0;
   return {
     group,
     animate(mood, elapsed, speed, phase) {
       if (disposed) return;
+      const dt =
+        lastElapsed === undefined
+          ? 0
+          : Math.min(0.1, Math.max(0, elapsed - lastElapsed));
+      lastElapsed = elapsed;
+      const stride = id === "cairnback" ? 7.5 : id === "pluvlet" ? 9 : 9.8;
+      gaitPhase += Math.max(0, speed) * dt * stride;
+      gaitBlend +=
+        (Math.min(1, Math.max(0, speed) * 2) - gaitBlend) *
+        (1 - Math.exp(-dt * 12));
       const t = elapsed + phase * 1.7,
         walking = mood === "travel" || (mood === "companion" && speed > 0.1),
         flying = id === "sailpip" || id === "tempestray" || id === "glasswhorl";
@@ -644,7 +695,9 @@ export function buildCreature(id: SpeciesId, variant = 0): CreatureRig {
         (flying
           ? Math.sin(t * 2) * 0.055
           : walking
-            ? Math.abs(Math.sin(t * 9)) * 0.035
+            ? Math.abs(Math.sin(gaitPhase)) *
+              (id === "pluvlet" ? 0.085 : 0.018) *
+              gaitBlend
             : Math.sin(t * 2.2) * 0.012) +
         (bond ? Math.abs(Math.sin(t * 5)) * 0.23 : 0);
       body.rotation.z = alert
@@ -652,7 +705,7 @@ export function buildCreature(id: SpeciesId, variant = 0): CreatureRig {
         : bond
           ? Math.sin(t * 5) * 0.17
           : walking
-            ? Math.sin(t * 9) * 0.025
+            ? Math.sin(gaitPhase) * 0.018 * gaitBlend
             : 0;
       body.rotation.x = alert ? 0.12 : curious ? -0.045 : 0;
       head.rotation.y = curious
@@ -665,15 +718,18 @@ export function buildCreature(id: SpeciesId, variant = 0): CreatureRig {
       tail.rotation.y =
         Math.sin(t * (bond ? 8 : walking ? 7 : 2.5)) * (bond ? 0.5 : 0.22);
       tail.rotation.x = alert ? 0.3 : Math.sin(t * 2) * 0.06;
-      limbs.forEach(
-        (j, i) =>
-          (j.rotation.x = walking
-            ? Math.sin(t * 9 + (i % 2 ? Math.PI : 0) + (i > 1 ? Math.PI : 0)) *
-              0.52
-            : bond
-              ? -0.15
-              : 0),
-      );
+      limbs.forEach((j, i) => {
+        const step = gaitPhase + (i % 2 ? Math.PI : 0) + (i > 1 ? Math.PI : 0);
+        // Short grounded steps, with a distinct crouch-and-spring rhythm for the rain amphibian.
+        j.rotation.x = walking
+          ? Math.sin(step) * (id === "cairnback" ? 0.27 : 0.4) * gaitBlend
+          : bond
+            ? -0.15
+            : 0;
+        j.position.y =
+          limbHeights[i] +
+          (walking ? Math.max(0, Math.cos(step)) * 0.035 * gaitBlend : 0);
+      });
       wings.forEach((j, i) => {
         const sign = i % 2 ? 1 : -1;
         j.rotation.z =

@@ -1,3 +1,11 @@
+## Visual milestone — implemented, measured limitations retained
+- Lead: integrated lighting/material/weather/graphics controls, inspected matching views and Mac/browser results.
+- Environment agent: coastal facade/material/foliage/water pass across districts.
+- Animation agent: planted gait, creature motion, pickup and relief-truck detail.
+- Performance agent: batching/resource checks and independent browser inspection.
+- Verified:177 tests, production build, driving across districts, companion/reload, preset controls, screenshot pairs and actual clip.
+- Outstanding quality targets: verified60FPS, long browser-heap soak, premium human assets and less rectangular terrain/road transitions. See VISUAL-RELEASE.md. No agents remain working after delivery.
+
 # Current milestone — Connected coastal region
 
 Checkpoint before expansion: `checkpoint-living-coast-67c9934`. Shared interfaces and ownership: [REGION-CONTRACT.md](REGION-CONTRACT.md).

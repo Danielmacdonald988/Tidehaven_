@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {
   REGION_BOUNDS,
@@ -258,9 +259,9 @@ export function buildVehicle() {
   group.userData.regionTarget = "vehicle";
   group.rotation.order = "YXZ";
   const paint = new THREE.MeshStandardMaterial({
-      color: "#497e80",
-      roughness: 0.38,
-      metalness: 0.24,
+      color: "#326b70",
+      roughness: 0.31,
+      metalness: 0.42,
     }),
     trim = new THREE.MeshStandardMaterial({
       color: "#d8d1af",
@@ -299,7 +300,17 @@ export function buildVehicle() {
     m: THREE.Material,
     parent: THREE.Object3D = group,
   ) => {
-    const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+    const geometry =
+      m === paint || (m === trim && h > 0.08)
+        ? new RoundedBoxGeometry(
+            w,
+            h,
+            d,
+            1,
+            Math.min(0.065, w * 0.18, h * 0.18, d * 0.18),
+          )
+        : new THREE.BoxGeometry(w, h, d);
+    const o = new THREE.Mesh(geometry, m);
     o.position.set(x, y, z);
     o.castShadow = true;
     o.receiveShadow = true;
@@ -346,6 +357,30 @@ export function buildVehicle() {
   }
   for (let i = 0; i < 5; i++)
     box(0.04, 0.23, 0.045, (i - 2) * 0.14, 0.94, 2.16, trim);
+  // Painted sill stripe, hood creases, recessed bed ribs and warm ivory coachwork.
+  for (const side of [-1, 1]) {
+    box(0.025, 0.075, 3.92, side * 0.921, 0.84, 0, trim);
+    box(0.026, 0.018, 0.91, side * 0.51, 1.226, 1.5, trim);
+    box(0.045, 0.055, 1.45, side * 0.858, 1.42, -1.34, trim);
+    box(0.06, 0.14, 0.1, side * 0.79, 1.34, -2.13, rubber);
+    const wiper = box(0.4, 0.018, 0.022, side * 0.37, 1.27, 0.995, rubber);
+    wiper.rotation.z = side * 0.2;
+  }
+  for (let rib = 0; rib < 7; rib++)
+    box(0.028, 0.022, 1.28, (rib - 3) * 0.21, 1.025, -1.35, trim);
+  box(0.38, 0.13, 0.025, 0, 0.67, -2.26, seat);
+  box(0.3, 0.055, 0.028, 0, 0.67, -2.275, trim);
+  box(0.24, 0.04, 0.025, 0, 1.28, -2.13, trim);
+  box(1.48, 0.18, 0.27, 0, 1.32, 0.68, rubber);
+  const steering = new THREE.Mesh(
+    new THREE.TorusGeometry(0.18, 0.024, 6, 18),
+    rubber,
+  );
+  steering.position.set(-0.44, 1.4, 0.45);
+  steering.rotation.x = -0.55;
+  group.add(steering);
+  box(0.025, 0.22, 0.025, -0.44, 1.35, 0.44, trim);
+  box(0.17, 0.025, 0.025, -0.44, 1.4, 0.45, trim);
   const wheelPivots: THREE.Group[] = [],
     wheels: THREE.Group[] = [];
   for (const x of [-0.93, 0.93])
@@ -370,6 +405,30 @@ export function buildVehicle() {
       );
       hub.rotation.z = Math.PI / 2;
       wheel.add(hub);
+      // Sidewall rings and restrained tread blocks catch light without texture shimmer.
+      for (const face of [-1, 1]) {
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(0.35, 0.012, 4, 20),
+          rubber,
+        );
+        ring.rotation.y = Math.PI / 2;
+        ring.position.x = face * 0.123;
+        wheel.add(ring);
+      }
+      for (let tread = 0; tread < 18; tread++) {
+        const angle = (tread / 18) * Math.PI * 2;
+        const block = box(
+          0.25,
+          0.022,
+          0.075,
+          0,
+          Math.cos(angle) * 0.453,
+          Math.sin(angle) * 0.453,
+          rubber,
+          wheel,
+        );
+        block.rotation.x = angle;
+      }
       for (let j = 0; j < 6; j++) {
         const spoke = box(0.265, 0.05, 0.36, 0, 0, 0, trim, wheel);
         spoke.rotation.x = (j * Math.PI) / 3;
@@ -398,8 +457,10 @@ export function buildVehicle() {
       if (!(child instanceof THREE.Mesh) || Array.isArray(child.material))
         continue;
       child.updateMatrix();
-      const geo = child.geometry.clone().applyMatrix4(child.matrix),
-        list = batches.get(child.material) || [];
+      const transformed = child.geometry.clone().applyMatrix4(child.matrix);
+      const geo = transformed.index ? transformed.toNonIndexed() : transformed;
+      if (geo !== transformed) transformed.dispose();
+      const list = batches.get(child.material) || [];
       list.push(geo);
       batches.set(child.material, list);
       child.geometry.dispose();
@@ -419,6 +480,10 @@ export function buildVehicle() {
   batch(cargo);
   batch(door);
   wheels.forEach(batch);
+  let previousSpeed = 0,
+    suspensionPitch = 0,
+    suspensionRoll = 0,
+    wheelAngle = 0;
   return {
     group,
     update(v: VehicleState, dt: number) {
@@ -436,8 +501,21 @@ export function buildVehicle() {
         surfaceHeight(forward) - surfaceHeight(backward),
         2,
       );
+      const acceleration =
+        dt > 0 ? (v.speed - previousSpeed) / Math.max(0.016, dt) : 0;
+      previousSpeed = v.speed;
+      suspensionPitch +=
+        (clamp(acceleration * 0.003, -0.025, 0.025) - suspensionPitch) *
+        (1 - Math.exp(-dt * 7));
+      suspensionRoll +=
+        (clamp(v.steer * v.speed * 0.004, -0.035, 0.035) - suspensionRoll) *
+        (1 - Math.exp(-dt * 6));
+      group.rotation.x += suspensionPitch;
+      group.rotation.z = suspensionRoll;
       cargo.visible = v.cargo > 0;
-      wheels.forEach((w) => (w.rotation.x = v.distance / 0.46));
+      // Signed travel reverses the tread correctly. The persisted distance remains untouched.
+      wheelAngle += (v.speed * dt) / 0.46;
+      wheels.forEach((w) => (w.rotation.x = wheelAngle));
       wheelPivots.forEach(
         (w, i) => (w.rotation.y = i % 2 === 1 ? v.steer * 0.48 : 0),
       );

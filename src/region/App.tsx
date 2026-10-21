@@ -7,6 +7,7 @@ import {
   type RegionCommand,
   type DriveInput,
 } from "./contracts";
+import { ClipRecorder } from "./ClipRecorder";
 import RegionMap from "./Map";
 import ResidentTalk from "./Talk";
 import "./region.css";
@@ -24,6 +25,20 @@ import { clearSegment } from "../three/navigation";
 import type { Collider, Quality } from "../three/shared";
 import type { ConversationReply, ConversationRequest } from "../contracts";
 import "../wildlife/wildlife.css";
+const readSetting = (key: string) => {
+  try {
+    return localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+};
+const storeSetting = (key: string, value: string) => {
+  try {
+    localStorage.setItem(key, value);
+  } catch {
+    /* Private mode keeps this session usable. */
+  }
+};
 const attentionNames: Record<SpeciesId, string> = {
   brindlefin: "Offer an open palm",
   cairnback: "Return the striped shell",
@@ -53,7 +68,16 @@ export default function RegionApp() {
     [paused, setPaused] = useState(false),
     [muted, setMuted] = useState(true),
     [volume, setVolume] = useState(0.5),
-    [quality, setQuality] = useState<Quality>("high"),
+    [quality, setQuality] = useState<Quality>(() =>
+      readSetting("afterlight-graphics") === "low" ? "low" : "high",
+    ),
+    [ambientOcclusion, setAmbientOcclusion] = useState(
+      () => readSetting("afterlight-depth-shading") !== "off",
+    ),
+    [renderScale, setRenderScale] = useState(() => {
+      const v = Number(readSetting("afterlight-render-scale"));
+      return [0.75, 1, 1.25].includes(v) ? v : 1;
+    }),
     [sensitivity, setSensitivity] = useState(1),
     [metrics, setMetrics] = useState<Metrics | null>(null),
     [notice, setNotice] = useState(""),
@@ -388,6 +412,8 @@ export default function RegionApp() {
         muted={muted}
         volume={volume}
         quality={quality}
+        renderScale={renderScale}
+        ambientOcclusion={ambientOcclusion}
         sensitivity={sensitivity}
         reaction={reaction}
         onTick={step}
@@ -775,10 +801,43 @@ export default function RegionApp() {
             <select
               aria-label="Wildlife graphics"
               value={quality}
-              onChange={(e) => setQuality(e.target.value as Quality)}
+              onChange={(e) => {
+                setQuality(e.target.value as Quality);
+                storeSetting("afterlight-graphics", e.target.value);
+              }}
             >
-              <option value="high">High</option>
-              <option value="low">Low</option>
+              <option value="high">Coastal · detailed shadows</option>
+              <option value="low">Performance · contact shadows</option>
+            </select>
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={ambientOcclusion}
+              onChange={(e) => {
+                setAmbientOcclusion(e.target.checked);
+                storeSetting(
+                  "afterlight-depth-shading",
+                  e.target.checked ? "on" : "off",
+                );
+              }}
+            />
+            Depth shading · Coastal preset
+          </label>
+          <label>
+            Render resolution
+            <select
+              aria-label="Render resolution"
+              value={renderScale}
+              onChange={(e) => {
+                const v = Number(e.target.value);
+                setRenderScale(v);
+                storeSetting("afterlight-render-scale", String(v));
+              }}
+            >
+              <option value={0.75}>75% · faster</option>
+              <option value={1}>100% · recommended</option>
+              <option value={1.25}>125% · sharper</option>
             </select>
           </label>
           <label>
@@ -811,6 +870,12 @@ export default function RegionApp() {
               triangles
               <br />
               {metrics.geometries} geometries · {metrics.textures} textures
+              <br />
+              {metrics.resolution} render pixels
+              <br />
+              {metrics.capabilities}
+              <br />
+              {metrics.gpu}
             </small>
           )}
           <nav>
@@ -819,6 +884,9 @@ export default function RegionApp() {
           </nav>
         </section>
       )}
+      <div hidden={!options} className="region-clip-panel">
+        <ClipRecorder onStart={() => setOptions(false)} />
+      </div>
     </main>
   );
 }
