@@ -1,0 +1,17 @@
+/* Self-hosted, unmodified SIL Open Font License assets; see public/fonts/README.md. */
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/dm-sans/DMSans-Variable.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Libre Caslon Display";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/libre-caslon-display/LibreCaslonDisplay-Regular.ttf")
+    format("truetype");
+}
