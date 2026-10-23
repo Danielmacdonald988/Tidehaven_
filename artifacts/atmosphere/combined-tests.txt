@@ -1,0 +1,1106 @@
+
+> afterlight@1.0.0 test
+> tsx --test tests/*.test.ts
+
+TAP version 13
+# Subtest: malformed runtime proposals are inert rather than crashing
+ok 1 - malformed runtime proposals are inert rather than crashing
+  ---
+  duration_ms: 3.401209
+  type: 'test'
+  ...
+# Subtest: prototype and invalid resources cannot alter money or inventory
+ok 2 - prototype and invalid resources cannot alter money or inventory
+  ---
+  duration_ms: 4.748083
+  type: 'test'
+  ...
+# Subtest: exhausted stock cannot be sold twice; cloned duplicate transactions remain inert
+ok 3 - exhausted stock cannot be sold twice; cloned duplicate transactions remain inert
+  ---
+  duration_ms: 1.117167
+  type: 'test'
+  ...
+# Subtest: repeated dialogue remains valid API input and does not become knowledge or money
+ok 4 - repeated dialogue remains valid API input and does not become knowledge or money
+  ---
+  duration_ms: 12.210417
+  type: 'test'
+  ...
+# Subtest: knowledge remains character-local after another resident reveals a secret
+ok 5 - knowledge remains character-local after another resident reveals a secret
+  ---
+  duration_ms: 1.509041
+  type: 'test'
+  ...
+# Subtest: late medicine helps patients but never retroactively repairs a broken commitment
+ok 6 - late medicine helps patients but never retroactively repairs a broken commitment
+  ---
+  duration_ms: 2.097625
+  type: 'test'
+  ...
+# Subtest: region atmosphere preserves assets and restores shared water callbacks
+ok 7 - region atmosphere preserves assets and restores shared water callbacks
+  ---
+  duration_ms: 3.331833
+  type: 'test'
+  ...
+# Subtest: water breeze clock freezes while paused/reduced motion and caps long frames
+ok 8 - water breeze clock freezes while paused/reduced motion and caps long frames
+  ---
+  duration_ms: 1.477709
+  type: 'test'
+  ...
+# Subtest: cooperative repair strategy earns shelter and evacuation through real inventory and recruited workers
+ok 9 - cooperative repair strategy earns shelter and evacuation through real inventory and recruited workers
+  ---
+  duration_ms: 30.14425
+  type: 'test'
+  ...
+# Subtest: salvage is a viable distinct strategy and neglect has understandable consequences
+ok 10 - salvage is a viable distinct strategy and neglect has understandable consequences
+  ---
+  duration_ms: 9.752709
+  type: 'test'
+  ...
+# Subtest: a missed promise remains remembered but extra medicine repairs practical cooperation
+ok 11 - a missed promise remains remembered but extra medicine repairs practical cooperation
+  ---
+  duration_ms: 10.158041
+  type: 'test'
+  ...
+# Subtest: exploration and conversations preserve deadlines, work still costs time and offers stay local
+ok 12 - exploration and conversations preserve deadlines, work still costs time and offers stay local
+  ---
+  duration_ms: 3.090625
+  type: 'test'
+  ...
+# Subtest: opening gives mutually exclusive real cargo recovery; duplicate and invented projects cannot mint supplies
+ok 13 - opening gives mutually exclusive real cargo recovery; duplicate and invented projects cannot mint supplies
+  ---
+  duration_ms: 7.09825
+  type: 'test'
+  ...
+# Subtest: salvage keeps medicine but sacrifices free transport; malformed/full carry remains unchanged
+ok 14 - salvage keeps medicine but sacrifices free transport; malformed/full carry remains unchanged
+  ---
+  duration_ms: 1.752792
+  type: 'test'
+  ...
+# Subtest: trade and cooperation debit actual finite market inventory and give distinct relationship outcomes
+ok 15 - trade and cooperation debit actual finite market inventory and give distinct relationship outcomes
+  ---
+  duration_ms: 4.728125
+  type: 'test'
+  ...
+# Subtest: shelter runs require real stock; solo and crew strategies consume identical supplies but different time
+ok 16 - shelter runs require real stock; solo and crew strategies consume identical supplies but different time
+  ---
+  duration_ms: 3.26625
+  type: 'test'
+  ...
+# Subtest: uncleared road is an explicit slower, fuel-costlier alternative instead of a forced quest
+ok 17 - uncleared road is an explicit slower, fuel-costlier alternative instead of a forced quest
+  ---
+  duration_ms: 0.880084
+  type: 'test'
+  ...
+# Subtest: paused exploration moves without consuming deadline, completing shipment or altering RNG
+ok 18 - paused exploration moves without consuming deadline, completing shipment or altering RNG
+  ---
+  duration_ms: 0.367125
+  type: 'test'
+  ...
+# Subtest: campaign save, exact replay and new branch preserve source; malformed campaign rejected
+ok 19 - campaign save, exact replay and new branch preserve source; malformed campaign rejected
+  ---
+  duration_ms: 5.170125
+  type: 'test'
+  ...
+# Subtest: aftermath explains imperfect success and allows paused inspection but rejects economic mutation
+ok 20 - aftermath explains imperfect success and allows paused inspection but rejects economic mutation
+  ---
+  duration_ms: 3.2445
+  type: 'test'
+  ...
+# Subtest: working through time completes real cargo and excludes busy helpers from simultaneous work
+ok 21 - working through time completes real cargo and excludes busy helpers from simultaneous work
+  ---
+  duration_ms: 4.0915
+  type: 'test'
+  ...
+# Subtest: conversation costs no campaign deadline and low trust changes repair terms without blocking salvage
+ok 22 - conversation costs no campaign deadline and low trust changes repair terms without blocking salvage
+  ---
+  duration_ms: 29.444959
+  type: 'test'
+  ...
+# Subtest: Inez can discuss and propose work beside the stranded van, with real speaking-distance limits
+ok 23 - Inez can discuss and propose work beside the stranded van, with real speaking-distance limits
+  ---
+  duration_ms: 11.788958
+  type: 'test'
+  ...
+# Subtest: Eli learns clinic progress through an explicitly recorded receipt rather than remote hearing
+ok 24 - Eli learns clinic progress through an explicitly recorded receipt rather than remote hearing
+  ---
+  duration_ms: 4.240083
+  type: 'test'
+  ...
+# Subtest: central residents retain medicine and trust boundaries when recruited directly
+ok 25 - central residents retain medicine and trust boundaries when recruited directly
+  ---
+  duration_ms: 24.248333
+  type: 'test'
+  ...
+# Subtest: campaign warnings describe actual harbor closure while legacy rules stay separate
+ok 26 - campaign warnings describe actual harbor closure while legacy rules stay separate
+  ---
+  duration_ms: 0.759042
+  type: 'test'
+  ...
+# Subtest: hand-carried aid completes prepared shelter without a duplicate stock project
+ok 27 - hand-carried aid completes prepared shelter without a duplicate stock project
+  ---
+  duration_ms: 11.893083
+  type: 'test'
+  ...
+# Subtest: organized shelter run charges only supplies still missing after earlier aid
+ok 28 - organized shelter run charges only supplies still missing after earlier aid
+  ---
+  duration_ms: 2.456959
+  type: 'test'
+  ...
+# Subtest: actual restitution restores Mara cooperation once while keeping broken promise in history
+ok 29 - actual restitution restores Mara cooperation once while keeping broken promise in history
+  ---
+  duration_ms: 3.831333
+  type: 'test'
+  ...
+# Subtest: negotiations conserve stock and money; duplicated or invalid actions are inert
+ok 30 - negotiations conserve stock and money; duplicated or invalid actions are inert
+  ---
+  duration_ms: 5.83525
+  type: 'test'
+  ...
+# Subtest: a complete successful relief strategy finishes with a strong outcome
+ok 31 - a complete successful relief strategy finishes with a strong outcome
+  ---
+  duration_ms: 31.703375
+  type: 'test'
+  ...
+# Subtest: missed promises persist and affect trust; failure remains playable
+ok 32 - missed promises persist and affect trust; failure remains playable
+  ---
+  duration_ms: 3.940625
+  type: 'test'
+  ...
+# Subtest: same proposal has different responses; characters act independently
+ok 33 - same proposal has different responses; characters act independently
+  ---
+  duration_ms: 0.49375
+  type: 'test'
+  ...
+# Subtest: context excludes other residents private knowledge; branching leaves original unchanged
+ok 34 - context excludes other residents private knowledge; branching leaves original unchanged
+  ---
+  duration_ms: 1.501125
+  type: 'test'
+  ...
+# Subtest: invalid model proposals cannot bypass engine rules
+ok 35 - invalid model proposals cannot bypass engine rules
+  ---
+  duration_ms: 0.674291
+  type: 'test'
+  ...
+# Subtest: broken promise changes recruitment and dialogue is recorded without becoming fact
+ok 36 - broken promise changes recruitment and dialogue is recorded without becoming fact
+  ---
+  duration_ms: 33.450167
+  type: 'test'
+  ...
+# Subtest: same seed reproduces donation; different seeds affect bounded personal donation
+ok 37 - same seed reproduces donation; different seeds affect bounded personal donation
+  ---
+  duration_ms: 1.510916
+  type: 'test'
+  ...
+# Subtest: late delivery must finish before deadline and autonomous rescues never exceed population
+ok 38 - late delivery must finish before deadline and autonomous rescues never exceed population
+  ---
+  duration_ms: 0.500583
+  type: 'test'
+  ...
+# Subtest: exact deadline succeeds and autonomous timestamps match trigger facts
+ok 39 - exact deadline succeeds and autonomous timestamps match trigger facts
+  ---
+  duration_ms: 1.648791
+  type: 'test'
+  ...
+# Subtest: every featured interior can be reached from every other interior without clipping
+ok 40 - every featured interior can be reached from every other interior without clipping
+  ---
+  duration_ms: 2545.048375
+  type: 'test'
+  ...
+# Subtest: clinic to market route remains collision free during frame-sized steps
+ok 41 - clinic to market route remains collision free during frame-sized steps
+  ---
+  duration_ms: 957.505167
+  type: 'test'
+  ...
+# Subtest: causal source links cannot confuse e1 with e10 or discover IDs inside prose
+ok 42 - causal source links cannot confuse e1 with e10 or discover IDs inside prose
+  ---
+  duration_ms: 3.14075
+  type: 'test'
+  ...
+# Subtest: first ability reveal survives old saves without replaying or changing saved progress
+ok 43 - first ability reveal survives old saves without replaying or changing saved progress
+  ---
+  duration_ms: 622.0095
+  type: 'test'
+  ...
+# Subtest: revealing tracks keeps full culling bounds and reuses disposable instance resources
+ok 44 - revealing tracks keeps full culling bounds and reuses disposable instance resources
+  ---
+  duration_ms: 542.032167
+  type: 'test'
+  ...
+# Subtest: Brindlefin settles out of every greeting without retaining a lifted paw or folded fins
+ok 45 - Brindlefin settles out of every greeting without retaining a lifted paw or folded fins
+  ---
+  duration_ms: 144.764875
+  type: 'test'
+  ...
+# Subtest: UI-only clinic-first strategy keeps the promise and earns a strong ending
+ok 46 - UI-only clinic-first strategy keeps the promise and earns a strong ending
+  ---
+  duration_ms: 54.373584
+  type: 'test'
+  ...
+# Subtest: UI-only market-first strategy keeps the promise and earns a strong ending
+ok 47 - UI-only market-first strategy keeps the promise and earns a strong ending
+  ---
+  duration_ms: 31.240542
+  type: 'test'
+  ...
+# Subtest: initial UI offers teach missing prerequisites without spending money or time
+ok 48 - initial UI offers teach missing prerequisites without spending money or time
+  ---
+  duration_ms: 0.488
+  type: 'test'
+  ...
+# Subtest: decision purpose validates identities, trigger, action choice, knowledge bounds and quantities
+ok 49 - decision purpose validates identities, trigger, action choice, knowledge bounds and quantities
+  ---
+  duration_ms: 1.647125
+  type: 'test'
+  ...
+# Subtest: deterministic decisions honor trust and only clone offered actions
+ok 50 - deterministic decisions honor trust and only clone offered actions
+  ---
+  duration_ms: 2.186458
+  type: 'test'
+  ...
+# Subtest: live decision copies economic parameters and stamps provenance, never model parameters
+ok 51 - live decision copies economic parameters and stamps provenance, never model parameters
+  ---
+  duration_ms: 0.875209
+  type: 'test'
+  ...
+# Subtest: offline fallback stamps both label and recorded action source
+ok 52 - offline fallback stamps both label and recorded action source
+  ---
+  duration_ms: 0.549584
+  type: 'test'
+  ...
+# Subtest: natural pickup asks produce assignment proposals rather than completed delivery
+ok 53 - natural pickup asks produce assignment proposals rather than completed delivery
+  ---
+  duration_ms: 3.579625
+  type: 'test'
+  ...
+# Subtest: configured is distinct from verified until a validated provider success
+ok 54 - configured is distinct from verified until a validated provider success
+  ---
+  duration_ms: 32.581709
+  type: 'test'
+  ...
+# Subtest: malformed provider decision falls back without claiming successful verification
+ok 55 - malformed provider decision falls back without claiming successful verification
+  ---
+  duration_ms: 15.569292
+  type: 'test'
+  ...
+# Subtest: USD cap stops a request before provider spend
+ok 56 - USD cap stops a request before provider spend
+  ---
+  duration_ms: 6.235417
+  type: 'test'
+  ...
+# Subtest: concurrent reservations prevent overspending before first response arrives
+ok 57 - concurrent reservations prevent overspending before first response arrives
+  ---
+  duration_ms: 9.717042
+  type: 'test'
+  ...
+# Subtest: configured concurrency cap is enforced with a playable fallback
+ok 58 - configured concurrency cap is enforced with a playable fallback
+  ---
+  duration_ms: 6.703
+  type: 'test'
+  ...
+# Subtest: one transient retry is charged conservatively and reservations always release
+ok 59 - one transient retry is charged conservatively and reservations always release
+  ---
+  duration_ms: 0.808459
+  type: 'test'
+  ...
+# Subtest: custom models require explicit pricing before provider access
+ok 60 - custom models require explicit pricing before provider access
+  ---
+  duration_ms: 3.453583
+  type: 'test'
+  ...
+# Subtest: timeout aborts provider, releases capacity, and preserves deterministic decision
+ok 61 - timeout aborts provider, releases capacity, and preserves deterministic decision
+  ---
+  duration_ms: 28.703459
+  type: 'test'
+  ...
+# Subtest: request payload carries purpose and bounded output schema without key in game data
+ok 62 - request payload carries purpose and bounded output schema without key in game data
+  ---
+  duration_ms: 1.500417
+  type: 'test'
+  ...
+# Subtest: mocked live resident decision produces a validated physical shipment and remembered arrival
+ok 63 - mocked live resident decision produces a validated physical shipment and remembered arrival
+  ---
+  duration_ms: 74.856458
+  type: 'test'
+  ...
+# Subtest: null assignment decision consumes a safe offered decline rather than retrying forever
+ok 64 - null assignment decision consumes a safe offered decline rather than retrying forever
+  ---
+  duration_ms: 4.215125
+  type: 'test'
+  ...
+# Subtest: demo initiative speaks in character without repeating planning instructions
+ok 65 - demo initiative speaks in character without repeating planning instructions
+  ---
+  duration_ms: 0.240375
+  type: 'test'
+  ...
+# Subtest: demo check-in recalls latest nonconversation memory while evidence preserves relevance order and exact IDs
+ok 66 - demo check-in recalls latest nonconversation memory while evidence preserves relevance order and exact IDs
+  ---
+  duration_ms: 0.312333
+  type: 'test'
+  ...
+# Subtest: campaign spends no autonomous requests on twelve opening routine recitals
+ok 67 - campaign spends no autonomous requests on twelve opening routine recitals
+  ---
+  duration_ms: 4.038833
+  type: 'test'
+  ...
+# Subtest: campaign decisions respond to meaningful local memories rather than chatter and old acknowledgements
+ok 68 - campaign decisions respond to meaningful local memories rather than chatter and old acknowledgements
+  ---
+  duration_ms: 0.898708
+  type: 'test'
+  ...
+# Subtest: natural repair, salvage, barter and shelter proposals select only exact offered actions
+ok 69 - natural repair, salvage, barter and shelter proposals select only exact offered actions
+  ---
+  duration_ms: 7.470125
+  type: 'test'
+  ...
+# Subtest: unsupported creative requests and fabricated project targets cannot create mechanics
+ok 70 - unsupported creative requests and fabricated project targets cannot create mechanics
+  ---
+  duration_ms: 0.483875
+  type: 'test'
+  ...
+# Subtest: three central voices retain distinct stakes and other people cannot read their secrets
+ok 71 - three central voices retain distinct stakes and other people cannot read their secrets
+  ---
+  duration_ms: 2.144458
+  type: 'test'
+  ...
+# Subtest: model payload explicitly indexes offered actions and decodes repair index without changing engine context
+ok 72 - model payload explicitly indexes offered actions and decodes repair index without changing engine context
+  ---
+  duration_ms: 25.013333
+  type: 'test'
+  ...
+# Subtest: demo deterministic, grounded in specific remembered commitment, proposals cloned
+ok 73 - demo deterministic, grounded in specific remembered commitment, proposals cloned
+  ---
+  duration_ms: 3.243709
+  type: 'test'
+  ...
+# Subtest: distinct motivations make same proposal feel different
+ok 74 - distinct motivations make same proposal feel different
+  ---
+  duration_ms: 0.676625
+  type: 'test'
+  ...
+# Subtest: only exact allowed indexed action can be proposed
+ok 75 - only exact allowed indexed action can be proposed
+  ---
+  duration_ms: 0.80925
+  type: 'test'
+  ...
+# Subtest: request bounds and malformed response rejected
+ok 76 - request bounds and malformed response rejected
+  ---
+  duration_ms: 0.817375
+  type: 'test'
+  ...
+# Subtest: missing key never calls provider
+ok 77 - missing key never calls provider
+  ---
+  duration_ms: 1.095209
+  type: 'test'
+  ...
+# Subtest: live result is structured and usage recorded
+ok 78 - live result is structured and usage recorded
+  ---
+  duration_ms: 64.734708
+  type: 'test'
+  ...
+# Subtest: malformed output falls back without mutating context
+ok 79 - malformed output falls back without mutating context
+  ---
+  duration_ms: 1.015625
+  type: 'test'
+  ...
+# Subtest: network errors leave demo playable and count reserved budget
+ok 80 - network errors leave demo playable and count reserved budget
+  ---
+  duration_ms: 1.108042
+  type: 'test'
+  ...
+# Subtest: transient failure retries once, request cap stops calls
+ok 81 - transient failure retries once, request cap stops calls
+  ---
+  duration_ms: 2.920333
+  type: 'test'
+  ...
+# Subtest: token cap prevents request before spending
+ok 82 - token cap prevents request before spending
+  ---
+  duration_ms: 1.760583
+  type: 'test'
+  ...
+# Subtest: concurrency bounded to two in-flight requests
+ok 83 - concurrency bounded to two in-flight requests
+  ---
+  duration_ms: 1.703792
+  type: 'test'
+  ...
+# Subtest: server endpoints reject foreign origins and invalid payload; valid demo works
+ok 84 - server endpoints reject foreign origins and invalid payload; valid demo works
+  ---
+  duration_ms: 397.828625
+  type: 'test'
+  ...
+# Subtest: unverified speech cannot masquerade as a fulfilled promise
+ok 85 - unverified speech cannot masquerade as a fulfilled promise
+  ---
+  duration_ms: 0.453583
+  type: 'test'
+  ...
+# Subtest: asking a conditional resident what they need proposes prerequisite rather than recruitment
+ok 86 - asking a conditional resident what they need proposes prerequisite rather than recruitment
+  ---
+  duration_ms: 0.156625
+  type: 'test'
+  ...
+# Subtest: kept-promise reflection acknowledges supplies without stale needs or an unwanted deal
+ok 87 - kept-promise reflection acknowledges supplies without stale needs or an unwanted deal
+  ---
+  duration_ms: 0.175333
+  type: 'test'
+  ...
+# Subtest: physical shipment offers remain valid bounded conversation proposals
+ok 88 - physical shipment offers remain valid bounded conversation proposals
+  ---
+  duration_ms: 176.391834
+  type: 'test'
+  ...
+# Subtest: Inez requested pickup is a pending decision, then real shipment, then remembered completion
+ok 89 - Inez requested pickup is a pending decision, then real shipment, then remembered completion
+  ---
+  duration_ms: 57.525083
+  type: 'test'
+  ...
+# Subtest: guarded resident declines; model cannot invent collect or reuse decision
+ok 90 - guarded resident declines; model cannot invent collect or reuse decision
+  ---
+  duration_ms: 3.191209
+  type: 'test'
+  ...
+# Subtest: remote requests cannot reach residents, decision candidates are revalidated when stock is gone
+ok 91 - remote requests cannot reach residents, decision candidates are revalidated when stock is gone
+  ---
+  duration_ms: 3.064458
+  type: 'test'
+  ...
+# Subtest: strangers cannot see global reserves or budgets; local witnesses retain causal source memory
+ok 92 - strangers cannot see global reserves or budgets; local witnesses retain causal source memory
+  ---
+  duration_ms: 0.310125
+  type: 'test'
+  ...
+# Subtest: twelve bounded routines persist, with few moves and no duplicate or economic action
+ok 93 - twelve bounded routines persist, with few moves and no duplicate or economic action
+  ---
+  duration_ms: 2.200583
+  type: 'test'
+  ...
+# Subtest: important promise memories survive a long conversation tail
+ok 94 - important promise memories survive a long conversation tail
+  ---
+  duration_ms: 0.613333
+  type: 'test'
+  ...
+# Subtest: routine decision can choose staying put or real travel at a bounded cycle
+ok 95 - routine decision can choose staying put or real travel at a bounded cycle
+  ---
+  duration_ms: 0.613708
+  type: 'test'
+  ...
+# Subtest: every routine offers a bounded check-in so abstention cannot starve other residents
+ok 96 - every routine offers a bounded check-in so abstention cannot starve other residents
+  ---
+  duration_ms: 1.884834
+  type: 'test'
+  ...
+# Subtest: all twelve residents have distinct non-self ties; migration preserves evolved living relationships
+ok 97 - all twelve residents have distinct non-self ties; migration preserves evolved living relationships
+  ---
+  duration_ms: 2.75475
+  type: 'test'
+  ...
+# Subtest: navigation routes around solid walls without corner clipping
+ok 98 - navigation routes around solid walls without corner clipping
+  ---
+  duration_ms: 7.113292
+  type: 'test'
+  ...
+# Subtest: click navigation resolves an obstructed target and respects shoreline bounds
+ok 99 - click navigation resolves an obstructed target and respects shoreline bounds
+  ---
+  duration_ms: 0.2305
+  type: 'test'
+  ...
+# Subtest: save/load round trip preserves complete world and memories
+ok 100 - save/load round trip preserves complete world and memories
+  ---
+  duration_ms: 9.840417
+  type: 'test'
+  ...
+# Subtest: malformed save, negative resources and duplicate action ids are rejected
+ok 101 - malformed save, negative resources and duplicate action ids are rejected
+  ---
+  duration_ms: 27.689459
+  type: 'test'
+  ...
+# Subtest: branch and checkpoint are independent deep snapshots
+ok 102 - branch and checkpoint are independent deep snapshots
+  ---
+  duration_ms: 1.935042
+  type: 'test'
+  ...
+# Subtest: session rejects corrupted replay snapshots and inconsistent current world
+ok 103 - session rejects corrupted replay snapshots and inconsistent current world
+  ---
+  duration_ms: 11.427583
+  type: 'test'
+  ...
+# Subtest: physical purchases stage stock, dispatch reserves one bounded load, arrival credits once
+ok 104 - physical purchases stage stock, dispatch reserves one bounded load, arrival credits once
+  ---
+  duration_ms: 52.242875
+  type: 'test'
+  ...
+# Subtest: movement cannot teleport, cross walls, hear remotely, or enter flooded harbor
+ok 105 - movement cannot teleport, cross walls, hear remotely, or enter flooded harbor
+  ---
+  duration_ms: 3.865834
+  type: 'test'
+  ...
+# Subtest: partial shipments save and replay exactly; old saves migrate without losing state
+ok 106 - partial shipments save and replay exactly; old saves migrate without losing state
+  ---
+  duration_ms: 4.438375
+  type: 'test'
+  ...
+# Subtest: delivery requires an actual carried load and backpack capacity is authoritative
+ok 107 - delivery requires an actual carried load and backpack capacity is authoritative
+  ---
+  duration_ms: 1.881208
+  type: 'test'
+  ...
+# Subtest: earlier spatial save migration adds empty backpack without changing inventory
+ok 108 - earlier spatial save migration adds empty backpack without changing inventory
+  ---
+  duration_ms: 0.211667
+  type: 'test'
+  ...
+# Subtest: complete physical medicine loop walks between buildings and keeps the promise
+ok 109 - complete physical medicine loop walks between buildings and keeps the promise
+  ---
+  duration_ms: 63.020542
+  type: 'test'
+  ...
+# Subtest: flooded harbor permits shoreward escape but prevents inward movement and reentry
+ok 110 - flooded harbor permits shoreward escape but prevents inward movement and reentry
+  ---
+  duration_ms: 3.397458
+  type: 'test'
+  ...
+# Subtest: region migrates collections without altering legacy state
+ok 111 - region migrates collections without altering legacy state
+  ---
+  duration_ms: 5.188042
+  type: 'test'
+  ...
+# Subtest: delivery requires physical loading, parking and handoff; promise and reward occur once
+ok 112 - delivery requires physical loading, parking and handoff; promise and reward occur once
+  ---
+  duration_ms: 4.730292
+  type: 'test'
+  ...
+# Subtest: abandoning releases cargo and records broken promise without rewards
+ok 113 - abandoning releases cargo and records broken promise without rewards
+  ---
+  duration_ms: 32.355292
+  type: 'test'
+  ...
+# Subtest: companion expedition removes physical blocker and relic rewards only at home
+ok 114 - companion expedition removes physical blocker and relic rewards only at home
+  ---
+  duration_ms: 3.10675
+  type: 'test'
+  ...
+# Subtest: escort moves the victim to safety before rewarding
+ok 115 - escort moves the victim to safety before rewarding
+  ---
+  duration_ms: 125.415916
+  type: 'test'
+  ...
+# Subtest: actual regional terrain connects all district sites and extended bounds preserve town default
+ok 116 - actual regional terrain connects all district sites and extended bounds preserve town default
+  ---
+  duration_ms: 1546.777292
+  type: 'test'
+  ...
+# Subtest: save reload preserves collection, memories, upgrades, vehicle and completed activity
+ok 117 - save reload preserves collection, memories, upgrades, vehicle and completed activity
+  ---
+  duration_ms: 4.067667
+  type: 'test'
+  ...
+# Subtest: walking companion crosses a district boundary physically and save accepts new bounds
+ok 118 - walking companion crosses a district boundary physically and save accepts new bounds
+  ---
+  duration_ms: 6.708167
+  type: 'test'
+  ...
+# Subtest: twelve resident routines are bounded and do not duplicate over repeated simulation
+ok 119 - twelve resident routines are bounded and do not duplicate over repeated simulation
+  ---
+  duration_ms: 198.92025
+  type: 'test'
+  ...
+# Subtest: one persistent world: physical driving to harbor, load, drive home, hand off
+ok 120 - one persistent world: physical driving to harbor, load, drive home, hand off
+  ---
+  duration_ms: 281.772042
+  type: 'test'
+  ...
+# Subtest: traffic yields locally, resumes when clear and stays bounded across saves
+ok 121 - traffic yields locally, resumes when clear and stays bounded across saves
+  ---
+  duration_ms: 2.8325
+  type: 'test'
+  ...
+# Subtest: events only update witnesses or a recorded radio recipient
+ok 122 - events only update witnesses or a recorded radio recipient
+  ---
+  duration_ms: 0.615833
+  type: 'test'
+  ...
+# Subtest: single cross-system timeline: bond, companion expedition, resident promise, freight and return home
+ok 123 - single cross-system timeline: bond, companion expedition, resident promise, freight and return home
+  ---
+  duration_ms: 340.970875
+  type: 'test'
+  ...
+# Subtest: regional conversation retention stays bounded without losing promise evidence or imported memories
+ok 124 - regional conversation retention stays bounded without losing promise evidence or imported memories
+  ---
+  duration_ms: 275.402792
+  type: 'test'
+  ...
+# Subtest: regional save rejects completion rollback, forged source ids and duplicate audit ids
+ok 125 - regional save rejects completion rollback, forged source ids and duplicate audit ids
+  ---
+  duration_ms: 1.676333
+  type: 'test'
+  ...
+# Subtest: parked truck blocks foot traffic while center-click approaches and boarding still work
+ok 126 - parked truck blocks foot traffic while center-click approaches and boarding still work
+  ---
+  duration_ms: 7.636833
+  type: 'test'
+  ...
+# Subtest: old save placing explorer inside truck can still board and safely exit
+ok 127 - old save placing explorer inside truck can still board and safely exit
+  ---
+  duration_ms: 0.603625
+  type: 'test'
+  ...
+# Subtest: escorted neighbor stops at a comfortable distance and resumes when the player moves away
+ok 128 - escorted neighbor stops at a comfortable distance and resumes when the player moves away
+  ---
+  duration_ms: 4.528959
+  type: 'test'
+  ...
+# Subtest: power failure is recorded once; invalid deltas and duplicate starts cannot advance rescue
+ok 129 - power failure is recorded once; invalid deltas and duplicate starts cannot advance rescue
+  ---
+  duration_ms: 2.228625
+  type: 'test'
+  ...
+# Subtest: live assist requires proximity, actual travel and work before opening passage
+ok 130 - live assist requires proximity, actual travel and work before opening passage
+  ---
+  duration_ms: 12.509958
+  type: 'test'
+  ...
+# Subtest: alternate access, physical escort, collapse, supplies and arrival complete independently of beam
+ok 131 - alternate access, physical escort, collapse, supplies and arrival complete independently of beam
+  ---
+  duration_ms: 93.170125
+  type: 'test'
+  ...
+# Subtest: checkpoint recovery is isolated and returns physical progress without corrupting original
+ok 132 - checkpoint recovery is isolated and returns physical progress without corrupting original
+  ---
+  duration_ms: 30.497666
+  type: 'test'
+  ...
+# Subtest: long-distance rescue and blocked wall interactions cannot invent consequences
+ok 133 - long-distance rescue and blocked wall interactions cannot invent consequences
+  ---
+  duration_ms: 1.617334
+  type: 'test'
+  ...
+# Subtest: both approaches complete through actual rendered environment colliders
+ok 134 - both approaches complete through actual rendered environment colliders
+  ---
+  duration_ms: 1374.90825
+  type: 'test'
+  ...
+# Subtest: player accelerates in 180ms independently of frame rate and stops without sliding
+ok 135 - player accelerates in 180ms independently of frame rate and stops without sliding
+  ---
+  duration_ms: 2.314666
+  type: 'test'
+  ...
+# Subtest: save validation accepts real checkpoints and rejects corrupt render/navigation data
+ok 136 - save validation accepts real checkpoints and rejects corrupt render/navigation data
+  ---
+  duration_ms: 2.652917
+  type: 'test'
+  ...
+# Subtest: duplicate help and rescue commands cannot restart work or duplicate the emergency case
+ok 137 - duplicate help and rescue commands cannot restart work or duplicate the emergency case
+  ---
+  duration_ms: 8.335792
+  type: 'test'
+  ...
+# Subtest: using the east entrance walks into the room rather than only recording a choice
+ok 138 - using the east entrance walks into the room rather than only recording a choice
+  ---
+  duration_ms: 11.676333
+  type: 'test'
+  ...
+# Subtest: residents have distinct articulated human silhouettes with bounded draw cost
+ok 139 - residents have distinct articulated human silhouettes with bounded draw cost
+  ---
+  duration_ms: 585.531458
+  type: 'test'
+  ...
+# Subtest: twelve interactable residents remain at their real homes without fictional roaming
+ok 140 - twelve interactable residents remain at their real homes without fictional roaming
+  ---
+  duration_ms: 307.716792
+  type: 'test'
+  ...
+# Subtest: visible delivery follows authoritative shipment positions and carries only actual cargo
+ok 141 - visible delivery follows authoritative shipment positions and carries only actual cargo
+  ---
+  duration_ms: 185.829458
+  type: 'test'
+  ...
+# Subtest: lathed limbs face outward so clothing does not vanish with back-face culling
+ok 142 - lathed limbs face outward so clothing does not vanish with back-face culling
+  ---
+  duration_ms: 9.375291
+  type: 'test'
+  ...
+# Subtest: mocked model conversation -> assignment -> independent decision -> physical cargo -> persistent history
+ok 143 - mocked model conversation -> assignment -> independent decision -> physical cargo -> persistent history
+  ---
+  duration_ms: 45.360042
+  type: 'test'
+  ...
+# Subtest: promise recollection prefers the commitment outcome over lower-priority witness bookkeeping
+ok 144 - promise recollection prefers the commitment outcome over lower-priority witness bookkeeping
+  ---
+  duration_ms: 9.79375
+  type: 'test'
+  ...
+# Subtest: pickup accelerates, brakes and reverses without invalid speed
+ok 145 - pickup accelerates, brakes and reverses without invalid speed
+  ---
+  duration_ms: 5.346375
+  type: 'test'
+  ...
+# Subtest: swept body stops at a thin wall even with a large frame delta
+ok 146 - swept body stops at a thin wall even with a large frame delta
+  ---
+  duration_ms: 2.615375
+  type: 'test'
+  ...
+# Subtest: safe exit chooses unobstructed passenger side and refuses enclosed space
+ok 147 - safe exit chooses unobstructed passenger side and refuses enclosed space
+  ---
+  duration_ms: 0.636167
+  type: 'test'
+  ...
+# Subtest: mouse driving follows the coastal road through district turns and stops
+ok 148 - mouse driving follows the coastal road through district turns and stops
+  ---
+  duration_ms: 21.172375
+  type: 'test'
+  ...
+# Subtest: mouse driving can reverse toward a nearby parking destination
+ok 149 - mouse driving can reverse toward a nearby parking destination
+  ---
+  duration_ms: 0.852583
+  type: 'test'
+  ...
+# Subtest: parked vehicle has no autonomous movement and model transforms stay finite
+ok 150 - parked vehicle has no autonomous movement and model transforms stay finite
+  ---
+  duration_ms: 205.820417
+  type: 'test'
+  ...
+# Subtest: pickup reaches all districts against the actual rendered world colliders
+ok 151 - pickup reaches all districts against the actual rendered world colliders
+  ---
+  duration_ms: 791.746083
+  type: 'test'
+  ...
+# Subtest: local recovery preserves freight and ownership without moving cargo home
+ok 152 - local recovery preserves freight and ownership without moving cargo home
+  ---
+  duration_ms: 1.024
+  type: 'test'
+  ...
+# Subtest: invalid control values cannot poison persistent physics state
+ok 153 - invalid control values cannot poison persistent physics state
+  ---
+  duration_ms: 0.858
+  type: 'test'
+  ...
+# Subtest: all creature animation states retain bounded scene resources and authoritative position
+ok 154 - all creature animation states retain bounded scene resources and authoritative position
+  ---
+  duration_ms: 413.339833
+  type: 'test'
+  ...
+# Subtest: avatar walk, idle, carrying and talking reuse geometry without moving simulation root
+ok 155 - avatar walk, idle, carrying and talking reuse geometry without moving simulation root
+  ---
+  duration_ms: 66.797958
+  type: 'test'
+  ...
+# Subtest: pickup driving, entry and cargo visibility do not grow GPU resources
+ok 156 - pickup driving, entry and cargo visibility do not grow GPU resources
+  ---
+  duration_ms: 174.030417
+  type: 'test'
+  ...
+# Subtest: visual batching preserves movable parent, bounds, metadata and geometry ownership
+ok 157 - visual batching preserves movable parent, bounds, metadata and geometry ownership
+  ---
+  duration_ms: 7.209917
+  type: 'test'
+  ...
+# Subtest: batching respects independent visibility, targets, material flags and spatial cells
+ok 158 - batching respects independent visibility, targets, material flags and spatial cells
+  ---
+  duration_ms: 0.629042
+  type: 'test'
+  ...
+# Subtest: animated, transparent, instanced and unapproved meshes remain separate
+ok 159 - animated, transparent, instanced and unapproved meshes remain separate
+  ---
+  duration_ms: 1.27475
+  type: 'test'
+  ...
+# Subtest: indexed and nonindexed geometry merge without losing triangles
+ok 160 - indexed and nonindexed geometry merge without losing triangles
+  ---
+  duration_ms: 2.78225
+  type: 'test'
+  ...
+# Subtest: frame summary reports uncapped stalls and nearest-rank percentiles
+ok 161 - frame summary reports uncapped stalls and nearest-rank percentiles
+  ---
+  duration_ms: 0.503166
+  type: 'test'
+  ...
+# Subtest: rain shelter follows actual enclosed town buildings while open pier remains wet
+ok 162 - rain shelter follows actual enclosed town buildings while open pier remains wet
+  ---
+  duration_ms: 2.727875
+  type: 'test'
+  ...
+# Subtest: rain cannot enter freight-house or field-station interior edges
+ok 163 - rain cannot enter freight-house or field-station interior edges
+  ---
+  duration_ms: 0.536375
+  type: 'test'
+  ...
+# Subtest: creature shelter blocks rain only after authoritative upgrade
+ok 164 - creature shelter blocks rain only after authoritative upgrade
+  ---
+  duration_ms: 0.292209
+  type: 'test'
+  ...
+# Subtest: creature approach finds visible ground beyond actual shop walls and garden entrance
+ok 165 - creature approach finds visible ground beyond actual shop walls and garden entrance
+  ---
+  duration_ms: 715.936833
+  type: 'test'
+  ...
+# Subtest: approach rejects invalid coordinates and an enclosed unreachable creature
+ok 166 - approach rejects invalid coordinates and an enclosed unreachable creature
+  ---
+  duration_ms: 0.534042
+  type: 'test'
+  ...
+# Subtest: independent playthrough: walk the complete three-ability chain and deterministic rare reveal
+ok 167 - independent playthrough: walk the complete three-ability chain and deterministic rare reveal
+  ---
+  duration_ms: 600.369167
+  type: 'test'
+  ...
+# Subtest: collection storage is isolated and rejects invalid saves without throwing
+ok 168 - collection storage is isolated and rejects invalid saves without throwing
+  ---
+  duration_ms: 3.648083
+  type: 'test'
+  ...
+# Subtest: unavailable browser storage does not break collection play
+ok 169 - unavailable browser storage does not break collection play
+  ---
+  duration_ms: 0.776542
+  type: 'test'
+  ...
+# Subtest: expedition archive preserves active and legacy saves and validates recovery
+ok 170 - expedition archive preserves active and legacy saves and validates recovery
+  ---
+  duration_ms: 1.588459
+  type: 'test'
+  ...
+# Subtest: archive fails safely when browser storage rejects writes
+ok 171 - archive fails safely when browser storage rejects writes
+  ---
+  duration_ms: 0.157208
+  type: 'test'
+  ...
+# Subtest: first encounter is visible, physical, bounded and persistent
+ok 172 - first encounter is visible, physical, bounded and persistent
+  ---
+  duration_ms: 12.913666
+  type: 'test'
+  ...
+# Subtest: movement is collision-safe, dt bounded and immutable
+ok 173 - movement is collision-safe, dt bounded and immutable
+  ---
+  duration_ms: 10.493334
+  type: 'test'
+  ...
+# Subtest: alarm is brief, assisted timing forgiving and remote actions forbidden
+ok 174 - alarm is brief, assisted timing forgiving and remote actions forbidden
+  ---
+  duration_ms: 2.824625
+  type: 'test'
+  ...
+# Subtest: three abilities change access and the authored rare chain is reachable
+ok 175 - three abilities change access and the authored rare chain is reachable
+  ---
+  duration_ms: 3.882917
+  type: 'test'
+  ...
+# Subtest: abilities require the right bonded companion nearby and cannot duplicate
+ok 176 - abilities require the right bonded companion nearby and cannot duplicate
+  ---
+  duration_ms: 2.260666
+  type: 'test'
+  ...
+# Subtest: companion navigates around obstacles without teleporting
+ok 177 - companion navigates around obstacles without teleporting
+  ---
+  duration_ms: 39.8325
+  type: 'test'
+  ...
+# Subtest: save validation rejects malformed and impossible structures
+ok 178 - save validation rejects malformed and impossible structures
+  ---
+  duration_ms: 1.156542
+  type: 'test'
+  ...
+# Subtest: identical commands and ticks replay exactly without model calls
+ok 179 - identical commands and ticks replay exactly without model calls
+  ---
+  duration_ms: 2.533208
+  type: 'test'
+  ...
+# Subtest: authored world colliders allow the complete walking exploration chain
+ok 180 - authored world colliders allow the complete walking exploration chain
+  ---
+  duration_ms: 655.625667
+  type: 'test'
+  ...
+# Subtest: Sailpip offers a stationary greeting window between physical glides
+ok 181 - Sailpip offers a stationary greeting window between physical glides
+  ---
+  duration_ms: 2.104208
+  type: 'test'
+  ...
+# Subtest: local benches allow weather changes and remote requests remain rejected
+ok 182 - local benches allow weather changes and remote requests remain rejected
+  ---
+  duration_ms: 0.743
+  type: 'test'
+  ...
+1..182
+# tests 182
+# suites 0
+# pass 182
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4291.291958
