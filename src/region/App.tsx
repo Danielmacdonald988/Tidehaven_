@@ -619,7 +619,7 @@ export default function RegionApp() {
           <h2>{SPECIES.find((s) => s.id === celebrate)!.name}</h2>
           <span>
             {celebrate === "brindlefin" && !view.abilities.tracks
-              ? "Follow the shells together. Something waits in the sand."
+              ? "Follow the shells together. Brindlefin knows the way."
               : "Not caught. Chosen."}
           </span>
         </div>

@@ -4,6 +4,7 @@ import * as THREE from "three";
 import { buildExpeditionDetails } from "../src/region/ExpeditionDetails";
 import { createRegion } from "../src/region/engine";
 import { surfaceHeight } from "../src/region/contracts";
+import { terrainGridHeight } from "../src/region/TerrainRibbon";
 
 test("earned expedition presentation survives reload and never changes progress", () => {
   const visuals = buildExpeditionDetails();
@@ -86,7 +87,11 @@ test("expedition visuals have bounded shared resources and terrain-following tra
     for (let i = 0; i < mesh.count; i++) {
       mesh.getMatrixAt(i, matrix);
       point.setFromMatrixPosition(matrix);
-      assert(Math.abs(point.y - surfaceHeight(point) - 0.075) < 1e-5);
+      const groundHeight =
+        mesh.name === "expedition-ascent-shells"
+          ? terrainGridHeight(point)
+          : surfaceHeight(point);
+      assert(Math.abs(point.y - groundHeight - 0.075) < 1e-5);
       assert(mesh.boundingBox.containsPoint(point));
     }
   }

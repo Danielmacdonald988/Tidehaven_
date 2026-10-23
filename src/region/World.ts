@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { buildExpeditionDetails } from "./ExpeditionDetails";
+import { terrainRibbon } from "./TerrainRibbon";
 import {
   coastalFrond,
   tropicalCrown,
@@ -575,7 +576,18 @@ export function buildRegionWorld() {
   post(-63, 1.25, 24, 0.13, 2.5, M.wood);
   // Footpath and gate reveal a separate northbound expedition route.
   ribbon({ x: -75, z: 10 }, { x: -81, z: -5 }, 2.3, M.sand, 0.035);
-  ribbon({ x: -81, z: -5 }, { x: -92, z: -23 }, 2.4, M.sand, 0.035);
+  // Match the actual ground facets at the observatory cliff edge.
+  const ascentGeometry = terrainRibbon(
+    REGION_SITES.shortcut,
+    REGION_SITES.ruin,
+    2.4,
+    0.035,
+  );
+  geometries.push(ascentGeometry);
+  const ascentPath = new THREE.Mesh(ascentGeometry, M.sand);
+  ascentPath.name = "observatory-terrain-path";
+  ascentPath.receiveShadow = true;
+  group.add(ascentPath);
   const gate = new THREE.Group();
   gate.position.set(-81, 0, -5);
   group.add(gate);

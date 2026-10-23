@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { terrainGridHeight } from "./TerrainRibbon";
 import { mergeGeometries } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 import {
   REGION_SITES as S,
@@ -75,7 +76,13 @@ export function buildExpeditionDetails() {
         const offset = side ? 0.18 : -0.18;
         const x = p.x + Math.cos(p.yaw) * offset;
         const z = p.z - Math.sin(p.yaw) * offset;
-        dummy.position.set(x, surfaceHeight({ x, z }) + 0.075, z);
+        dummy.position.set(
+          x,
+          (name === "expedition-ascent-shells"
+            ? terrainGridHeight({ x, z })
+            : surfaceHeight({ x, z })) + 0.075,
+          z,
+        );
         dummy.rotation.set(0, p.yaw, 0);
         dummy.scale.set(0.105, 0.035, 0.19);
         dummy.updateMatrix();
