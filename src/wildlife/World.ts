@@ -64,36 +64,124 @@ export function buildWildlifeWorld() {
     parent.add(o);
     return o;
   }
-  const tracks = new THREE.Group();
+  // Original procedural shore clues. One instanced mesh per trail keeps the
+  // first route readable without adding blockers, lights, or per-frame geometry.
+  const printGeo = new THREE.SphereGeometry(1, 8, 6);
+  geos.push(printGeo);
+  const trailSand = mat("#ead1a3"),
+    revealedSand = mat("#d4b474", "#76572e");
+  const dummy = new THREE.Object3D();
+  function footprint(
+    mesh: THREE.InstancedMesh,
+    index: number,
+    x: number,
+    z: number,
+    angle: number,
+    width = 0.13,
+  ) {
+    // The authored town has raised curbs; keep clues above their surface.
+    const curb = Math.abs(z - 16.9) < 0.7 || Math.abs(z - 24.1) < 0.7;
+    dummy.position.set(x, curb ? 0.205 : 0.075, z);
+    dummy.rotation.set(0, angle, 0);
+    dummy.scale.set(width, 0.018, width * 1.7);
+    dummy.updateMatrix();
+    mesh.setMatrixAt(index, dummy.matrix);
+  }
+  // From the warehouse doorstep, along the open road, then onto tide sand.
+  // These are scattered shell impressions rather than an enforced quest line.
+  const route = [
+    [-22, 15.2],
+    [-21.5, 17.5],
+    [-12, 17.5],
+    [-11, 25],
+    [-8.8, 25.8],
+  ];
+  const approachPrints: { x: number; z: number; angle: number }[] = [];
+  for (let segment = 1; segment < route.length; segment++) {
+    const [ax, az] = route[segment - 1],
+      [bx, bz] = route[segment];
+    const length = Math.hypot(bx - ax, bz - az);
+    const steps = Math.ceil(length / 0.85);
+    const angle = Math.atan2(bx - ax, bz - az);
+    for (let i = 0; i < steps; i++) {
+      const t = i / steps,
+        side = i % 2 ? 0.17 : -0.17;
+      approachPrints.push({
+        x: ax + (bx - ax) * t + Math.cos(angle) * side,
+        z: az + (bz - az) * t - Math.sin(angle) * side,
+        angle,
+      });
+    }
+  }
+  const approachTrail = new THREE.InstancedMesh(
+    printGeo,
+    trailSand,
+    approachPrints.length,
+  );
+  approachTrail.name = "shore-shell-discovery-trail";
+  approachPrints.forEach((p, i) =>
+    footprint(approachTrail, i, p.x, p.z, p.angle),
+  );
+  approachTrail.receiveShadow = true;
+  group.add(approachTrail);
+  const sniffRoute = [
+    [-9, 26],
+    [-13, 25.5],
+    [-26, 25.5],
+    [-26, 19.6],
+  ];
+  const sniffClues: { x: number; z: number; angle: number }[] = [];
+  for (let segment = 1; segment < sniffRoute.length; segment++) {
+    const [ax, az] = sniffRoute[segment - 1],
+      [bx, bz] = sniffRoute[segment];
+    const steps = Math.ceil(Math.hypot(bx - ax, bz - az) / 1.1);
+    for (let i = 0; i < steps; i++)
+      sniffClues.push({
+        x: ax + ((bx - ax) * i) / steps,
+        z: az + ((bz - az) * i) / steps,
+        angle: Math.atan2(bx - ax, bz - az),
+      });
+  }
+  const sniffSand = mat("#d7bd90", "#655139");
+  const sniffTrail = new THREE.InstancedMesh(
+    printGeo,
+    sniffSand,
+    sniffClues.length,
+  );
+  sniffTrail.name = "companion-shore-shell-trail";
+  sniffClues.forEach((p, i) =>
+    footprint(sniffTrail, i, p.x, p.z, p.angle, 0.16),
+  );
+  group.add(sniffTrail);
+  const tracks = new THREE.InstancedMesh(printGeo, revealedSand, 30);
+  tracks.name = "brindlefin-revealed-tracks";
   group.add(tracks);
   for (let i = 0; i < 15; i++) {
     const t = i / 14;
-    for (const side of [-1, 1]) {
-      const p = oval(
+    for (let side = 0; side < 2; side++) {
+      footprint(
         tracks,
-        -26 - 7 * t + side * 0.18,
-        0.075,
+        i * 2 + side,
+        -26 - 7 * t + (side ? 0.2 : -0.2),
         19 - t + Math.sin(t * 7) * 0.25,
-        0.1,
-        0.025,
-        0.17,
-        stone,
+        -1.7,
+        0.16,
       );
-      p.rotation.y = -0.7;
     }
   }
-  for (let i = 0; i < 8; i++)
-    for (const side of [-1, 1])
-      oval(
-        group,
-        -12 + i * 0.5 + side * 0.12,
-        0.205,
-        25 + i * 0.12,
-        0.09,
-        0.025,
-        0.13,
-        stone,
-      );
+  // Compute bounds with every pair present, before the reveal trims draw count.
+  for (const trail of [approachTrail, sniffTrail, tracks]) {
+    trail.computeBoundingSphere();
+    trail.computeBoundingBox();
+  }
+  // A small shell fan marks the sniffing site before its hidden trail is found.
+  const clue = new THREE.Group();
+  clue.position.set(SITES.tracks.x, 0.07, SITES.tracks.z + 0.55);
+  group.add(clue);
+  for (let i = 0; i < 5; i++) {
+    const rib = block(clue, (i - 2) * 0.1, 0, 0, 0.075, 0.035, 0.42, sand);
+    rib.rotation.y = (i - 2) * 0.22;
+  }
   // Protected garden: the only front gap is occupied by the movable driftwood gate.
   function wall(x: number, z: number, w: number, d: number) {
     block(group, x, 0.55, z, w, 1.1, d, stone);
@@ -307,6 +395,23 @@ export function buildWildlifeWorld() {
       const legacyGate = base.group.getObjectByName("legacy-storm-gate");
       if (legacyGate) legacyGate.visible = false;
       tracks.visible = s.abilities.tracks;
+      sniffTrail.visible = s.companion === "brindlefin" && !s.abilities.tracks;
+      const trackEvent = s.events.find(
+        (event) => event.kind === "ability" && event.species === "brindlefin",
+      );
+      const revealAge = trackEvent
+        ? Math.max(0, s.elapsed - trackEvent.at)
+        : 10;
+      // Reveal follows the companion's sniff outward; old saves show the full
+      // result immediately. count changes only draw range, never saved state.
+      tracks.count = Math.min(
+        30,
+        Math.max(2, Math.ceil((revealAge / 1.8) * 15) * 2),
+      );
+      revealedSand.emissiveIntensity =
+        revealAge < 2.4
+          ? 0.7 + Math.sin(Math.min(1, revealAge / 2.4) * Math.PI) * 0.7
+          : 0.25;
       shell.visible = !s.foundShell;
       const gateGoal = s.abilities.gate ? -37.3 : -34;
       gate.position.x = THREE.MathUtils.damp(gate.position.x, gateGoal, 4, dt);
@@ -345,6 +450,9 @@ export function buildWildlifeWorld() {
     },
     dispose() {
       base.dispose();
+      approachTrail.dispose();
+      sniffTrail.dispose();
+      tracks.dispose();
       geos.forEach((g) => g.dispose());
       mats.forEach((m) => m.dispose());
     },

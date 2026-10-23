@@ -1,0 +1,4 @@
+104420287f00bc6b14d6b213503edd55fd11a65d1dddd9200cde2063fb8eddbe  src/region/App.tsx
+5659c138bb9dd484870e2985fa4eaead4d84201e0582331ad19f4492db4fc375  src/wildlife/World.ts
+c7a1ba761b9c23c6734a05f32d4ef6fe89d57daede54997c085b8c9ce10d8d82  src/wildlife/Creatures.ts
+03a19a3f292d42e3b860ee381425bbb99c42dc7fbdf91b3133568cc840945ec6  tests/first-encounter.test.ts

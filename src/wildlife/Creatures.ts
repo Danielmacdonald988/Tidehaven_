@@ -666,6 +666,8 @@ export function buildCreature(id: SpeciesId, variant = 0): CreatureRig {
   const limbHeights = limbs.map((limb) => limb.position.y);
   const baseHeadY = head.position.y,
     baseBodyY = body.position.y;
+  // Blend the starter's readable silhouettes without changing its world position.
+  const greeting = { alert: 0, curious: 0, receptive: 0, bonding: 0 };
   let disposed = false,
     gaitPhase = 0,
     lastElapsed: number | undefined,
@@ -743,6 +745,31 @@ export function buildCreature(id: SpeciesId, variant = 0): CreatureRig {
           (j.rotation.z =
             Math.sin(t * 3 + i) * 0.07 + (alert ? (i % 2 ? 0.3 : -0.3) : 0)),
       );
+      if (id === "brindlefin") {
+        const blend = dt > 0 ? 1 - Math.exp(-dt * 9) : 1;
+        for (const state of ["alert", "curious", "receptive", "bonding"] as const)
+          greeting[state] += ((mood === state ? 1 : 0) - greeting[state]) * blend;
+        const shy = greeting.alert,
+          listening = greeting.curious,
+          open = greeting.receptive,
+          happy = greeting.bonding;
+        // Closed fins and a low head ask for space; an open fan and lifted paw
+        // answer the player's palm. These poses stay legible beyond eye detail.
+        body.position.y -= shy * 0.065;
+        head.position.y += -shy * 0.045 + open * 0.065;
+        head.rotation.x = shy * 0.22 - open * 0.18;
+        head.rotation.z += listening * 0.2;
+        head.rotation.y *= 1 - open * 0.75;
+        feelers.forEach((fin, i) => {
+          const side = i === 0 ? -1 : 1;
+          fin.rotation.z += side * (shy * -0.65 + open * 0.38 + happy * 0.25);
+          fin.rotation.y = side * shy * 0.7;
+        });
+        limbs[0].rotation.x -= open * 0.65;
+        limbs[0].position.y += open * 0.07;
+        tail.rotation.y += Math.sin(t * 9) * (open * 0.18 + happy * 0.2);
+        tail.rotation.x += shy * 0.25 - open * 0.16;
+      }
       const blink = Math.sin(t * 0.83) > 0.996 ? 0.14 : 1;
       eyes.forEach(
         (e) =>
