@@ -223,6 +223,7 @@ export default function RegionApp() {
     }
     if (e.kind === "reveal")
       setNotice("The chimes answer. Something moves above the water.");
+    if (e.kind === "ability" || e.kind === "pulse") setNotice(e.detail);
   }, [view.events]);
   useEffect(() => {
     if (!celebrate) return;
@@ -482,8 +483,12 @@ export default function RegionApp() {
                 ? "A little space. It will return."
                 : selected.attention
                   ? receptive(view, selected)
-                    ? "Its crest answers yours."
-                    : "Listen for the next bright moment."
+                    ? selected.id === "brindlefin"
+                      ? "Fins open. A little paw reaches toward you."
+                      : "Its crest answers yours."
+                    : selected.id === "brindlefin"
+                      ? "A curious tilt. Wait for its fins to open."
+                      : "Listen for the next bright moment."
                   : selected.id === "sailpip"
                     ? selected.phase % 8 <= 3
                       ? "A hovering pause. Now, gently."
@@ -607,7 +612,11 @@ export default function RegionApp() {
         <div className="wildlife-bond">
           <small>A NEW FRIEND</small>
           <h2>{SPECIES.find((s) => s.id === celebrate)!.name}</h2>
-          <span>Not caught. Chosen.</span>
+          <span>
+            {celebrate === "brindlefin" && !view.abilities.tracks
+              ? "Follow the shells together. Something waits in the sand."
+              : "Not caught. Chosen."}
+          </span>
         </div>
       )}
       <footer className="wildlife-footer">
