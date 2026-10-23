@@ -1,0 +1,1520 @@
+2026-10-23T03:17:49.849Z BASELINE DOCK
+Browser tab: 2139238697, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4193/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4193/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 0/6
+				11 text Field journal 
+				12 text 0
+				13 text /6
+			14 button Exploration options
+		15 text The coast turns violet
+		16 text Free exploration · no countdown
+		17 text Click to walk · People, creatures & your truck are interactive
+		18 text WASD move/drive · B brake · Drag camera · Space pause
+		19 container
+			20 text $ 10,000
+		21 text Free roam · your own pace
+		22 container Exploration options
+			23 button Close exploration options
+			24 heading A little breathing room., Value: 2
+				25 text A little breathing room.
+			26 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			27 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			28 container
+				29 text Volume
+				30 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			31 container
+				32 text Camera sensitivity
+				33 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			34 container
+				35 text Graphics
+				36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					37 menu
+						38 (selected) Coastal · detailed shadows
+						39 Performance · contact shadows
+			40 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			41 container
+				42 text Render resolution
+				43 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					44 menu
+						45 75% · faster
+						46 (selected) 100% · recommended
+						47 125% · sharper
+			48 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			49 container
+				50 text Demo reactions · no API needed
+				51 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			52 button Pause exploration
+			53 container
+				54 text 21  FPS · p95  61.5  ms
+				55 text 795  draws ·  608,020 triangles
+				56 text 439  geometries ·  43  textures
+				57 text 1710 × 809  render pixels
+				58 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				59 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			60 container
+				61 link Description: Storm rescue ↗, Value: 127.0.0.1:4193/?rescue
+				62 link Description: Original campaign ↗, Value: 127.0.0.1:4193/?campaign
+		63 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+2026-10-23T03:18:37.455Z CANDIDATE1 DOCK
+Browser tab: 2139238698, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+0 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	1 container
+		2 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		3 text AFTERLIGHT
+		4 container
+			5 text TOWN  · THE LIVING COAST
+		6 container
+			7 button Coastal map
+			8 button Enable wildlife sound
+			9 button Field journal 0/6
+				10 text Field journal 
+				11 text 0
+				12 text /6
+			13 button Exploration options
+		14 text Salt air & soft light
+		15 text Free exploration · no countdown
+		16 text Something small is stirring by the water · follow the shells from your doorstep.
+		17 text WASD move/drive · B brake · Drag camera · Space pause
+		18 container
+			19 text $ 10,000
+		20 text Free roam · your own pace
+		21 container Exploration options
+			22 button Close exploration options
+			23 heading A little breathing room., Value: 2
+				24 text A little breathing room.
+			25 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			26 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			27 container
+				28 text Volume
+				29 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			30 container
+				31 text Camera sensitivity
+				32 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			33 container
+				34 text Graphics
+				35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					36 menu
+						37 (selected) Coastal · detailed shadows
+						38 Performance · contact shadows
+			39 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			40 container
+				41 text Render resolution
+				42 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					43 menu
+						44 75% · faster
+						45 (selected) 100% · recommended
+						46 125% · sharper
+			47 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			48 container
+				49 text Demo reactions · no API needed
+				50 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			51 button Pause exploration
+			52 container
+				53 text 21  FPS · p95  64.6  ms
+				54 text 792  draws ·  608,415 triangles
+				55 text 414  geometries ·  43  textures
+				56 text 1710 × 809  render pixels
+				57 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				58 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			59 container
+				60 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				61 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		62 button Record 12-second gameplay clip
+
+The focused UI element is 13 button Exploration options
+2026-10-23T03:25:43.634Z FINAL COASTAL HOME
+Browser tab: 2139238698, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text The weather is singing
+		16 text Free exploration · no countdown
+		17 button WITH YOU Brindlefin ↗
+			18 text WITH YOU
+			19 text Brindlefin
+			20 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		26 container Exploration options
+			27 button Close exploration options
+			28 heading A little breathing room., Value: 2
+				29 text A little breathing room.
+			30 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			31 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			32 container
+				33 text Volume
+				34 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			35 container
+				36 text Camera sensitivity
+				37 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			38 container
+				39 text Graphics
+				40 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					41 menu
+						42 (selected) Coastal · detailed shadows
+						43 Performance · contact shadows
+			44 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			45 container
+				46 text Render resolution
+				47 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					48 menu
+						49 75% · faster
+						50 (selected) 100% · recommended
+						51 125% · sharper
+			52 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			53 container
+				54 text Demo reactions · no API needed
+				55 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			56 button Pause exploration
+			57 container
+				58 text 22  FPS · p95  58.9  ms
+				59 text 1079  draws ·  1,422,548 triangles
+				60 text 373  geometries ·  41  textures
+				61 text 1710 × 809  render pixels
+				62 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				63 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			64 container
+				65 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				66 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		67 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+2026-10-23T03:26:43.620Z FINAL COASTAL BRIDGE
+Browser tab: 2139238698, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text WETLANDS  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text Salt air & soft light
+		16 text Free exploration · no countdown
+		17 button WITH YOU Brindlefin ↗
+			18 text WITH YOU
+			19 text Brindlefin
+			20 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		26 container Exploration options
+			27 button Close exploration options
+			28 heading A little breathing room., Value: 2
+				29 text A little breathing room.
+			30 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			31 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			32 container
+				33 text Volume
+				34 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			35 container
+				36 text Camera sensitivity
+				37 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			38 container
+				39 text Graphics
+				40 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					41 menu
+						42 (selected) Coastal · detailed shadows
+						43 Performance · contact shadows
+			44 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			45 container
+				46 text Render resolution
+				47 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					48 menu
+						49 75% · faster
+						50 (selected) 100% · recommended
+						51 125% · sharper
+			52 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 0
+			53 container
+				54 text Demo reactions · no API needed
+				55 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			56 button Pause exploration
+			57 container
+				58 text 21  FPS · p95  63.8  ms
+				59 text 1070  draws ·  1,417,971 triangles
+				60 text 460  geometries ·  44  textures
+				61 text 1710 × 809  render pixels
+				62 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				63 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			64 container
+				65 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				66 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		67 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+2026-10-23T03:30:16.275Z FINAL LOW TRUCK EXIT
+Browser tab: 2139238698, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+0 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	1 container
+		2 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		3 text AFTERLIGHT
+		4 container
+			5 text TOWN  · THE LIVING COAST
+		6 container
+			7 button Coastal map
+			8 button Enable wildlife sound
+			9 button Field journal 1/6
+				10 text Field journal 
+				11 text 1
+				12 text /6
+			13 button Exploration options
+		14 text Rain wakes the garden
+		15 text Free exploration · no countdown
+		26 button WITH YOU Brindlefin ↗
+			27 text WITH YOU
+			28 text Brindlefin
+			29 text ↗
+		25 text The shell trail continues west · follow it across the bridge.
+		21 text WASD move/drive · B brake · Drag camera · Space pause
+		22 container
+			23 text $ 10,000
+		24 text Free roam · your own pace
+		30 container Exploration options
+			31 button Close exploration options
+			32 heading A little breathing room., Value: 2
+				33 text A little breathing room.
+			34 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			35 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			36 container
+				37 text Volume
+				38 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			39 container
+				40 text Camera sensitivity
+				41 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			42 container
+				43 text Graphics
+				44 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+					45 menu
+						46 Coastal · detailed shadows
+						47 (selected) Performance · contact shadows
+			48 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			49 container
+				50 text Render resolution
+				51 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					52 menu
+						53 75% · faster
+						54 (selected) 100% · recommended
+						55 125% · sharper
+			56 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 0
+			57 container
+				58 text Demo reactions · no API needed
+				59 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			60 button Pause exploration
+			61 container
+				62 text 31  FPS · p95  47.8  ms
+				63 text 278  draws ·  205,170 triangles
+				64 text 613  geometries ·  51  textures
+				65 text 1710 × 809  render pixels
+				66 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				67 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			68 container
+				69 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				70 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		71 button Record 12-second gameplay clip
+
+The focused UI element is 13 button Exploration options
+
+CONTROLLED BASE1 {"at":"2026-10-23T03:38:08.254Z","selected":"2139238701","test":"2139238701","visibility":"visible"}
+Browser tab: 2139238701, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				53 text 12  FPS · p95  102.7  ms
+~				54 text 282  draws ·  453,322 triangles
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+CONTROLLED BASE2 {"at":"2026-10-23T03:38:33.804Z","selected":"2139238701","visibility":"visible"}
+Browser tab: 2139238701, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				53 text 11  FPS · p95  118.4  ms
+~				54 text 281  draws ·  453,247 triangles
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED BASE1 {"at":"2026-10-23T03:39:55.577Z","selected":"2139238701","visibility":"visible"}
+Browser tab: 2139238701, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+0 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4196/
+	1 container
+		2 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		3 text AFTERLIGHT
+		4 container
+			5 text TOWN  · THE LIVING COAST
+		6 container
+			7 button Coastal map
+			8 button Enable wildlife sound
+			9 button Field journal 0/6
+				10 text Field journal 
+				11 text 0
+				12 text /6
+			13 button Exploration options
+		14 text Salt air & soft light
+		15 text Free exploration · no countdown
+		16 text Click to walk · People, creatures & your truck are interactive
+		17 text WASD move/drive · B brake · Drag camera · Space pause
+		18 container
+			19 text $ 10,000
+		20 text Free roam · your own pace
+		21 container Exploration options
+			22 button Close exploration options
+			23 heading A little breathing room., Value: 2
+				24 text A little breathing room.
+			25 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			26 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			27 container
+				28 text Volume
+				29 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			30 container
+				31 text Camera sensitivity
+				32 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			33 container
+				34 text Graphics
+				35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+					36 menu
+						37 Coastal · detailed shadows
+						38 (selected) Performance · contact shadows
+			39 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			40 container
+				41 text Render resolution
+				42 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					43 menu
+						44 75% · faster
+						45 (selected) 100% · recommended
+						46 125% · sharper
+			47 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			48 container
+				49 text Demo reactions · no API needed
+				50 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			51 button Pause exploration
+			52 container
+				53 text 60  FPS · p95  18.5  ms
+				54 text 281  draws ·  453,247 triangles
+				55 text 324  geometries ·  37  textures
+				56 text 1710 × 809  render pixels
+				57 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				58 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			59 container
+				60 link Description: Storm rescue ↗, Value: 127.0.0.1:4196/?rescue
+				61 link Description: Original campaign ↗, Value: 127.0.0.1:4196/?campaign
+		62 button Record 12-second gameplay clip
+
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED BASE2 2026-10-23T03:40:27.336Z
+Browser tab: 2139238701, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				53 text 60  FPS · p95  18.2  ms
+~				54 text 281  draws ·  453,242 triangles
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED BASE3 2026-10-23T03:40:59.455Z
+Browser tab: 2139238701, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				53 text 60  FPS · p95  18.5  ms
+~				54 text 282  draws ·  453,322 triangles
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED DIAG1 2026-10-23T03:41:55.122Z
+Browser tab: 2139238702, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4197/".
+0 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4197/
+	1 container
+		2 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		3 text AFTERLIGHT
+		4 container
+			5 text TOWN  · THE LIVING COAST
+		6 container
+			7 button Coastal map
+			8 button Enable wildlife sound
+			9 button Field journal 0/6
+				10 text Field journal 
+				11 text 0
+				12 text /6
+			13 button Exploration options
+		14 text Salt air & soft light
+		15 text Free exploration · no countdown
+		16 text Something small is stirring by the water · follow the shells from your doorstep.
+		17 text WASD move/drive · B brake · Drag camera · Space pause
+		18 container
+			19 text $ 10,000
+		20 text Free roam · your own pace
+		21 container Exploration options
+			22 button Close exploration options
+			23 heading A little breathing room., Value: 2
+				24 text A little breathing room.
+			25 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			26 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			27 container
+				28 text Volume
+				29 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			30 container
+				31 text Camera sensitivity
+				32 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			33 container
+				34 text Graphics
+				35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+					36 menu
+						37 Coastal · detailed shadows
+						38 (selected) Performance · contact shadows
+			39 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			40 container
+				41 text Render resolution
+				42 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					43 menu
+						44 75% · faster
+						45 (selected) 100% · recommended
+						46 125% · sharper
+			47 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			48 container
+				49 text Demo reactions · no API needed
+				50 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			51 button Pause exploration
+			52 container
+				53 text 60  FPS · p95  18.6  ms
+				54 text 283  draws ·  453,302 triangles
+				55 text 327  geometries ·  37  textures
+				56 text 1710 × 809  render pixels
+				57 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				58 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			59 container
+				60 link Description: Storm rescue ↗, Value: 127.0.0.1:4197/?rescue
+				61 link Description: Original campaign ↗, Value: 127.0.0.1:4197/?campaign
+		62 button Record 12-second gameplay clip
+
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED DIAG2 2026-10-23T03:42:23.214Z
+Browser tab: 2139238702, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4197/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				53 text 60  FPS · p95  18.7  ms
+~				54 text 283  draws ·  453,271 triangles
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED DIAG3 2026-10-23T03:42:58.130Z
+Browser tab: 2139238702, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4197/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				53 text 60  FPS · p95  18.8  ms
+~				54 text 282  draws ·  453,258 triangles
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED ACTUAL1 2026-10-23T03:43:57.272Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4198/".
+0 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4198/
+	1 container
+		2 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		3 text AFTERLIGHT
+		4 container
+			5 text TOWN  · THE LIVING COAST
+		6 container
+			7 button Coastal map
+			8 button Enable wildlife sound
+			9 button Field journal 0/6
+				10 text Field journal 
+				11 text 0
+				12 text /6
+			13 button Exploration options
+		14 text Salt air & soft light
+		15 text Free exploration · no countdown
+		16 text Something small is stirring by the water · follow the shells from your doorstep.
+		17 text WASD move/drive · B brake · Drag camera · Space pause
+		18 container
+			19 text $ 10,000
+		20 text Free roam · your own pace
+		21 container Exploration options
+			22 button Close exploration options
+			23 heading A little breathing room., Value: 2
+				24 text A little breathing room.
+			25 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			26 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			27 container
+				28 text Volume
+				29 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			30 container
+				31 text Camera sensitivity
+				32 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			33 container
+				34 text Graphics
+				35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+					36 menu
+						37 Coastal · detailed shadows
+						38 (selected) Performance · contact shadows
+			39 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			40 container
+				41 text Render resolution
+				42 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					43 menu
+						44 75% · faster
+						45 (selected) 100% · recommended
+						46 125% · sharper
+			47 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			48 container
+				49 text Demo reactions · no API needed
+				50 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			51 button Pause exploration
+			52 container
+				53 text 60  FPS · p95  18.6  ms
+				54 text 399  draws ·  488,372 triangles
+				55 text 378  geometries ·  39  textures
+				56 text 1710 × 809  render pixels
+				57 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				58 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			59 container
+				60 link Description: Storm rescue ↗, Value: 127.0.0.1:4198/?rescue
+				61 link Description: Original campaign ↗, Value: 127.0.0.1:4198/?campaign
+		62 button Record 12-second gameplay clip
+
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED ACTUAL2 2026-10-23T03:44:25.656Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4198/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				53 text 60  FPS · p95  18.7  ms
+~				54 text 398  draws ·  488,180 triangles
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+ISOLATED ACTUAL3 2026-10-23T03:45:01.587Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4198/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				53 text 60  FPS · p95  18.1  ms
+The focused UI element is 35 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+
+CLEAN COASTAL dock 2026-10-23T03:47:04.157Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text The coast turns violet
+		16 text Free exploration · no countdown
+		17 button WITH YOU Brindlefin ↗
+			18 text WITH YOU
+			19 text Brindlefin
+			20 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		26 container Exploration options
+			27 button Close exploration options
+			28 heading A little breathing room., Value: 2
+				29 text A little breathing room.
+			30 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			31 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			32 container
+				33 text Volume
+				34 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			35 container
+				36 text Camera sensitivity
+				37 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			38 container
+				39 text Graphics
+				40 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					41 menu
+						42 (selected) Coastal · detailed shadows
+						43 Performance · contact shadows
+			44 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			45 container
+				46 text Render resolution
+				47 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					48 menu
+						49 75% · faster
+						50 (selected) 100% · recommended
+						51 125% · sharper
+			52 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			53 container
+				54 text Demo reactions · no API needed
+				55 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			56 button Pause exploration
+			57 container
+				58 text 43  FPS · p95  32.6  ms
+				59 text 752  draws ·  596,307 triangles
+				60 text 387  geometries ·  41  textures
+				61 text 1710 × 809  render pixels
+				62 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				63 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			64 container
+				65 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				66 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		67 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+CLEAN COASTAL home 2026-10-23T03:48:12.106Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text The coast turns violet
+		16 text Free exploration · no countdown
+		17 button WITH YOU Brindlefin ↗
+			18 text WITH YOU
+			19 text Brindlefin
+			20 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		26 container Exploration options
+			27 button Close exploration options
+			28 heading A little breathing room., Value: 2
+				29 text A little breathing room.
+			30 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			31 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			32 container
+				33 text Volume
+				34 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			35 container
+				36 text Camera sensitivity
+				37 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			38 container
+				39 text Graphics
+				40 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					41 menu
+						42 (selected) Coastal · detailed shadows
+						43 Performance · contact shadows
+			44 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			45 container
+				46 text Render resolution
+				47 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					48 menu
+						49 75% · faster
+						50 (selected) 100% · recommended
+						51 125% · sharper
+			52 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			53 container
+				54 text Demo reactions · no API needed
+				55 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			56 button Pause exploration
+			57 container
+				58 text 42  FPS · p95  35.6  ms
+				59 text 1154  draws ·  1,460,500 triangles
+				60 text 448  geometries ·  43  textures
+				61 text 1710 × 809  render pixels
+				62 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				63 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			64 container
+				65 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				66 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		67 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+CLEAN COASTAL bridge 2026-10-23T03:49:03.717Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text WETLANDS  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text The weather is singing
+		16 text Free exploration · no countdown
+		17 button WITH YOU Brindlefin ↗
+			18 text WITH YOU
+			19 text Brindlefin
+			20 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		26 container Exploration options
+			27 button Close exploration options
+			28 heading A little breathing room., Value: 2
+				29 text A little breathing room.
+			30 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			31 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			32 container
+				33 text Volume
+				34 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			35 container
+				36 text Camera sensitivity
+				37 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			38 container
+				39 text Graphics
+				40 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					41 menu
+						42 (selected) Coastal · detailed shadows
+						43 Performance · contact shadows
+			44 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			45 container
+				46 text Render resolution
+				47 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					48 menu
+						49 75% · faster
+						50 (selected) 100% · recommended
+						51 125% · sharper
+			52 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			53 container
+				54 text Demo reactions · no API needed
+				55 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			56 button Pause exploration
+			57 container
+				58 text 40  FPS · p95  35.1  ms
+				59 text 938  draws ·  1,392,630 triangles
+				60 text 554  geometries ·  47  textures
+				61 text 1710 × 809  render pixels
+				62 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				63 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			64 container
+				65 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				66 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		67 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+CLEAN COASTAL dock repeat 2026-10-23T03:50:23.929Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text The weather is singing
+		16 text Free exploration · no countdown
+		26 button WITH YOU Brindlefin ↗
+			27 text WITH YOU
+			28 text Brindlefin
+			29 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		30 container Exploration options
+			31 button Close exploration options
+			32 heading A little breathing room., Value: 2
+				33 text A little breathing room.
+			34 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			35 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			36 container
+				37 text Volume
+				38 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			39 container
+				40 text Camera sensitivity
+				41 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			42 container
+				43 text Graphics
+				44 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					45 menu
+						46 (selected) Coastal · detailed shadows
+						47 Performance · contact shadows
+			48 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			49 container
+				50 text Render resolution
+				51 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					52 menu
+						53 75% · faster
+						54 (selected) 100% · recommended
+						55 125% · sharper
+			56 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			57 container
+				58 text Demo reactions · no API needed
+				59 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			60 button Pause exploration
+			61 container
+				62 text 43  FPS · p95  35  ms
+				63 text 723  draws ·  588,519 triangles
+				64 text 567  geometries ·  47  textures
+				65 text 1710 × 809  render pixels
+				66 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				67 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			68 container
+				69 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				70 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		71 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+CLEAN COASTAL end-home 2026-10-23T03:51:29.747Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text Salt air & soft light
+		16 text Free exploration · no countdown
+		26 button WITH YOU Brindlefin ↗
+			27 text WITH YOU
+			28 text Brindlefin
+			29 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		30 container Exploration options
+			31 button Close exploration options
+			32 heading A little breathing room., Value: 2
+				33 text A little breathing room.
+			34 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			35 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			36 container
+				37 text Volume
+				38 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			39 container
+				40 text Camera sensitivity
+				41 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			42 container
+				43 text Graphics
+				44 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					45 menu
+						46 (selected) Coastal · detailed shadows
+						47 Performance · contact shadows
+			48 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			49 container
+				50 text Render resolution
+				51 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					52 menu
+						53 75% · faster
+						54 (selected) 100% · recommended
+						55 125% · sharper
+			56 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			57 container
+				58 text Demo reactions · no API needed
+				59 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			60 button Pause exploration
+			61 container
+				62 text 39  FPS · p95  41.3  ms
+				63 text 1162  draws ·  1,457,790 triangles
+				64 text 567  geometries ·  47  textures
+				65 text 1710 × 809  render pixels
+				66 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				67 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			68 container
+				69 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				70 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		71 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+CLEAN LOW bridge 2026-10-23T03:52:25.685Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text WETLANDS  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text Salt air & soft light
+		16 text Free exploration · no countdown
+		26 button WITH YOU Brindlefin ↗
+			27 text WITH YOU
+			28 text Brindlefin
+			29 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		30 container Exploration options
+			31 button Close exploration options
+			32 heading A little breathing room., Value: 2
+				33 text A little breathing room.
+			34 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			35 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			36 container
+				37 text Volume
+				38 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			39 container
+				40 text Camera sensitivity
+				41 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			42 container
+				43 text Graphics
+				44 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+					45 menu
+						46 Coastal · detailed shadows
+						47 (selected) Performance · contact shadows
+			48 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			49 container
+				50 text Render resolution
+				51 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					52 menu
+						53 75% · faster
+						54 (selected) 100% · recommended
+						55 125% · sharper
+			56 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			57 container
+				58 text Demo reactions · no API needed
+				59 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			60 button Pause exploration
+			61 container
+				62 text 60  FPS · p95  18.3  ms
+				63 text 314  draws ·  467,714 triangles
+				64 text 567  geometries ·  47  textures
+				65 text 1710 × 809  render pixels
+				66 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				67 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			68 container
+				69 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				70 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		71 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+CLEAN LOW dock 2026-10-23T03:53:27.415Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text Rain wakes the garden
+		16 text Free exploration · no countdown
+		26 button WITH YOU Brindlefin ↗
+			27 text WITH YOU
+			28 text Brindlefin
+			29 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		30 container Exploration options
+			31 button Close exploration options
+			32 heading A little breathing room., Value: 2
+				33 text A little breathing room.
+			34 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			35 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			36 container
+				37 text Volume
+				38 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			39 container
+				40 text Camera sensitivity
+				41 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			42 container
+				43 text Graphics
+				44 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+					45 menu
+						46 Coastal · detailed shadows
+						47 (selected) Performance · contact shadows
+			48 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			49 container
+				50 text Render resolution
+				51 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					52 menu
+						53 75% · faster
+						54 (selected) 100% · recommended
+						55 125% · sharper
+			56 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			57 container
+				58 text Demo reactions · no API needed
+				59 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			60 button Pause exploration
+			61 container
+				62 text 60  FPS · p95  18.6  ms
+				63 text 230  draws ·  197,685 triangles
+				64 text 571  geometries ·  47  textures
+				65 text 1710 × 809  render pixels
+				66 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				67 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			68 container
+				69 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				70 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		71 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+CLEAN LOW endhome 2026-10-23T03:54:53.591Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4194/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4194/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 1/6
+				11 text Field journal 
+				12 text 1
+				13 text /6
+			14 button Exploration options
+		15 text Rain wakes the garden
+		16 text Free exploration · no countdown
+		26 button WITH YOU Brindlefin ↗
+			27 text WITH YOU
+			28 text Brindlefin
+			29 text ↗
+		21 text The shell trail continues west · follow it across the bridge.
+		22 text WASD move/drive · B brake · Drag camera · Space pause
+		23 container
+			24 text $ 10,000
+		25 text Free roam · your own pace
+		30 container Exploration options
+			31 button Close exploration options
+			32 heading A little breathing room., Value: 2
+				33 text A little breathing room.
+			34 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			35 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			36 container
+				37 text Volume
+				38 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			39 container
+				40 text Camera sensitivity
+				41 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			42 container
+				43 text Graphics
+				44 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Performance · contact shadows, Secondary Actions: Expand
+					45 menu
+						46 Coastal · detailed shadows
+						47 (selected) Performance · contact shadows
+			48 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			49 container
+				50 text Render resolution
+				51 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					52 menu
+						53 75% · faster
+						54 (selected) 100% · recommended
+						55 125% · sharper
+			56 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			57 container
+				58 text Demo reactions · no API needed
+				59 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			60 button Pause exploration
+			61 container
+				62 text 60  FPS · p95  18.6  ms
+				63 text 388  draws ·  243,976 triangles
+				64 text 571  geometries ·  47  textures
+				65 text 1710 × 809  render pixels
+				66 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				67 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			68 container
+				69 link Description: Storm rescue ↗, Value: 127.0.0.1:4194/?rescue
+				70 link Description: Original campaign ↗, Value: 127.0.0.1:4194/?campaign
+		71 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+COASTAL BASE1 2026-10-23T03:56:08.683Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4196/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 0/6
+				11 text Field journal 
+				12 text 0
+				13 text /6
+			14 button Exploration options
+		15 text Salt air & soft light
+		16 text Free exploration · no countdown
+		17 text Click to walk · People, creatures & your truck are interactive
+		18 text WASD move/drive · B brake · Drag camera · Space pause
+		19 container
+			20 text $ 10,000
+		21 text Free roam · your own pace
+		22 container Exploration options
+			23 button Close exploration options
+			24 heading A little breathing room., Value: 2
+				25 text A little breathing room.
+			26 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			27 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			28 container
+				29 text Volume
+				30 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			31 container
+				32 text Camera sensitivity
+				33 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			34 container
+				35 text Graphics
+				36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					37 menu
+						38 (selected) Coastal · detailed shadows
+						39 Performance · contact shadows
+			40 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			41 container
+				42 text Render resolution
+				43 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					44 menu
+						45 75% · faster
+						46 (selected) 100% · recommended
+						47 125% · sharper
+			48 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			49 container
+				50 text Demo reactions · no API needed
+				51 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			52 button Pause exploration
+			53 container
+				54 text 45  FPS · p95  33.9  ms
+				55 text 986  draws ·  1,407,050 triangles
+				56 text 341  geometries ·  37  textures
+				57 text 1710 × 809  render pixels
+				58 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				59 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			60 container
+				61 link Description: Storm rescue ↗, Value: 127.0.0.1:4196/?rescue
+				62 link Description: Original campaign ↗, Value: 127.0.0.1:4196/?campaign
+		63 button Record 12-second gameplay clip
+
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL BASE2 2026-10-23T03:56:40.210Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 43  FPS · p95  37.4  ms
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL BASE3 2026-10-23T03:57:22.887Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 43  FPS · p95  34.9  ms
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL ACTUAL1 2026-10-23T03:58:20.393Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4198/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4198/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 0/6
+				11 text Field journal 
+				12 text 0
+				13 text /6
+			14 button Exploration options
+		15 text Salt air & soft light
+		16 text Free exploration · no countdown
+		17 text Something small is stirring by the water · follow the shells from your doorstep.
+		18 text WASD move/drive · B brake · Drag camera · Space pause
+		19 container
+			20 text $ 10,000
+		21 text Free roam · your own pace
+		22 container Exploration options
+			23 button Close exploration options
+			24 heading A little breathing room., Value: 2
+				25 text A little breathing room.
+			26 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			27 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			28 container
+				29 text Volume
+				30 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			31 container
+				32 text Camera sensitivity
+				33 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			34 container
+				35 text Graphics
+				36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					37 menu
+						38 (selected) Coastal · detailed shadows
+						39 Performance · contact shadows
+			40 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			41 container
+				42 text Render resolution
+				43 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					44 menu
+						45 75% · faster
+						46 (selected) 100% · recommended
+						47 125% · sharper
+			48 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			49 container
+				50 text Demo reactions · no API needed
+				51 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			52 button Pause exploration
+			53 container
+				54 text 41  FPS · p95  35.6  ms
+				55 text 1144  draws ·  1,441,332 triangles
+				56 text 395  geometries ·  39  textures
+				57 text 1710 × 809  render pixels
+				58 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				59 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			60 container
+				61 link Description: Storm rescue ↗, Value: 127.0.0.1:4198/?rescue
+				62 link Description: Original campaign ↗, Value: 127.0.0.1:4198/?campaign
+		63 button Record 12-second gameplay clip
+
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL ACTUAL2 2026-10-23T03:58:55.049Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4198/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 40  FPS · p95  36.4  ms
+~				55 text 1144  draws ·  1,440,884 triangles
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL ACTUAL3 2026-10-23T03:59:35.797Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4198/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 39  FPS · p95  36  ms
+~				55 text 1142  draws ·  1,440,948 triangles
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL DIAG1 2026-10-23T04:00:35.272Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4197/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4197/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 0/6
+				11 text Field journal 
+				12 text 0
+				13 text /6
+			14 button Exploration options
+		15 text Salt air & soft light
+		16 text Free exploration · no countdown
+		17 text Something small is stirring by the water · follow the shells from your doorstep.
+		18 text WASD move/drive · B brake · Drag camera · Space pause
+		19 container
+			20 text $ 10,000
+		21 text Free roam · your own pace
+		22 container Exploration options
+			23 button Close exploration options
+			24 heading A little breathing room., Value: 2
+				25 text A little breathing room.
+			26 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			27 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			28 container
+				29 text Volume
+				30 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			31 container
+				32 text Camera sensitivity
+				33 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			34 container
+				35 text Graphics
+				36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					37 menu
+						38 (selected) Coastal · detailed shadows
+						39 Performance · contact shadows
+			40 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			41 container
+				42 text Render resolution
+				43 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					44 menu
+						45 75% · faster
+						46 (selected) 100% · recommended
+						47 125% · sharper
+			48 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			49 container
+				50 text Demo reactions · no API needed
+				51 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			52 button Pause exploration
+			53 container
+				54 text 43  FPS · p95  34.4  ms
+				55 text 938  draws ·  1,384,388 triangles
+				56 text 344  geometries ·  37  textures
+				57 text 1710 × 809  render pixels
+				58 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				59 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			60 container
+				61 link Description: Storm rescue ↗, Value: 127.0.0.1:4197/?rescue
+				62 link Description: Original campaign ↗, Value: 127.0.0.1:4197/?campaign
+		63 button Record 12-second gameplay clip
+
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL DIAG2 2026-10-23T04:01:07.942Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4197/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 40  FPS · p95  35.7  ms
+~				55 text 942  draws ·  1,384,718 triangles
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL DIAG3 2026-10-23T04:01:52.005Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4197/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 45  FPS · p95  33.8  ms
+~				55 text 940  draws ·  1,384,548 triangles
+The focused UI element is 36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+
+COASTAL BASE RECHECK1 2026-10-23T04:02:40.409Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 42  FPS · p95  38.6  ms
+~				55 text 921  draws ·  1,377,840 triangles
+The focused UI element is 14 button Exploration options
+
+COASTAL BASE RECHECK2 2026-10-23T04:03:14.265Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4196/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 45  FPS · p95  33.4  ms
+~				55 text 919  draws ·  1,377,670 triangles
+The focused UI element is 14 button Exploration options
+
+COASTAL DIST16-1 2026-10-23T04:07:19.460Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4199/".
+1 AXWebArea AFTERLIGHT — The Living Coast, URL: 127.0.0.1:4199/
+	2 container
+		3 image Living coast. Click ground to walk; click a creature to approach. Click an attentive creature again to release resonance.
+		4 text AFTERLIGHT
+		5 container
+			6 text TOWN  · THE LIVING COAST
+		7 container
+			8 button Coastal map
+			9 button Enable wildlife sound
+			10 button Field journal 0/6
+				11 text Field journal 
+				12 text 0
+				13 text /6
+			14 button Exploration options
+		15 text Salt air & soft light
+		16 text Free exploration · no countdown
+		17 text Something small is stirring by the water · follow the shells from your doorstep.
+		18 text WASD move/drive · B brake · Drag camera · Space pause
+		19 container
+			20 text $ 10,000
+		21 text Free roam · your own pace
+		22 container Exploration options
+			23 button Close exploration options
+			24 heading A little breathing room., Value: 2
+				25 text A little breathing room.
+			26 checkbox (settable, integer) Description: Gentle timing assistance, Value: 1
+			27 text Assisted pulses answer any curious moment. Switch off for the bright-crest timing window.
+			28 container
+				29 text Volume
+				30 slider (settable, float) Description: Wildlife volume, Value: 0.5
+			31 container
+				32 text Camera sensitivity
+				33 slider (settable, integer) Description: Camera sensitivity, Value: 1
+			34 container
+				35 text Graphics
+				36 pop up button (collapsed, settable) Description: Wildlife graphics, Value: Coastal · detailed shadows, Secondary Actions: Expand
+					37 menu
+						38 (selected) Coastal · detailed shadows
+						39 Performance · contact shadows
+			40 checkbox (settable, integer) Description: Depth shading · Coastal preset, Value: 1
+			41 container
+				42 text Render resolution
+				43 pop up button (collapsed, settable) Description: Render resolution, Value: 100% · recommended, Secondary Actions: Expand
+					44 menu
+						45 75% · faster
+						46 (selected) 100% · recommended
+						47 125% · sharper
+			48 checkbox (settable, integer) Description: Occasional AI companion reactions, Value: 1
+			49 container
+				50 text Demo reactions · no API needed
+				51 text At most six requests this session, at least one minute apart. Movement and bonding never wait for AI.
+			52 button Pause exploration
+			53 container
+				54 text 41  FPS · p95  37.1  ms
+				55 text 1065  draws ·  1,424,298 triangles
+				56 text 391  geometries ·  39  textures
+				57 text 1710 × 809  render pixels
+				58 text WebGL2 · MSAA 4 · texture max 16384 · anisotropy 16
+				59 text ANGLE (Apple, ANGLE Metal Renderer: Apple M4, Unspecified Version)
+			60 container
+				61 link Description: Storm rescue ↗, Value: 127.0.0.1:4199/?rescue
+				62 link Description: Original campaign ↗, Value: 127.0.0.1:4199/?campaign
+		63 button Record 12-second gameplay clip
+
+The focused UI element is 14 button Exploration options
+
+COASTAL DIST16-2 2026-10-23T04:08:00.571Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4199/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 40  FPS · p95  35.1  ms
+The focused UI element is 14 button Exploration options
+
+COASTAL DIST16-3 2026-10-23T04:08:35.037Z
+Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://127.0.0.1:4199/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				54 text 42  FPS · p95  35.1  ms
+The focused UI element is 14 button Exploration options
