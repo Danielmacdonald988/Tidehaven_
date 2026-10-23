@@ -2,3 +2,13 @@
 2026-10-23T01:10:03.899Z wetland gate dusk Coastal100%: 60FPS p95 18.7ms 401draws 1221417triangles 431geometries 44textures; freshly opened Options.
 2026-10-23T01:27:56.000Z revised1f bridge return fair Coastal100%:60FPS p9517.3ms 890draws 1400993triangles 272geometries40textures; freshly opened Options.
 2026-10-23T01:32:01.271Z revised1f9748c town return Performance100% 60FPS p95 18.6ms 286draws472032tri364geom40tex; rolling panel sample, not aggregate
+2026-10-23T02:10:33.730Z final4fc sustained attempt start Coastal100% depthon home storm60FPS p9518.5ms1023draws1425106tri361geom39tex; menu sample then close
+2026-10-23T02:11:57.384Z final4fc wetlands north Coastal100% 60FPS p9518.6ms477draws1313424tri460geom44tex
+2026-10-23T02:14:07.630Z final4fc observatory rain Coastal100%60FPS p9518.1ms233draws1133689tri462geom45tex
+2026-10-23T02:16:20.907Z final4fc returnedhome dusk Coastal100%60FPS p9518.7ms987draws1429214tri462geom45tex
+2026-10-23T02:18:19.571Z final4fc observatory repeat storm Coastal100%60FPS p9518.6ms233draws1133689tri462geom45tex MATCHED resourcecounts
+2026-10-23T02:21:33.327Z final4fc waterfront rain Coastal100%60FPS p9518.7ms990draws1176607tri527geom47tex newlyvisited shore
+2026-10-23T02:23:04.580Z Coastal run end/LOW start; finalCoastal dock60FPS p9518.5ms718draws591803tri563geom48tex. Coastal wall duration 750.85s, short menu pauses excluded separately
+2026-10-23T02:25:00.935Z low town dusk60FPS p9518.5ms320draws482581tri578geom48tex100%
+2026-10-23T02:25:54.077Z low wetlands dusk60FPS p9518.5ms205draws458669tri578geom48tex100%
+2026-10-23T02:26:55.569Z LOW end home storm60FPS p9518.1ms326draws475737tri578geom48tex; low wall 230.989s minus brief samplemenus; restoreCoastal

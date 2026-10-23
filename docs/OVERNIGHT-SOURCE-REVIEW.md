@@ -48,3 +48,9 @@ Independently reviewed delta `1f9748c49df142e59428a0c0c9ba56d079e67a86..de8ef2d1
 The departure trail runs from home (-22,15.2) eastward toward Brindlefin, so the new display lies west of that route. The first ability's trail starts at (-26,19), at least1.2m south of the display center; the existing ring/cradle extent does not overlap that centerline. The return-home trail hides upon completion, when the display appears. Traffic is confined to x44..62 and cannot intersect this placement. The parked owned vehicle starts at (-19,20.5), also separated. As with the prior display, no solid collider is authored for the decoration; this move does not introduce a new navigation blocker.
 
 The shared constant prevents pedestal/optic drift. It moves the center outside the reported canopy edge, but actual default-camera readability and any remaining occlusion require the pending revised-home screenshot. No build/browser/test run performed for this placement-only follow-up.
+
+## Persistence and runtime verification follow-up
+
+Independent review of exact4fc77fe found no blocking findings; only test/docs changed and production source stayed identical tode8. The persistence regression now exercises actual save/load at every expedition stage. A minor assertion-label overclaim was corrected: byte equality establishes unchanged saved contents, not absence of an identical rewrite.
+
+Independent review of the isolated motion harness confirmed its Proxy supplies the current simulated preference to the retained MediaQueryList, and WebGL observers preserve original arguments, receiver and return values. Valid interpretation is submitted shader-time freeze/resume while rendering continues. It does not establish native preference detection, CSS behavior or GPU readback. No production source was modified for this test.
