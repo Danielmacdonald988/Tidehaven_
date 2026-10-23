@@ -218,6 +218,20 @@ export function parkedVehicleColliders(s: RegionState): Collider[] {
     };
   });
 }
+/** Optional route guidance derived from earned progress; never changes a waypoint. */
+export function expeditionGuidance(s: RegionState): string | null {
+  if (s.expedition.complete) return null;
+  if (s.expedition.relic)
+    return "Brass lens recovered · follow the shells home to your warehouse.";
+  if (s.expedition.shortcut)
+    return "The passage is open · follow the shells uphill to the observatory.";
+  if (s.expedition.clue)
+    return "Follow the prints to the passage · bring Brindlefin or Cairnback close.";
+  if (s.wildlife.abilities.tracks)
+    return "The shell trail continues west · follow it across the bridge.";
+  return null;
+}
+
 export function regionInteractions(s: RegionState): RegionInteraction[] {
   const sites: RegionInteraction[] = [
     {
@@ -270,7 +284,11 @@ export function regionInteractions(s: RegionState): RegionInteraction[] {
       id: "shortcut",
       label: s.expedition.shortcut
         ? "Wetland passage open"
-        : "Ask companion to find a passage",
+        : s.wildlife.companion === "brindlefin"
+          ? "Brindlefin, find a way through"
+          : s.wildlife.companion === "cairnback"
+            ? "Cairnback, move the barrier"
+            : "Bring a companion to the passage",
       position: P.shortcut,
       radius: 5,
       kind: "site",
@@ -544,13 +562,17 @@ export function regionCommand(
         break;
       case "shortcut":
         if (s.expedition.shortcut) return fail("The passage is already open.");
-        if (
-          !s.expedition.clue ||
-          !["brindlefin", "cairnback"].includes(s.wildlife.companion ?? "") ||
-          distance(s.wildlife.companionPosition, P.shortcut) > 7
-        )
+        if (!s.expedition.clue)
           return fail(
-            "Inspect the tracks, then bring a track-finding or strong companion.",
+            "Inspect the unusual tracks at the foot of this path first.",
+          );
+        if (!["brindlefin", "cairnback"].includes(s.wildlife.companion ?? ""))
+          return fail(
+            "Choose Brindlefin or Cairnback in your field journal, then bring them here.",
+          );
+        if (distance(s.wildlife.companionPosition, P.shortcut) > 7)
+          return fail(
+            "Wait for your companion to catch up beside the passage.",
           );
         s.expedition.shortcut = true;
         record(
@@ -558,12 +580,18 @@ export function regionCommand(
           "shortcut",
           "player",
           s.wildlife.companion === "brindlefin"
-            ? "Your Brindlefin reveals a dry passage beneath the roots."
-            : "Your Cairnback pushes the tangled branches aside.",
+            ? "Brindlefin traces a gap through the driftwood. The dry passage is clear."
+            : "Cairnback pushes the driftwood aside. The dry passage is open.",
         );
         break;
       case "ruin":
-        if (!s.expedition.shortcut || s.expedition.relic)
+        if (s.expedition.relic)
+          return fail(
+            s.expedition.complete
+              ? "The brass lens is already on display at home."
+              : "You have the brass lens. Bring it home to your warehouse.",
+          );
+        if (!s.expedition.shortcut)
           return fail(
             "Find a companion-assisted passage before recovering the lens.",
           );

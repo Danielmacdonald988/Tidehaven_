@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import WildlifeScene, { type Metrics } from "./Scene";
 import { loadRegion, saveRegion } from "./persistence";
-import { regionCommand, tickRegion, regionInteractions } from "./engine";
+import {
+  regionCommand,
+  tickRegion,
+  regionInteractions,
+  expeditionGuidance,
+} from "./engine";
 import {
   REGION_BOUNDS,
   type RegionCommand,
@@ -623,7 +628,8 @@ export default function RegionApp() {
         <span>
           {paused
             ? "PAUSED"
-            : "Click to walk · People, creatures & your truck are interactive"}
+            : (expeditionGuidance(region.current) ??
+              "Click to walk · People, creatures & your truck are interactive")}
         </span>
         <small>WASD move/drive · B brake · Drag camera · Space pause</small>
       </footer>
