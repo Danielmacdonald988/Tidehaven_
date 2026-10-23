@@ -1,0 +1,33 @@
+
+> afterlight@1.0.0 build
+> tsc --noEmit && vite build
+
+vite v6.4.5 building for production...
+transforming...
+✓ 104 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                         0.48 kB │ gzip:   0.32 kB
+dist/assets/index-g71HFnDJ.css          0.33 kB │ gzip:   0.19 kB
+dist/assets/RescueApp-DY0KPG5n.css      6.12 kB │ gzip:   1.90 kB
+dist/assets/App-MTsv3XAK.css            6.15 kB │ gzip:   1.97 kB
+dist/assets/wildlife-lRaAb1Jt.css       6.56 kB │ gzip:   1.93 kB
+dist/assets/App3D-D4K-OXJW.css         15.94 kB │ gzip:   4.28 kB
+dist/assets/App-hbq4iEdX.css           18.78 kB │ gzip:   4.93 kB
+dist/assets/persistence-DswzBs3-.js     5.54 kB │ gzip:   2.00 kB
+dist/assets/intelligence-CAbZX8Qf.js    7.52 kB │ gzip:   3.29 kB
+dist/assets/App-C6Z8VEyU.js            23.92 kB │ gzip:   9.49 kB
+dist/assets/App-D7q5UDvM.js            30.81 kB │ gzip:  10.91 kB
+dist/assets/wildlife-CN7FQZs8.js       37.21 kB │ gzip:  14.72 kB
+dist/assets/RescueApp-CUGusxKJ.js      41.59 kB │ gzip:  15.95 kB
+dist/assets/App3D-2hkb442B.js          47.16 kB │ gzip:  16.87 kB
+dist/assets/engine-DDrw0_GQ.js         56.02 kB │ gzip:  19.72 kB
+dist/assets/App-CggdaYDA.js           131.89 kB │ gzip:  46.29 kB
+dist/assets/index-BBdEfLcq.js         227.59 kB │ gzip:  71.22 kB
+dist/assets/navigation-BgvcQea0.js    628.62 kB │ gzip: 166.19 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.22s

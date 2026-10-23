@@ -1,0 +1,4 @@
+2026-10-23T01:08:17.216Z west town rain Coastal100%: 60FPS p95 18.6ms 947draws 1425398triangles 335geometries 39textures; Options freshly opened pauses simulation.
+2026-10-23T01:10:03.899Z wetland gate dusk Coastal100%: 60FPS p95 18.7ms 401draws 1221417triangles 431geometries 44textures; freshly opened Options.
+2026-10-23T01:27:56.000Z revised1f bridge return fair Coastal100%:60FPS p9517.3ms 890draws 1400993triangles 272geometries40textures; freshly opened Options.
+2026-10-23T01:32:01.271Z revised1f9748c town return Performance100% 60FPS p95 18.6ms 286draws472032tri364geom40tex; rolling panel sample, not aggregate
