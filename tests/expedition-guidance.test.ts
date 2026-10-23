@@ -54,7 +54,7 @@ test("earned expedition guidance survives persisted progress without changing sa
     assert.equal(
       store.get(REGION_SAVE_KEY),
       saved,
-      "valid saves are not rewritten on load",
+      "valid saved contents remain unchanged on load",
     );
     assert.equal(store.has(`${REGION_SAVE_KEY}-corrupt-backup`), false);
     assert.equal(validateRegion(s), true);
