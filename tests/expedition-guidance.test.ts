@@ -34,7 +34,7 @@ test("earned expedition guidance survives persisted progress without changing sa
     else Reflect.deleteProperty(globalThis, "localStorage");
   });
   let s = createRegion();
-  assert.equal(expeditionGuidance(s), null);
+  assert.match(expeditionGuidance(s)!, /follow the shells from your doorstep/);
   s.wildlife.abilities.tracks = true;
   s.wildlife.creatures[0].bonded = true;
   s.wildlife.creatures[0].discovered = true;
@@ -113,4 +113,25 @@ test("passage feedback identifies the missing prerequisite and active companion 
     regionInteractions(s).find((i) => i.id === "shortcut")!.label,
     /^Cairnback/,
   );
+});
+
+test("opening invitation stays local and companion guidance follows active progress", () => {
+  const s = createRegion();
+  const before = structuredClone(s);
+  assert.match(expeditionGuidance(s)!, /by the water/);
+  assert.deepEqual(s, before);
+  s.vehicle.occupied = true;
+  assert.equal(expeditionGuidance(s), null);
+  s.vehicle.occupied = false;
+  s.wildlife.player = { x: 70, z: 15 };
+  assert.equal(expeditionGuidance(s), null);
+  s.wildlife.player = { ...P.home };
+  s.wildlife.creatures.find((c) => c.id === "brindlefin")!.bonded = true;
+  assert.equal(expeditionGuidance(s), null);
+  s.wildlife.companion = "brindlefin";
+  assert.match(expeditionGuidance(s)!, /prints by your warehouse/);
+  s.wildlife.abilities.tracks = true;
+  assert.match(expeditionGuidance(s)!, /west/);
+  s.expedition.complete = true;
+  assert.equal(expeditionGuidance(s), null);
 });

@@ -472,12 +472,6 @@ export default function RegionApp() {
               : "The weather is singing"}
         <small>Free exploration · no countdown</small>
       </aside>
-      {false && bonded === 0 && !selected && (
-        <div className="wildlife-first">
-          <p>Something small is stirring.</p>
-          <span>Follow the little shoreline prints.</span>
-        </div>
-      )}
       {selected && spec && !journal && !options && (
         <section className="wildlife-encounter">
           <div>
@@ -624,7 +618,7 @@ export default function RegionApp() {
           </span>
         </div>
       )}
-      <footer className="wildlife-footer">
+      <footer className="wildlife-footer region-footer">
         <span>
           {paused
             ? "PAUSED"

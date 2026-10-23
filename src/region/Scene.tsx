@@ -1,3 +1,8 @@
+import {
+  isForegroundPalm,
+  OCCLUSION_SILHOUETTE,
+  retainOcclusionHits,
+} from "./cameraOcclusion";
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -196,14 +201,15 @@ export default function RegionScene(props: Props) {
         }
         ancestor = ancestor.parent;
       }
-      const frond =
-        o.geometry instanceof THREE.ShapeGeometry && o.position.y > 4;
+      const frond = isForegroundPalm(o, world.colliders);
       if (!roof && !frond) return;
       const original = o.material,
         source = Array.isArray(original) ? original : [original];
       const clones = source.map((m) => {
         const clone = m.clone();
         clone.transparent = true;
+        // Thin double-sided leaf surfaces need one pass, even during a fade.
+        if (frond) clone.forceSinglePass = true;
         return clone;
       });
       o.material = Array.isArray(original) ? clones : clones[0];
@@ -227,10 +233,12 @@ export default function RegionScene(props: Props) {
       { mesh: THREE.InstancedMesh; index: number; matrix: THREE.Matrix4 }
     >();
     let lastOcclusion = -1;
+    const fadedUntil = new Map<string, number>();
     const zeroCrown = new THREE.Matrix4().makeScale(0, 0, 0);
     const occlusionRay = new THREE.Raycaster(),
       occluderMeshes = occluders.map((o) => o.mesh),
       occluderKeys = new Map(occluders.map((o) => [o.mesh.uuid, o.key]));
+    const occlusionMeshes = [...occluderMeshes, ...canopy];
     const avatar = buildAvatar("player", "#cba974");
     scene.add(avatar.group);
     const models = new Map(
@@ -256,8 +264,10 @@ export default function RegionScene(props: Props) {
       hit = new THREE.Vector3();
     let pitch = 0.75,
       lastY = 0;
-    let yaw = 0.1,
-      distance = mount.clientWidth < 600 ? 19 : 13,
+    // Look along the doorstep-to-shore route instead of filling the opening
+    // with the warehouse wall. Drag/zoom remain entirely player controlled.
+    let yaw = -1.2,
+      distance = mount.clientWidth < 600 ? 19 : 17,
       dragging = false,
       startX = 0,
       startY = 0,
@@ -274,7 +284,11 @@ export default function RegionScene(props: Props) {
       0.8,
       current.current.getState().player.z,
     );
-    camera.position.set(focus.x + 1, 11, focus.z + 13);
+    camera.position.set(
+      focus.x + Math.sin(yaw) * distance,
+      focus.y + distance * pitch,
+      focus.z + Math.cos(yaw) * distance,
+    );
     const facing = new Map<string, number>(),
       lastPositions = new Map<string, { x: number; z: number }>();
     const ringMat = new THREE.MeshBasicMaterial({
@@ -853,25 +867,49 @@ export default function RegionScene(props: Props) {
         hiddenCrowns.clear();
         scene.updateMatrixWorld(true);
         const faded = new Set<string>(),
-          targets = [new THREE.Vector3(s.player.x, 0.9, s.player.z)];
+          targets = [
+            new THREE.Vector3(
+              s.player.x,
+              surfaceHeight(s.player) + 0.9,
+              s.player.z,
+            ),
+          ];
         if (selected)
           targets.push(
             new THREE.Vector3(
               selected.position.x,
-              SPECIES.find((c) => c.id === selected.id)!.height + 0.55,
+              surfaceHeight(selected.position) +
+                SPECIES.find((c) => c.id === selected.id)!.height +
+                0.55,
               selected.position.z,
             ),
           );
+        if (
+          s.companion &&
+          selected?.id !== s.companion &&
+          Math.hypot(
+            s.companionPosition.x - s.player.x,
+            s.companionPosition.z - s.player.z,
+          ) < 6
+        )
+          targets.push(
+            new THREE.Vector3(
+              s.companionPosition.x,
+              surfaceHeight(s.companionPosition) + 0.55,
+              s.companionPosition.z,
+            ),
+          );
         for (const target of targets)
-          for (const offset of [-0.5, 0, 0.5]) {
+          for (const [offset, height] of OCCLUSION_SILHOUETTE) {
             const point = target.clone();
             point.x += Math.cos(yaw) * offset;
             point.z -= Math.sin(yaw) * offset;
+            point.y += height;
             const direction = point.sub(camera.position);
             occlusionRay.set(camera.position, direction.clone().normalize());
             occlusionRay.far = Math.max(0, direction.length() - 0.25);
             for (const hit of occlusionRay.intersectObjects(
-              [...occluderMeshes, ...canopy],
+              occlusionMeshes,
               false,
             )) {
               if (!hit.object.visible) continue;
@@ -895,13 +933,15 @@ export default function RegionScene(props: Props) {
               if (key) faded.add(key);
             }
           }
-        for (const o of occluders)
-          o.materials.forEach((m, i) => {
-            const goal = faded.has(o.key) ? 0.12 : o.opacity[i];
-            m.opacity = THREE.MathUtils.damp(m.opacity, goal, 10, dt);
-            m.depthWrite = m.opacity > 0.95;
-          });
+        retainOcclusionHits(fadedUntil, faded, elapsed);
       }
+      // Detection is bounded to 15Hz; interpolation uses every render frame.
+      for (const o of occluders)
+        o.materials.forEach((m, i) => {
+          const goal = fadedUntil.has(o.key) ? 0.12 : o.opacity[i];
+          m.opacity = THREE.MathUtils.damp(m.opacity, goal, 10, dt);
+          m.depthWrite = m.opacity > 0.95;
+        });
       renderer.info.reset();
       sun.shadow.needsUpdate = p.quality === "high";
       if (p.ambientOcclusion && p.quality === "high") composer.render(dt);

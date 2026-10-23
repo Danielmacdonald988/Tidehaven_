@@ -218,7 +218,7 @@ export function parkedVehicleColliders(s: RegionState): Collider[] {
     };
   });
 }
-/** Optional route guidance derived from earned progress; never changes a waypoint. */
+/** Optional route guidance derived from location and progress; never changes a waypoint. */
 export function expeditionGuidance(s: RegionState): string | null {
   if (s.expedition.complete) return null;
   if (s.expedition.relic)
@@ -229,6 +229,13 @@ export function expeditionGuidance(s: RegionState): string | null {
     return "Follow the prints to the passage · bring Brindlefin or Cairnback close.";
   if (s.wildlife.abilities.tracks)
     return "The shell trail continues west · follow it across the bridge.";
+  const { x, z } = s.wildlife.player;
+  if (!s.vehicle.occupied && x >= -38 && x <= 12 && z >= 10 && z <= 33) {
+    if (s.wildlife.companion === "brindlefin")
+      return "Brindlefin can read the prints by your warehouse · follow the shells back together.";
+    if (!s.wildlife.creatures.some((creature) => creature.bonded))
+      return "Something small is stirring by the water · follow the shells from your doorstep.";
+  }
   return null;
 }
 
