@@ -10,7 +10,7 @@ Browser tab: 2139238697, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 0/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 0
 				13 text /6
 			14 button Exploration options
@@ -77,7 +77,7 @@ Browser tab: 2139238698, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			7 button Coastal map
 			8 button Enable wildlife sound
 			9 button Field journal 0/6
-				10 text Field journal 
+				10 text Field journal
 				11 text 0
 				12 text /6
 			13 button Exploration options
@@ -144,7 +144,7 @@ Browser tab: 2139238698, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -215,7 +215,7 @@ Browser tab: 2139238698, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -286,7 +286,7 @@ Browser tab: 2139238698, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			7 button Coastal map
 			8 button Enable wildlife sound
 			9 button Field journal 1/6
-				10 text Field journal 
+				10 text Field journal
 				11 text 1
 				12 text /6
 			13 button Exploration options
@@ -372,7 +372,7 @@ Browser tab: 2139238701, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			7 button Coastal map
 			8 button Enable wildlife sound
 			9 button Field journal 0/6
-				10 text Field journal 
+				10 text Field journal
 				11 text 0
 				12 text /6
 			13 button Exploration options
@@ -454,7 +454,7 @@ Browser tab: 2139238702, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			7 button Coastal map
 			8 button Enable wildlife sound
 			9 button Field journal 0/6
-				10 text Field journal 
+				10 text Field journal
 				11 text 0
 				12 text /6
 			13 button Exploration options
@@ -536,7 +536,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			7 button Coastal map
 			8 button Enable wildlife sound
 			9 button Field journal 0/6
-				10 text Field journal 
+				10 text Field journal
 				11 text 0
 				12 text /6
 			13 button Exploration options
@@ -617,7 +617,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -689,7 +689,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -761,7 +761,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -833,7 +833,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -905,7 +905,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -977,7 +977,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -1049,7 +1049,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -1121,7 +1121,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 1/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 1
 				13 text /6
 			14 button Exploration options
@@ -1193,7 +1193,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 0/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 0
 				13 text /6
 			14 button Exploration options
@@ -1273,7 +1273,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 0/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 0
 				13 text /6
 			14 button Exploration options
@@ -1355,7 +1355,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 0/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 0
 				13 text /6
 			14 button Exploration options
@@ -1451,7 +1451,7 @@ Browser tab: 2139238703, Title: "AFTERLIGHT — The Living Coast", URL: "http://
 			8 button Coastal map
 			9 button Enable wildlife sound
 			10 button Field journal 0/6
-				11 text Field journal 
+				11 text Field journal
 				12 text 0
 				13 text /6
 			14 button Exploration options
