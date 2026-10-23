@@ -8,6 +8,7 @@ import { buildRegionWorld } from "./World";
 import { buildVehicle } from "./Vehicle";
 import { batchStaticVisuals } from "./visualPerformance";
 import { createPresentation } from "./Presentation";
+import { createCoastalAtmosphere } from "./Atmosphere";
 import { DriveSound } from "./DriveSound";
 import { trafficPositions } from "./engine";
 import { surfaceHeight, type RegionState, type DriveInput } from "./contracts";
@@ -143,6 +144,8 @@ export default function RegionScene(props: Props) {
     const world = buildRegionWorld();
     const staticBatches = batchStaticVisuals(world.group);
     scene.add(world.group);
+    const atmosphere = createCoastalAtmosphere(world.group);
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const car = buildVehicle();
     car.group.userData.regionTarget = "vehicle";
     scene.add(car.group);
@@ -553,6 +556,7 @@ export default function RegionScene(props: Props) {
       sun.position.set(s.player.x - 25, 45, s.player.z + 24);
       sun.target.position.set(s.player.x, 0, s.player.z);
       world.update(region, dt, elapsed, p.quality);
+      atmosphere.update(dt, p.paused || document.hidden, reducedMotion.matches);
       car.update(region.vehicle, dt);
       presentation.update(region, dt, p.quality === "low");
       avatar.group.visible = !region.vehicle.occupied;
@@ -622,11 +626,11 @@ export default function RegionScene(props: Props) {
       sound.update(s, p.paused ? 0 : dt);
       const pal =
         s.weather === "fair"
-          ? ["#a9cbdc", "#ffdda8", 1.35, 3.4]
+          ? ["#b3cddd", "#ffe2ba", 1.5, 2.9]
           : s.weather === "rain"
             ? ["#8cabbc", "#d5e5f2", 1.2, 1.6]
             : s.weather === "dusk"
-              ? ["#737d9c", "#ffd0a0", 0.85, 1.6]
+              ? ["#858da5", "#ffd0a0", 1.0, 1.6]
               : ["#667e95", "#bdd2ec", 0.95, 1.15];
       (scene.background as THREE.Color).lerp(
         new THREE.Color(pal[0] as string),
@@ -925,6 +929,7 @@ export default function RegionScene(props: Props) {
     loop();
     return () => {
       cancelAnimationFrame(raf);
+      atmosphere.dispose();
       presentation.dispose();
       composer.dispose();
       ao.dispose();
