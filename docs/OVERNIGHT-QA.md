@@ -39,3 +39,13 @@ Remaining required checks before merging: final exterior display/default-camera 
 Local handoff:4191/session52248 serves `tidehaven-sprint/dist` with the earned completed save;4190/session20645 serves `baseline/dist`. Both use task-workspace `qa-static.mjs`, deny API paths, and preserve saves. QA tabs2139238688/2139238687 remain open; no close was attempted. Inspect availability before using either server. Do not repeat the uncertain clip download.
 
 PRs3,4,5 remain draft and unmerged. Original Cursor checkout was last verified clean on main3b7bf85 and was not synced. Once Mac access returns, complete the remaining gates, guard exact remote heads, merge normally without bypass/force push/deletion, then recheck the user checkout before a safe fast-forward and build.
+
+## Browser-independent follow-up
+
+After the lock report, source review confirmed the regional persistence implementation, state contract, startup boundary and lazy entrypoint are unchanged from baseline. Valid regional saves load without conversion; the new visuals derive from existing flags. Retry reloads the page without clearing storage. This establishes source compatibility, not a fresh browser recovery pass. Existing legacy-import and interaction tests were reused; no speculative gameplay changes were made.
+
+The expedition regression now uses actual `saveRegion`/`loadRegion` at clue, passage, lens collection and home completion, rather than direct JSON reconstruction. It checks full state equality, untouched waypoints, no valid-save rewrite/corrupt backup, and one-time reward after reload. All 187 tests passed, including 22 targeted regional/atmosphere/guidance cases; TypeScript/Vite build passed. The initial restricted build could not write Vite’s temporary dependency cache; the supported elevated rerun succeeded. Only test/documentation files changed; implementation remains de8ef2d.
+
+Reduced motion is read from the live MediaQueryList on every frame; pause/hidden state also freezes the new water clock. Existing clock tests verify freeze/resume and long-frame capping. No claim is made that pre-existing creature/world movement respects reduced motion. Runtime preference switching still requires the Mac gate.
+
+Merge order is PR3, PR4, then PR5, only after all required gates pass. PR5 already contains the exact PR3 and PR4 commits as ancestors (PR4 was merged locally into the PR3-based branch). Preserve ancestry with normal merge commits, not squash/rebase or cherry-picking their patches again. After each upstream merge, re-fetch and inspect PR5's remaining diff against main; it should contain only the discovery/path/display work plus its tests/evidence. Recheck exact heads and reject unexpected changes before merging. No merge has been executed.

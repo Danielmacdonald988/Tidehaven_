@@ -9,8 +9,30 @@ import {
   validateRegion,
 } from "../src/region/engine";
 import { REGION_SITES as P } from "../src/region/contracts";
+import {
+  loadRegion,
+  saveRegion,
+  REGION_SAVE_KEY,
+} from "../src/region/persistence";
 
-test("earned expedition guidance survives interrupted progress without changing saves or waypoints", () => {
+test("earned expedition guidance survives persisted progress without changing saves or waypoints", (t) => {
+  const descriptor = Object.getOwnPropertyDescriptor(
+    globalThis,
+    "localStorage",
+  );
+  const store = new Map<string, string>();
+  Object.defineProperty(globalThis, "localStorage", {
+    configurable: true,
+    value: {
+      getItem: (key: string) => store.get(key) ?? null,
+      setItem: (key: string, value: string) => store.set(key, value),
+    },
+  });
+  t.after(() => {
+    if (descriptor)
+      Object.defineProperty(globalThis, "localStorage", descriptor);
+    else Reflect.deleteProperty(globalThis, "localStorage");
+  });
   let s = createRegion();
   assert.equal(expeditionGuidance(s), null);
   s.wildlife.abilities.tracks = true;
@@ -25,7 +47,16 @@ test("earned expedition guidance survives interrupted progress without changing 
     s.wildlife.player = { ...P[id] };
     const result = regionCommand(s, { type: "interact", id });
     assert.equal(result.ok, true, result.reason);
-    s = JSON.parse(JSON.stringify(result.state));
+    assert.equal(saveRegion(result.state), true);
+    const saved = store.get(REGION_SAVE_KEY);
+    s = loadRegion();
+    assert.deepEqual(s, result.state);
+    assert.equal(
+      store.get(REGION_SAVE_KEY),
+      saved,
+      "valid saves are not rewritten on load",
+    );
+    assert.equal(store.has(`${REGION_SAVE_KEY}-corrupt-backup`), false);
     assert.equal(validateRegion(s), true);
     assert.deepEqual(s.waypoint, start.waypoint);
   };
