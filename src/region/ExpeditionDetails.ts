@@ -8,6 +8,9 @@ import {
   type RegionState,
 } from "./contracts";
 
+// Outside the warehouse canopy (front edge z=16.93), beside the doorway.
+export const HOME_OPTIC_DISPLAY = { x: -26, z: 17.8 } as const;
+
 /** Original optical brasswork and earned shell inlays. Presentation only; no saved state. */
 export function buildExpeditionDetails() {
   const group = new THREE.Group();
@@ -153,7 +156,7 @@ export function buildExpeditionDetails() {
   group.add(instrument);
   const homeInstrument = instrument.clone();
   homeInstrument.name = "home-observatory-optic";
-  homeInstrument.position.set(-24, 1.2, 12);
+  homeInstrument.position.set(HOME_OPTIC_DISPLAY.x, 1.2, HOME_OPTIC_DISPLAY.z);
   group.add(homeInstrument);
   const cradle = new THREE.Group();
   cradle.name = "observatory-empty-cradle";
@@ -169,7 +172,7 @@ export function buildExpeditionDetails() {
   group.add(cradle);
   const homePlinth = cradle.clone();
   homePlinth.name = "home-optic-plinth";
-  homePlinth.position.set(-24, 1.2, 12);
+  homePlinth.position.set(HOME_OPTIC_DISPLAY.x, 1.2, HOME_OPTIC_DISPLAY.z);
   group.add(homePlinth);
   return {
     group,

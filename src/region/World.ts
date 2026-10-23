@@ -1,5 +1,8 @@
 import * as THREE from "three";
-import { buildExpeditionDetails } from "./ExpeditionDetails";
+import {
+  buildExpeditionDetails,
+  HOME_OPTIC_DISPLAY,
+} from "./ExpeditionDetails";
 import { terrainRibbon } from "./TerrainRibbon";
 import {
   coastalFrond,
@@ -823,7 +826,17 @@ export function buildRegionWorld() {
     );
   const homeRelic = new THREE.Group();
   group.add(homeRelic);
-  box(-24, 0.6, 12, 1.1, 1.2, 1.1, M.stone, 0, homeRelic);
+  box(
+    HOME_OPTIC_DISPLAY.x,
+    0.6,
+    HOME_OPTIC_DISPLAY.z,
+    1.1,
+    1.2,
+    1.1,
+    M.stone,
+    0,
+    homeRelic,
+  );
   const bench = new THREE.Group();
   bench.position.set(1, 0, 4);
   group.add(bench);
