@@ -255,7 +255,7 @@ export function wildlifeCommand(
         s,
         "ability",
         command.target === "tracks"
-          ? "Hidden tracks surface in the wet sand."
+          ? "Brindlefin uncovers a hidden trail of shell prints."
           : command.target === "gate"
             ? "The garden entrance rolls clear."
             : "Living light opens the reflection passage.",

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+<script>
+// Isolated QA ONLY: production bundle is unchanged. No storage access.
+const nativeMatchMedia = window.matchMedia.bind(window);
+let qaReducedMotion = false;
+let qaPreferenceReads = 0;
+let qaWaterTime = null, qaWaterUploads = 0, qaDrawCalls = 0;
+const qaUniformNames = new WeakMap();
+for (const Type of [window.WebGLRenderingContext, window.WebGL2RenderingContext]) {
+  if (!Type) continue;
+  const proto = Type.prototype;
+  const getUniformLocation = proto.getUniformLocation;
+  proto.getUniformLocation = function(program, name) {
+    const location = getUniformLocation.call(this, program, name);
+    if (location) qaUniformNames.set(location, name);
+    return location;
+  };
+  const uniform1f = proto.uniform1f;
+  proto.uniform1f = function(location, value) {
+    const result = uniform1f.call(this, location, value);
+    if (qaUniformNames.get(location) === 'coastalBreezeTime') {
+      qaWaterTime = value; qaWaterUploads++;
+    }
+    return result;
+  };
+  for (const method of ['drawElements', 'drawArrays', 'drawElementsInstanced', 'drawArraysInstanced']) {
+    const original = proto[method];
+    if (!original) continue;
+    proto[method] = function(...args) { const result = original.apply(this, args); qaDrawCalls++; return result; };
+  }
+}
+window.matchMedia = function(query) {
+  const native = nativeMatchMedia(query);
+  if (query !== '(prefers-reduced-motion: reduce)') return native;
+  return new Proxy(native, {
+    get(target, property) {
+      if (property === 'matches') { qaPreferenceReads++; return qaReducedMotion; }
+      const value = Reflect.get(target, property, target);
+      return typeof value === 'function' ? value.bind(target) : value;
+    }
+  });
+};
+window.addEventListener('DOMContentLoaded', () => {
+  const panel = document.createElement('aside');
+  panel.style.cssText = 'position:fixed;left:20px;bottom:65px;z-index:100000;background:#fff;color:#111;padding:12px;font:14px system-ui;border:3px solid #804000;border-radius:8px';
+  const title = document.createElement('div');
+  title.textContent = 'QA HARNESS — simulated media preference; not a Mac setting';
+  const button = document.createElement('button');
+  button.textContent = 'Simulated reduced motion: OFF';
+  button.onclick = () => {
+    qaReducedMotion = !qaReducedMotion;
+    button.textContent = 'Simulated reduced motion: ' + (qaReducedMotion ? 'ON' : 'OFF');
+  };
+  const status = document.createElement('div');
+  setInterval(() => { status.textContent = 'Application preference reads: ' + qaPreferenceReads + ' | water uniform seconds: ' + (qaWaterTime === null ? 'not observed' : qaWaterTime.toFixed(6)) + ' | uploads: ' + qaWaterUploads + ' | draw calls: ' + qaDrawCalls; }, 500);
+  panel.append(title, button, status);
+  document.body.append(panel);
+});
+</script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <meta name="theme-color" content="#183e42" />
+    <title>AFTERLIGHT — Three days before the water</title>
+    <script type="module" crossorigin src="/assets/index-BBdEfLcq.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-g71HFnDJ.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

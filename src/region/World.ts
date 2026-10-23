@@ -1,5 +1,10 @@
 import * as THREE from "three";
 import {
+  buildExpeditionDetails,
+  HOME_OPTIC_DISPLAY,
+} from "./ExpeditionDetails";
+import { terrainRibbon } from "./TerrainRibbon";
+import {
   coastalFrond,
   tropicalCrown,
   mineralFinish,
@@ -574,13 +579,38 @@ export function buildRegionWorld() {
   post(-63, 1.25, 24, 0.13, 2.5, M.wood);
   // Footpath and gate reveal a separate northbound expedition route.
   ribbon({ x: -75, z: 10 }, { x: -81, z: -5 }, 2.3, M.sand, 0.035);
-  ribbon({ x: -81, z: -5 }, { x: -92, z: -23 }, 2.4, M.sand, 0.035);
+  // Match the actual ground facets at the observatory cliff edge.
+  const ascentGeometry = terrainRibbon(
+    REGION_SITES.shortcut,
+    REGION_SITES.ruin,
+    2.4,
+    0.035,
+  );
+  geometries.push(ascentGeometry);
+  const ascentPath = new THREE.Mesh(ascentGeometry, M.sand);
+  ascentPath.name = "observatory-terrain-path";
+  ascentPath.receiveShadow = true;
+  group.add(ascentPath);
   const gate = new THREE.Group();
   gate.position.set(-81, 0, -5);
   group.add(gate);
-  for (let i = 0; i < 3; i++)
-    box(0, 0.3 + i * 0.3, 0, 4.2, 0.22, 0.27, M.wood, 0.09 * (i - 1), gate);
-  for (const x of [-1.8, 1.8]) post(x, 0.6, 0, 0.1, 1.2, M.wood, gate);
+  // Driftwood roots retain the old barrier envelope and opening transform.
+  for (let i = 0; i < 5; i++) {
+    const root = shape(
+      cylinder,
+      i % 2 ? M.trunk : M.wood,
+      (i - 2) * 0.16,
+      0.3 + i * 0.15,
+      (i % 2) * 0.12,
+      0.09,
+      3.7 - (i % 2) * 0.25,
+      0.09,
+      0,
+      Math.PI / 2 + (i - 2) * 0.075,
+      gate,
+    );
+    root.rotation.y = (i - 2) * 0.06;
+  }
   for (const x of [-85, -77]) {
     solid(x, -5, 4, 0.9, "shortcut-rock-bank");
     for (let i = 0; i < 5; i++)
@@ -624,15 +654,8 @@ export function buildRegionWorld() {
   box(-93, 5, -27, 12, 0.55, 1.2, M.stone);
   terrain(-96.5, -89.5, -27.5, -22.5, M.stone, 0.01);
   sign("TIDAL OBSERVATORY", -90, 3.2, -27.65, 4);
-  const relic = new THREE.Group();
-  relic.position.set(
-    REGION_SITES.ruin.x,
-    surfaceHeight(REGION_SITES.ruin),
-    REGION_SITES.ruin.z,
-  );
-  group.add(relic);
-  shape(lifeRingGeo, M.brass, 0, 0.45, 0, 1, 1, 1, 0, 0, relic);
-  post(0, 0.15, 0, 0.3, 0.3, M.stone, relic);
+  const expeditionDetails = buildExpeditionDetails();
+  group.add(expeditionDetails.group);
   // Instanced woodland: broad crowns, leaning trunks and low fern clusters, kept off designated roads/paths.
   const trunks: THREE.Matrix4[] = [],
     crowns: THREE.Matrix4[] = [],
@@ -803,8 +826,17 @@ export function buildRegionWorld() {
     );
   const homeRelic = new THREE.Group();
   group.add(homeRelic);
-  box(-24, 0.6, 12, 1.1, 1.2, 1.1, M.stone, 0, homeRelic);
-  shape(lifeRingGeo, M.brass, -24, 1.7, 12, 1, 1, 1, 0, 0, homeRelic);
+  box(
+    HOME_OPTIC_DISPLAY.x,
+    0.6,
+    HOME_OPTIC_DISPLAY.z,
+    1.1,
+    1.2,
+    1.1,
+    M.stone,
+    0,
+    homeRelic,
+  );
   const bench = new THREE.Group();
   bench.position.set(1, 0, 4);
   group.add(bench);
@@ -972,13 +1004,13 @@ export function buildRegionWorld() {
         dt,
       );
       clue.visible = !s.expedition.complete;
-      relic.visible = !s.expedition.relic;
-      relic.rotation.y = time * 0.3;
+      expeditionDetails.update(s);
       obstruction.visible = s.assistance.status !== "complete";
       reeds.rotation.z = Math.sin(time * 1.7) * 0.025;
     },
     dispose() {
       base.dispose();
+      expeditionDetails.dispose();
       geometries.forEach((g) => g.dispose());
       materials.forEach((m) => m.dispose());
       textures.forEach((t) => t.dispose());
