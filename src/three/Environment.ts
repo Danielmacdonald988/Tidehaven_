@@ -753,7 +753,11 @@ export function buildEnvironment(
   cylinder(28, 6, 7, 0.05, 12, M.metal);
   for (const y of [8, 10]) block(28, y, 7, 3, 0.05, 0.06, M.metal);
   // Waterfront: timber pier, quay, mooring ropes, boat launch and warning boundary.
-  block(5, 0.03, 29.5, 30, 0.3, 7, M.cream);
+  // Fit the quay around the timber deck. Their shared walking height is 0.18;
+  // a full slab underneath caused cream/wood triangles to fight at the surface.
+  block(5, 0.03, 28.125, 30, 0.3, 4.25, M.cream);
+  block(-5, 0.03, 31.625, 10, 0.3, 2.75, M.cream);
+  block(15, 0.03, 31.625, 10, 0.3, 2.75, M.cream);
   plankFloor(5, 33, 10, 5.5);
   for (const x of [-0.1, 10.1])
     for (const z of [30.5, 33, 35.5]) cylinder(x, 0.45, z, 0.14, 1.3, M.wood);
@@ -1312,8 +1316,14 @@ export function buildEnvironment(
     block(x, 3.4, 15.25, 0.09, 1.9, 0.09, M.metal);
     block(x, 4.32, 15.9, 0.11, 0.09, 1.4, M.metal);
   }
+  // Keep the fabric independent of the opaque architecture so the region
+  // camera can reveal a player standing under the entrance canopy.
+  const warehouseCanopy = new THREE.Group();
+  warehouseCanopy.name = "Warehouse cutaway awning";
+  group.add(warehouseCanopy);
   for (let i = 0; i < 22; i++)
-    block(
+    prop(
+      warehouseCanopy,
       -27.25 + i * 0.5,
       4.43,
       15.95,
@@ -1322,7 +1332,7 @@ export function buildEnvironment(
       1.9,
       i % 2 ? M.cream : M.darkTeal,
     );
-  block(-22, 4.2, 16.9, 11, 0.32, 0.055, M.darkTeal);
+  prop(warehouseCanopy, -22, 4.2, 16.9, 11, 0.32, 0.055, M.darkTeal);
   // Cut granite curb joints and irregular planted margins keep the street edge deliberate.
   for (let i = 0; i < 24; i++) {
     const x = -34 + i * 1.15;
@@ -1508,6 +1518,7 @@ export function buildEnvironment(
   }
   batchDetails(campaignObjects);
   batchDetails(aftermathDebris);
+  batchDetails(warehouseCanopy);
   for (const roof of roofs) batchDetails(roof.object);
   // Batch architectural components into a handful of GPU submissions.
   for (const [mat, matrices] of buckets) {
