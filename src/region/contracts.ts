@@ -126,7 +126,10 @@ export function surfaceHeight(p: Point): number {
   return p.x < -44 && p.x > -61 && Math.abs(p.z - 20.5) < 5
     ? Math.sin(((p.x + 61) / 17) * Math.PI) * 0.9
     : p.x < -88 && p.z < -15
-      ? Math.min(2.2, (-p.z - 15) * 0.16)
+      ? // Blend inside the existing cliff footprint. The stone platform starts
+        // at x=-89.5 and retains its original height; east of -88 stays flat.
+        // Ground vertices, path ribbons and moving actors share this surface.
+        Math.min(2.2, (-p.z - 15) * 0.16) * Math.min(1, (-88 - p.x) / 1.5)
       : 0;
 }
 export type { Point, Collider, Quality };
